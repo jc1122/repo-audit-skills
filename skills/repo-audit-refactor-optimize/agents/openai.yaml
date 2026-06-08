@@ -1,0 +1,7 @@
+# Example agent configuration for the OpenAI platform.
+# Other orchestrators can provide their own config file in this directory
+# (e.g. anthropic.yaml, copilot.yaml) following the same interface schema.
+interface:
+  display_name: "Repo Audit Refactor Optimize"
+  short_description: "End-to-end repository optimization orchestration"
+  default_prompt: "Bootstrap the relevant subskills, audit this repository end-to-end, execute safe improvements, and verify the results."

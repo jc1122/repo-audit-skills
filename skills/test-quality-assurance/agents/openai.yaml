@@ -1,0 +1,11 @@
+interface:
+  display_name: "Test Quality Assurance — TDD Rubric Scorer"
+  short_description: "8-dimension TDD quality audit with automated scoring and delta tracking"
+  categories:
+    - testing
+    - code-quality
+    - tdd
+  default_prompt: >
+    Audit this repository's test suite against TDD and behavior-first quality
+    criteria. Score each of 8 rubric dimensions (0-3), identify gaps, and
+    produce a prioritized improvement plan.
