@@ -129,3 +129,65 @@ def analyze_tree(root, source_prefixes, config) -> list[hc.Finding]:
     findings += _ruff_format(root, rel_files)
     findings += _type_findings(root, rel_files, config)
     return hc.sort_findings(findings)
+
+
+def render_report(findings: list[hc.Finding]) -> str:
+    lines = ["# quality-audit report", ""]
+    if not findings:
+        lines.append("No findings.")
+        return "\n".join(lines) + "\n"
+    by_signal: dict[str, list[hc.Finding]] = {}
+    for f in findings:
+        by_signal.setdefault(f.signal, []).append(f)
+    for signal in sorted(by_signal):
+        lines.append(f"## {signal} ({len(by_signal[signal])})")
+        for f in by_signal[signal]:
+            lines.append(f"- `{f.path}:{f.line_start}` {f.metric_name} — {f.evidence_raw} [{f.severity}]")
+        lines.append("")
+    return "\n".join(lines) + "\n"
+
+
+def load_config(config_path: str | None) -> dict:
+    config = dict(DEFAULT_CONFIG)
+    if config_path:
+        try:
+            config.update(json.loads(Path(config_path).read_text(encoding="utf-8")))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ToolError(f"invalid --config: {exc}") from exc
+    return config
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Deterministic lint/format/type audit (advisory).")
+    parser.add_argument("--root")
+    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes",
+                        help="Path prefix(es) relative to --root to include. Repeatable.")
+    parser.add_argument("--exclude", action="append", default=[])
+    parser.add_argument("--out-dir")
+    parser.add_argument("--config", help="JSON file overriding config (type_checker, ruff_select, ruff_ignore).")
+    parser.add_argument("--format", choices=["json", "md"], default="json")
+    parser.add_argument("--simulate-missing-tool", action="store_true", help=argparse.SUPPRESS)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    if not args.root or not args.out_dir:
+        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
+        return hc.EXIT_ERROR
+    try:
+        if args.simulate_missing_tool:
+            raise ToolError("simulated missing tool")
+        config = load_config(args.config)
+        findings = analyze_tree(args.root, args.source_prefixes, config)
+    except ToolError as exc:
+        print(json.dumps({"status": "error", "message": str(exc)}))
+        return hc.EXIT_ERROR
+    data = hc.write_findings(findings, args.out_dir, LEAF)
+    Path(args.out_dir, "quality_report.md").write_text(render_report(findings), encoding="utf-8")
+    print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
+    return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
+
+
+if __name__ == "__main__":
+    sys.exit(main())
