@@ -122,9 +122,11 @@ All of the above belong to Sub-project 2.
    `test-redundancy-triage`.
 2. Install round-trip: `node bin/install-repo-audit-skills.js --dest /tmp/ras --force`
    installs all skills; a spot-check `--help` on a migrated script works from the install.
-3. Each migrated skill's **existing pytest suite passes** after the move (verification
-   only — not wired as a new release gate in this sub-project). Any extra runtime deps the
-   suites need (e.g. coverage) are noted but not added to the release gate.
+3. **Functional smoke for the migrated skills** (they ship no in-repo pytest suites and no
+   `pyproject.toml`): all three answer `--help` with exit 0, and `audit_pipeline.py`'s
+   sibling-discovery constants (`DEFAULT_TQA_SCRIPT`, `DEFAULT_TRIAGE_SCRIPT`) resolve to
+   existing files in the new `skills/` layout. Running the full pipeline end-to-end needs a
+   target repo + coverage tooling and is out of scope for this sub-project.
 4. Both umbrellas run from their new location (smoke: `audit_pipeline.py --help` and a
    `code_health_pipeline.py` run still exits per contract).
 5. After the takeover: directory is `repo-audit-skills`, `origin` points at the GitHub
@@ -132,8 +134,9 @@ All of the above belong to Sub-project 2.
 
 ## Risks / verifications for the plan
 
-- **Migrated test suites' path/deps assumptions.** Run them post-move; if a suite needs a
-  dependency not present, record it for Sub-project 2 rather than expanding this gate.
+- **No in-repo tests for the migrated skills.** They ship `SKILL.md` + `scripts/` +
+  `references/` + `agents/` only (no `tests/`, no `pyproject.toml`). Verification is the
+  functional smoke in acceptance #3; adding real test suites is a Sub-project 2 concern.
 - **Force-push correctness.** Confirm `origin` URL and that overwriting the placeholder is
   intended before pushing (it is, per decision 6) — this is the one irreversible external
   action.
