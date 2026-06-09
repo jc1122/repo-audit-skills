@@ -1,0 +1,12 @@
+[project]
+name = "dead-code-audit"
+version = "0.1.0"
+description = "Deterministic dead/unused-code audit leaf (vulture + ruff F-codes)."
+requires-python = ">=3.10"
+dependencies = [
+    "vulture>=2.11",
+    "ruff>=0.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
