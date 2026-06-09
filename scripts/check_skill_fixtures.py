@@ -17,6 +17,7 @@ HELP_COMMANDS = [
     ["python3", "skills/dead-code-audit/scripts/dead_code_audit.py", "--help"],
     ["python3", "skills/structure-audit/scripts/structure_audit.py", "--help"],
     ["python3", "skills/quality-audit/scripts/quality_audit.py", "--help"],
+    ["python3", "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py", "--help"],
 ]
 
 

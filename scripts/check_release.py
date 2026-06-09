@@ -19,6 +19,7 @@ REQUIRED_SKILLS = {
     "dead-code-audit": "dead-code-audit",
     "structure-audit": "structure-audit",
     "quality-audit": "quality-audit",
+    "code-health-audit-pipeline": "code-health-audit-pipeline",
 }
 REQUIRED_SCRIPTS = {
     "complexity-audit": ["scripts/complexity_audit.py"],
@@ -26,6 +27,7 @@ REQUIRED_SCRIPTS = {
     "dead-code-audit": ["scripts/dead_code_audit.py"],
     "structure-audit": ["scripts/structure_audit.py"],
     "quality-audit": ["scripts/quality_audit.py"],
+    "code-health-audit-pipeline": ["scripts/code_health_pipeline.py"],
 }
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 

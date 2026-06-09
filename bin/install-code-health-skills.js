@@ -13,6 +13,7 @@ const skills = [
   "dead-code-audit",
   "structure-audit",
   "quality-audit",
+  "code-health-audit-pipeline",
 ];
 
 function usage() {
