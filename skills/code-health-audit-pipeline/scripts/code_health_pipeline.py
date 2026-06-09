@@ -126,3 +126,99 @@ def run_leaves(leaves: list[dict], root: str, source_prefixes: list[str], out_di
         leaf_exit[name] = code
         all_findings.extend(findings)
     return all_findings, leaf_exit
+
+
+def build_summary(ranked: list[dict], leaf_exit: dict[str, int], decision: str, code: int) -> dict:
+    by_signal: dict[str, int] = {}
+    by_severity: dict[str, int] = {}
+    for f in ranked:
+        by_signal[f["signal"]] = by_signal.get(f["signal"], 0) + 1
+        by_severity[f["severity"]] = by_severity.get(f["severity"], 0) + 1
+    status = {0: "clean", 1: "findings", 2: "errored"}
+    leaves = {}
+    for name, exit_code in sorted(leaf_exit.items()):
+        count = sum(1 for f in ranked if f.get("leaf") == name)
+        leaves[name] = {"exit": exit_code, "status": status.get(exit_code, "unknown"), "count": count}
+    return {
+        "supervisor": decision,
+        "exit_code": code,
+        "leaves": leaves,
+        "totals": {"count": len(ranked), "by_signal": by_signal, "by_severity": by_severity},
+        "findings": ranked,
+    }
+
+
+def render_report(ranked: list[dict], decision: str) -> str:
+    lines = [f"# code-health-audit-pipeline report — {decision}", ""]
+    if not ranked:
+        lines.append("No findings.")
+        return "\n".join(lines) + "\n"
+    by_signal: dict[str, list[dict]] = {}
+    for f in ranked:
+        by_signal.setdefault(f["signal"], []).append(f)
+    for signal in sorted(by_signal):
+        lines.append(f"## {signal} ({len(by_signal[signal])})")
+        for f in by_signal[signal]:
+            loc = f["location"]
+            lines.append(f"- `{f['path']}:{loc['line_start']}` {loc['symbol']} "
+                         f"[{f['severity']}/{f['leaf']}] — {f['suggested_action']}")
+        lines.append("")
+    return "\n".join(lines) + "\n"
+
+
+def load_gate(config_path: str | None) -> dict:
+    gate = dict(DEFAULT_GATE)
+    if config_path:
+        try:
+            gate.update(json.loads(Path(config_path).read_text(encoding="utf-8")))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"invalid --config: {exc}")
+    return gate
+
+
+def _parse_overrides(values: list[str]) -> dict[str, str]:
+    overrides: dict[str, str] = {}
+    for item in values:
+        if "=" not in item:
+            raise SystemExit(f"--leaf-script must be name=PATH, got {item!r}")
+        name, path = item.split("=", 1)
+        overrides[name] = path
+    return overrides
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run code-health leaves, merge/rank, decide.")
+    parser.add_argument("--root")
+    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes",
+                        help="Path prefix(es) relative to --root. Repeatable.")
+    parser.add_argument("--out-dir")
+    parser.add_argument("--languages", default="python", help="Comma-separated languages to select leaves.")
+    parser.add_argument("--registry", default=str(DEFAULT_REGISTRY), help="Leaf registry JSON.")
+    parser.add_argument("--leaf-script", action="append", default=[], help="Override: name=PATH. Repeatable.")
+    parser.add_argument("--config", help="JSON gate overrides.")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    if not args.root or not args.out_dir:
+        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
+        return 2
+    gate = load_gate(args.config)
+    overrides = _parse_overrides(args.leaf_script)
+    leaves = select_leaves(load_registry(Path(args.registry)), args.languages.split(","))
+    out_dir = Path(args.out_dir)
+    findings, leaf_exit = run_leaves(leaves, args.root, args.source_prefixes, out_dir, overrides)
+    ranked = rank(merge_and_dedupe(findings))
+    decision, code = decide(ranked, leaf_exit, gate)
+    summary = build_summary(ranked, leaf_exit, decision, code)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "code_health_summary.json").write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (out_dir / "code_health_report.md").write_text(render_report(ranked, decision), encoding="utf-8")
+    print(json.dumps({"status": "ok", "supervisor": decision, "findings": len(ranked)}))
+    return code
+
+
+if __name__ == "__main__":
+    sys.exit(main())
