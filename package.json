@@ -1,0 +1,40 @@
+{
+  "name": "code-health-skills",
+  "version": "0.1.0",
+  "description": "Deterministic, advisory code-health leaf skills (complexity, duplication, dead-code, structure, quality) and a code-health-audit-pipeline umbrella.",
+  "license": "MIT",
+  "bin": {
+    "code-health-skills": "./bin/install-code-health-skills.js",
+    "install-code-health-skills": "./bin/install-code-health-skills.js"
+  },
+  "scripts": {
+    "check": "npm run check:vendored && npm run check:fixtures && npm run check:release",
+    "check:vendored": "python3 scripts/check_vendored_common.py",
+    "check:fixtures": "python3 scripts/check_skill_fixtures.py",
+    "check:release": "python3 scripts/check_release.py",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "files": [
+    "AGENTS.md",
+    "README.md",
+    "LICENSE",
+    "bin/",
+    "scripts/",
+    "shared/",
+    "skills/",
+    "!**/.git/**",
+    "!**/__pycache__/**",
+    "!**/*.pyc",
+    "!**/*.pyo",
+    "!**/.pytest_cache/**",
+    "!**/.mypy_cache/**",
+    "!**/.ruff_cache/**"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jc1122/code-health-skills.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
