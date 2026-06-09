@@ -73,3 +73,56 @@ def decide(findings: list[dict], leaf_exit: dict[str, int], gate: dict) -> tuple
     if findings:
         return "ADVISE", 1
     return "PASS", 0
+
+
+def load_registry(registry_path: Path) -> list[dict]:
+    data = json.loads(Path(registry_path).read_text(encoding="utf-8"))
+    return data.get("leaves", [])
+
+
+def select_leaves(leaves: list[dict], languages: list[str]) -> list[dict]:
+    wanted = set(languages)
+    return [leaf for leaf in leaves if wanted & set(leaf.get("languages", []))]
+
+
+def _resolve_script(leaf: dict, overrides: dict[str, str]) -> Path:
+    if leaf["name"] in overrides:
+        return Path(overrides[leaf["name"]])
+    script = leaf["script"]
+    p = Path(script)
+    return p if p.is_absolute() else SKILLS_ROOT / script
+
+
+def _run_one(leaf: dict, root: str, source_prefixes: list[str], out_dir: Path, overrides: dict[str, str]):
+    script = _resolve_script(leaf, overrides)
+    leaf_out = out_dir / leaf["name"]
+    cmd = [sys.executable, str(script), "--root", root, "--out-dir", str(leaf_out)]
+    for pre in source_prefixes:
+        cmd += ["--source-prefix", pre]
+    if not script.exists():
+        return leaf["name"], 2, []
+    proc = subprocess.run(cmd, text=True, capture_output=True, check=False)
+    findings_path = leaf_out / leaf["findings_file"]
+    findings: list[dict] = []
+    if proc.returncode != 2 and findings_path.exists():
+        try:
+            findings = json.loads(findings_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return leaf["name"], 2, []
+    return leaf["name"], proc.returncode, findings
+
+
+def run_leaves(leaves: list[dict], root: str, source_prefixes: list[str], out_dir: Path,
+               overrides: dict[str, str]):
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    leaf_exit: dict[str, int] = {}
+    all_findings: list[dict] = []
+    with ThreadPoolExecutor(max_workers=max(1, len(leaves))) as pool:
+        results = list(pool.map(
+            lambda leaf: _run_one(leaf, root, source_prefixes, out_dir, overrides), leaves
+        ))
+    for name, code, findings in results:
+        leaf_exit[name] = code
+        all_findings.extend(findings)
+    return all_findings, leaf_exit
