@@ -9,6 +9,10 @@ const root = path.resolve(__dirname, "..");
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const skills = [
   "complexity-audit",
+  "duplication-audit",
+  "dead-code-audit",
+  "structure-audit",
+  "quality-audit",
 ];
 
 function usage() {

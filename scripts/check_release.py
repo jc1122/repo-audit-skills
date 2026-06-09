@@ -15,9 +15,17 @@ ROOT = Path(__file__).resolve().parents[1]
 # Append one entry per skill as later plans land. Name on left == skill dir == SKILL.md name.
 REQUIRED_SKILLS = {
     "complexity-audit": "complexity-audit",
+    "duplication-audit": "duplication-audit",
+    "dead-code-audit": "dead-code-audit",
+    "structure-audit": "structure-audit",
+    "quality-audit": "quality-audit",
 }
 REQUIRED_SCRIPTS = {
     "complexity-audit": ["scripts/complexity_audit.py"],
+    "duplication-audit": ["scripts/duplication_audit.py"],
+    "dead-code-audit": ["scripts/dead_code_audit.py"],
+    "structure-audit": ["scripts/structure_audit.py"],
+    "quality-audit": ["scripts/quality_audit.py"],
 }
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 

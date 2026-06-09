@@ -13,6 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 # Append one command per skill as later plans land.
 HELP_COMMANDS = [
     ["python3", "skills/complexity-audit/scripts/complexity_audit.py", "--help"],
+    ["python3", "skills/duplication-audit/scripts/duplication_audit.py", "--help"],
+    ["python3", "skills/dead-code-audit/scripts/dead_code_audit.py", "--help"],
+    ["python3", "skills/structure-audit/scripts/structure_audit.py", "--help"],
+    ["python3", "skills/quality-audit/scripts/quality_audit.py", "--help"],
 ]
 
 
