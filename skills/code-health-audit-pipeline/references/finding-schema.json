@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Code Health Finding",
+  "type": "object",
+  "required": ["id", "leaf", "signal", "severity", "path", "location", "metric", "evidence", "confidence", "suggested_action"],
+  "properties": {
+    "id": {"type": "string"},
+    "leaf": {"type": "string"},
+    "signal": {"enum": ["SIMPLIFY", "DECOMPOSE", "EXTRACT", "MERGE", "DELETE", "RESTRUCTURE", "LINT", "FORMAT", "TYPE"]},
+    "severity": {"enum": ["info", "low", "medium", "high"]},
+    "path": {"type": "string"},
+    "location": {"type": "object", "required": ["line_start", "line_end", "symbol"]},
+    "metric": {"type": "object", "required": ["name", "value", "threshold"]},
+    "evidence": {"type": "object", "required": ["tool", "raw"]},
+    "confidence": {"enum": ["low", "medium", "high"]},
+    "suggested_action": {"type": "string"}
+  }
+}

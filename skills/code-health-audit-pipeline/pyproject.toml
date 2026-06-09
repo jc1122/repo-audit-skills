@@ -1,0 +1,9 @@
+[project]
+name = "code-health-audit-pipeline"
+version = "0.1.0"
+description = "Umbrella that runs the code-health leaves, merges/ranks findings, and emits a supervisor decision."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]

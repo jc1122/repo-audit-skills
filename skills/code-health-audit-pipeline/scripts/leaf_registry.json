@@ -1,0 +1,9 @@
+{
+  "leaves": [
+    {"name": "complexity", "skill": "complexity-audit", "script": "complexity-audit/scripts/complexity_audit.py", "languages": ["python"], "findings_file": "complexity_findings.json"},
+    {"name": "duplication", "skill": "duplication-audit", "script": "duplication-audit/scripts/duplication_audit.py", "languages": ["python"], "findings_file": "duplication_findings.json"},
+    {"name": "dead-code", "skill": "dead-code-audit", "script": "dead-code-audit/scripts/dead_code_audit.py", "languages": ["python"], "findings_file": "dead-code_findings.json"},
+    {"name": "structure", "skill": "structure-audit", "script": "structure-audit/scripts/structure_audit.py", "languages": ["python"], "findings_file": "structure_findings.json"},
+    {"name": "quality", "skill": "quality-audit", "script": "quality-audit/scripts/quality_audit.py", "languages": ["python"], "findings_file": "quality_findings.json"}
+  ]
+}
