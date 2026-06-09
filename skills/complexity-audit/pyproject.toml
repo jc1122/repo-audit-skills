@@ -1,0 +1,12 @@
+[project]
+name = "complexity-audit"
+version = "0.1.0"
+description = "Deterministic complexity/maintainability audit leaf (radon + lizard)."
+requires-python = ">=3.10"
+dependencies = [
+    "radon>=6.0",
+    "lizard>=1.17",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
