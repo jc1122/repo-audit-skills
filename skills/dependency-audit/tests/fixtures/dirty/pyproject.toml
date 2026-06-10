@@ -1,0 +1,13 @@
+[project]
+name = "dirty"
+version = "0.1.0"
+dependencies = [
+    "requests",
+    "left-pad-py",
+    "pytest",
+]
+
+[project.optional-dependencies]
+dev = [
+    "rich",
+]
