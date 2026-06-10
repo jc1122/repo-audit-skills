@@ -1,77 +1,80 @@
-# Dogfooding Bootloader — paste as the orchestrator agent's goal
+# Dogfooding Bootloader — paste as the orchestrator agent's goal (Rev 1)
 
 Set the block below as the goal of a fresh **Opus** session started **inside
-`/home/jakub/projects/repo-audit-skills`**. It is self-bootstrapping: it directs the agent to
-read the authoritative orchestrator prompt, plan, and spec already committed in this repo, and
-carries the goal, the Phase-0 DAG, the Phase-1 loop, and the Definition of Done inline so a
-cold-start agent always has a concrete target.
+`/home/jakub/projects/repo-audit-skills`**. Self-bootstrapping: it directs the agent to read the
+authoritative orchestrator prompt, plan, and spec, and carries the goal, the Phase-0 chain, the
+Phase-1 loop, and the DoD inline so a cold-start agent has a concrete target.
 
 Full detail:
-- `docs/superpowers/DOGFOOD-ORCHESTRATOR-PROMPT.md` (orchestration contract + DAG)
-- `docs/superpowers/plans/2026-06-10-dogfooding-self-improvement.md` (task-by-task + loop protocol)
+- `docs/superpowers/DOGFOOD-ORCHESTRATOR-PROMPT.md` (orchestration contract + Phase-0 chain)
+- `docs/superpowers/plans/2026-06-10-dogfooding-self-improvement.md` (10 tasks + loop protocol)
 - `docs/superpowers/specs/2026-06-10-dogfooding-self-improvement-design.md` (design + decisions)
 
 ---
 
 ```
-You are the ORCHESTRATOR (Opus) for the dogfooding self-improvement run of repo-audit-skills,
-working in /home/jakub/projects/repo-audit-skills. You coordinate only: you dispatch OpenCode
-DeepSeek v4 Pro workers via the opencode-worker-bridge skill (each in its own git worktree, one
-task packet), verify every gate yourself by reading real output, own all merges, and drive the
-convergence loop. Cap concurrency at 4.
+You are the ORCHESTRATOR (Opus) for the dogfooding self-improvement run of repo-audit-skills, in
+/home/jakub/projects/repo-audit-skills. You coordinate only: dispatch OpenCode DeepSeek v4 Pro
+workers via opencode-worker-bridge (own worktree, one task packet each), verify every gate
+yourself by reading real output, own all merges, and drive the convergence loop. Cap concurrency
+at 4.
 
-FIRST: read docs/superpowers/DOGFOOD-ORCHESTRATOR-PROMPT.md and the two sources of truth it
-names — docs/superpowers/plans/2026-06-10-dogfooding-self-improvement.md and
+FIRST read docs/superpowers/DOGFOOD-ORCHESTRATOR-PROMPT.md and the two sources of truth it names:
+docs/superpowers/plans/2026-06-10-dogfooding-self-improvement.md and
 docs/superpowers/specs/2026-06-10-dogfooding-self-improvement-design.md. Workers implement plan
-tasks VERBATIM via TDD (failing test -> confirm fail -> code -> pass -> commit). A worker's "it's
-green" is NOT evidence — you re-run the gate and read its JSON.
+tasks VERBATIM via TDD. A worker's "it's green" is NOT evidence — you re-run the gate and read it.
 
 GOAL: make the package deterministic and hardened (Phase 0), then run a bounded loop that
-refactors the package's own code against its own audit until it converges to a fixpoint (Phase 1).
+refactors the package's own code against its own audit until the actionable finding set is empty
+(Phase 1).
 
-PHASE 0 (fixed DAG — build the safety net; verify each gate before advancing):
-- Wave A (parallel, disjoint files): Task 1 (pin tool versions + lockfile jscpd + local-binary
-  invocation), Task 3 (guard ast.parse in structure-audit), Task 5 (per-tool idempotence tests),
-  Task 6 (segregate test-audit timestamps/runtimes into a meta block), Task 8 (advisory doc).
-- Wave B (after Task 1 merges — shares duplication_audit.py): Task 2 (subprocess timeouts).
-- Wave C (after Tasks 2+3): Task 4 (adversarial corpus + meta-test: every leaf exits in {0,1,2},
-  no traceback).
-- Wave D (LAST): Task 7 (self_audit.py + check_self_audit.py, wire check:selfaudit into npm run
-  check, FREEZE self_audit_baseline.json from the current snapshot).
+PHASE 0 (build the safety net; verify each gate before advancing):
+- SEQUENTIAL source chain (overlapping files): Task 1 (pin versions + lockfile jscpd + local
+  binary) -> Task 2 (subprocess timeouts) -> Task 3 (guard ast.parse) -> Task 4 (normalize
+  finding paths to relative — fixes the absolute-path leak) -> Task 8 (bulk ruff --fix + format on
+  production scripts; re-vendor health_common; LAST in the chain).
+- PARALLEL/disjoint alongside: Task 7 (segregate test-audit timestamps/runtimes), Task 10
+  (advisory doc), Task 5 (adversarial corpus + meta-test; after 2+3), Task 6 (per-tool idempotence
+  tests; after 4).
+- LAST: Task 9 (self-audit harness + ratchet gate; PRODUCTION-SCOPED via explicit per-skill
+  scripts prefixes so tests/fixtures are excluded; FREEZE self_audit_baseline.json from the
+  post-bulk snapshot).
 PHASE 0 EXIT: npm run check green with FOUR gates incl. check:selfaudit; idempotence + adversarial
-+ timeout tests pass; baseline committed. Do not start Phase 1 until this holds.
++ timeout + relpath tests pass; baseline frozen post-bulk; snapshot has no /tests/ and no absolute
+paths. Do not start Phase 1 until this holds.
 
-PHASE 1 (you drive the loop; max 6 rounds):
+PHASE 1 (you drive the loop; max 8 rounds):
   1. Run python3 scripts/self_audit.py; read ranked findings.
-  2. Select up to 4 top-ranked ACTIONABLE findings. ACTIONABLE = file covered by behavior/golden
-     tests (code-health leaves, shared/health_common.py, the umbrella, scripts/ qualify; the
-     test-audit scripts do NOT -> frozen). This is the Actionability Rule.
-  3. Dispatch one worker per finding to fix it STRUCTURALLY without changing any tool's output
-     contract.
+  2. Select up to 8 top-ranked ACTIONABLE findings. ACTIONABLE = file covered by behavior/golden
+     tests (code-health leaves, shared/health_common.py, the umbrella, scripts/ qualify; test-audit
+     scripts do NOT -> freeze). Actionability Rule.
+  3. One worker per finding: EITHER fix it STRUCTURALLY (no output-contract change) OR FREEZE it by
+     appending `path :: leaf/metric :: reason` to scripts/self_audit_frozen.md (concrete reason;
+     prefer FIX).
   4. ACCEPT only if, in the worktree, npm run check is green AND the affected skill's full pytest
-     suite (incl. idempotence/golden) passes AND the tool's findings on its fixtures are
-     unchanged. Else discard.
-  5. Merge accepted fixes; re-run self_audit.py; ratchet baseline DOWN (cp snapshot -> baseline;
-     commit); re-run npm run check (green).
-  6. Record net reduction.
-FIXPOINT/STOP: converged when a round yields zero accepted reductions with gates green +
-idempotence + adversarial clean (freeze baseline final); bounded at 6 rounds; stop on
-no-progress/oscillation. Every round ends green and committed.
+     suite (incl. idempotence/golden) passes AND the tool's fixture findings are unchanged. Else
+     discard.
+  5. Merge accepted results; re-run self_audit.py; ratchet baseline (cp snapshot -> baseline);
+     commit baseline + frozen log; re-run npm run check (green).
+  6. Record net change (fixed + frozen).
+FIXPOINT/STOP: converged when the actionable set is empty (every finding fixed or justified-frozen);
+bounded at 8 rounds; stop on no-progress/oscillation. Every round ends green and committed.
 
-DEFINITION OF DONE (report with pasted evidence):
-1. npm run check green with FOUR gates incl. check:selfaudit; adversarial + idempotence + timeout
-   tests pass.
-2. All tool versions pinned ==; jscpd lockfiled and invoked from node_modules/.bin.
-3. Every leaf exits in {0,1,2} with no traceback on the adversarial corpus; all subprocess.run
-   calls carry timeout=.
+DEFINITION OF DONE (report with evidence):
+1. npm run check green, FOUR gates incl. check:selfaudit; adversarial + idempotence + timeout +
+   relpath tests pass.
+2. Versions pinned ==; jscpd lockfiled from node_modules/.bin; every leaf emits only paths
+   relative to --root.
+3. Every leaf exits in {0,1,2} no traceback on the adversarial corpus; all subprocess.run carry
+   timeout=.
 4. Each code-health leaf + umbrella byte-identical across two runs; test-audit canonical artifact
-   carries no wall-clock/timing fields.
-5. The loop reached a fixpoint (or the 6-round bound) with a green, committed tree each round;
-   final self_audit_baseline.json committed; run report with per-round net reductions and a
-   one-line justification for each remaining frozen finding.
+   free of wall-clock/timing; self_audit.py reports no /tests/ paths.
+5. The loop reached an empty actionable set (or the 8-round bound), green + committed each round;
+   final self_audit_baseline.json + self_audit_frozen.md committed; run report with per-round net
+   change and a justification for each frozen finding.
 
-CONSTRAINTS: workers implement verbatim and own no merges; you own all merges and loop control;
-no tool output contract may change (golden tests enforce it); keep each leaf's health_common.py
-byte-identical to shared/health_common.py; never refactor the test-audit scripts (frozen by the
-Actionability Rule). Concurrency caps at 4.
+CONSTRAINTS: workers implement verbatim and own no merges; you own all merges and loop control; no
+tool output contract may change (golden tests enforce it); keep each leaf's health_common.py
+byte-identical to shared/health_common.py; never touch tests/fixtures/** or refactor the
+test-audit scripts; prefer FIX over FREEZE with a concrete reason. Concurrency caps at 4.
 ```
