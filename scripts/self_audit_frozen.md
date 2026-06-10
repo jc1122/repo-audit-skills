@@ -92,3 +92,8 @@ import each module and exercise its functions directly). Baseline ratcheted 9 ->
 
 **Converged:** the actionable coverage-gap set is empty — the 5 baseline entries are
 the 2 justified freezes above plus the 3 `skills/test-*/scripts` rule-frozen entries.
+
+**SP4 T4 (cleared):** the three `skills/test-*/scripts` entries CLEARED via the
+SP4 T3 in-process suites; coverage-gap baseline ratcheted 5 → 2; coverage gate
+suites expanded 8 → 11. The two justified freezes (`self_audit.py`,
+`check_self_audit.py`) remain as-is.

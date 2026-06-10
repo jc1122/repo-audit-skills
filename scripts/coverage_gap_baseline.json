@@ -6,17 +6,5 @@
   {
     "metric": "file_coverage_percent",
     "path": "scripts/self_audit.py"
-  },
-  {
-    "metric": "file_coverage_percent",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py"
-  },
-  {
-    "metric": "file_coverage_percent",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py"
-  },
-  {
-    "metric": "file_coverage_percent",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py"
   }
 ]

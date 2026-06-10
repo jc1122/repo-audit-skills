@@ -26,6 +26,9 @@ SUITES = [
     "skills/quality-audit/tests",
     "skills/code-health-audit-pipeline/tests",
     "skills/coverage-gap-audit/tests",
+    "skills/test-audit-pipeline/tests",
+    "skills/test-quality-assurance/tests",
+    "skills/test-redundancy-triage/tests",
 ]
 SUITE_TIMEOUT = 600
 
