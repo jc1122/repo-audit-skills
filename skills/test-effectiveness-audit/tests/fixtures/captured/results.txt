@@ -1,0 +1,4 @@
+    calc.x_weak__mutmut_1: no tests
+    calc.x_weak__mutmut_2: no tests
+    calc.x_weak__mutmut_3: no tests
+    calc.x_weak__mutmut_4: no tests
