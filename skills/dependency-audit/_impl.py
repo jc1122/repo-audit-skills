@@ -10,6 +10,7 @@ Imported by the thin CLI wrapper at ``scripts/dependency_audit.py``.
 from __future__ import annotations
 
 import ast
+import argparse
 import json
 import re
 import sys as _sys
@@ -26,6 +27,8 @@ import health_common as hc  # noqa: E402
 # ---------------------------------------------------------------------------
 
 LEAF = "dependency"
+
+DEFAULT_THRESHOLDS: dict[str, float] = {}
 
 MODULE_TO_DIST: dict[str, str] = {
     "PIL": "pillow",
@@ -133,20 +136,37 @@ def collect_imports(
 
 def _parse_pyproject_deps(root: Path) -> tuple[list[str], bool]:
     """Extract dependency specifiers from pyproject.toml."""
-    py = root / "pyproject.toml"
-    if not py.exists():
+    specs, found = _parse_pyproject_runtime_deps(root)
+    if not found:
         return [], False
-    try:
-        data = tomllib.loads(py.read_text(encoding="utf-8"))
-    except tomllib.TOMLDecodeError as exc:
-        raise ToolError(f"invalid pyproject.toml: {exc}") from exc
+    data = _load_pyproject(root)
     project = data.get("project")
     if not isinstance(project, dict):
         return [], True
-    specs: list[str] = list(project.get("dependencies", []))
+    specs = list(specs)
     for extra in (project.get("optional-dependencies") or {}).values():
         specs.extend(extra)
     return specs, True
+
+
+def _load_pyproject(root: Path) -> dict:
+    py = root / "pyproject.toml"
+    try:
+        return tomllib.loads(py.read_text(encoding="utf-8"))
+    except tomllib.TOMLDecodeError as exc:
+        raise ToolError(f"invalid pyproject.toml: {exc}") from exc
+
+
+def _parse_pyproject_runtime_deps(root: Path) -> tuple[list[str], bool]:
+    """Extract dependency specifiers from [project.dependencies] only."""
+    py = root / "pyproject.toml"
+    if not py.exists():
+        return [], False
+    data = _load_pyproject(root)
+    project = data.get("project")
+    if not isinstance(project, dict):
+        return [], True
+    return list(project.get("dependencies", [])), True
 
 
 def declared_deps(root: Path) -> tuple[dict[str, str], bool]:
@@ -178,7 +198,7 @@ def _is_local_module(root: Path, module: str, source_prefixes: list[str]) -> boo
 
 def _runtime_dep_names(root: Path) -> set[str]:
     """Normalised dist names from [project.dependencies] only (no extras)."""
-    specs, _ = _parse_pyproject_deps(root)
+    specs, _ = _parse_pyproject_runtime_deps(root)
     return {_spec_name(s) for s in specs}
 
 
@@ -505,3 +525,100 @@ def analyze_tree(
         )
 
     return hc.sort_findings(findings)
+
+
+# ---------------------------------------------------------------------------
+# CLI helpers
+# ---------------------------------------------------------------------------
+
+
+def render_report(findings: list[hc.Finding]) -> str:
+    """Render findings as a markdown section per signal."""
+    lines = ["# dependency-audit report", ""]
+    if not findings:
+        lines.append("No findings.")
+        return "\n".join(lines) + "\n"
+    grouped: dict[str, list[hc.Finding]] = {}
+    for f in findings:
+        bucket = grouped.get(f.signal)
+        if bucket is None:
+            grouped[f.signal] = [f]
+        else:
+            bucket.append(f)
+    for sig in sorted(grouped):
+        items = grouped[sig]
+        lines.append(f"## {sig} ({len(items)})")
+        for f_item in items:
+            lines.append(
+                f"- `{f_item.path}:{f_item.line_start}` "
+                f"{f_item.symbol} — "
+                f"{f_item.metric_name}={f_item.metric_value:g} "
+                f"[{f_item.severity}]"
+            )
+        lines.append("")
+    return "\n".join(lines) + "\n"
+
+
+def load_thresholds(cfg: str | None) -> dict[str, float]:
+    """Load threshold overrides from an optional JSON file."""
+    th: dict[str, float] = dict(DEFAULT_THRESHOLDS)
+    if cfg:
+        try:
+            with Path(cfg).open(encoding="utf-8") as fh:
+                th.update(json.load(fh))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ToolError(f"invalid --config: {exc}") from exc
+    return th
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Build the CLI argument parser."""
+    p = argparse.ArgumentParser(
+        description="Declared-vs-imported dependency audit (advisory).",
+    )
+    p.add_argument("--root")
+    p.add_argument("--out-dir")
+    p.add_argument(
+        "--source-prefix",
+        action="append",
+        default=[],
+        dest="source_prefixes",
+    )
+    p.add_argument("--config")
+    p.add_argument("--format", choices=["json", "md"], default="json")
+    p.add_argument("--advisory-report")
+    return p
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI entry point."""
+    a = build_parser().parse_args(argv)
+    if not (a.root and a.out_dir):
+        print(
+            json.dumps(
+                {"status": "error", "message": "--root and --out-dir are required"}
+            )
+        )
+        return hc.EXIT_ERROR
+    try:
+        th = load_thresholds(a.config)
+        findings = analyze_tree(
+            a.root,
+            a.source_prefixes,
+            th,
+            a.advisory_report,
+        )
+        _, manifest_found = declared_deps(Path(a.root))
+    except ToolError as exc:
+        print(json.dumps({"status": "error", "message": str(exc)}))
+        return hc.EXIT_ERROR
+    data = hc.write_findings(findings, a.out_dir, LEAF)
+    Path(a.out_dir, f"{LEAF}_report.md").write_text(
+        render_report(findings),
+        encoding="utf-8",
+    )
+    status = {"status": "ok", "findings": len(data), "leaf": LEAF}
+    if not manifest_found:
+        status["manifest"] = False
+    print(json.dumps(status))
+    return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
