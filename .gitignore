@@ -10,3 +10,4 @@ node_modules/
 artifacts/
 .self_audit_out/
 scripts/self_audit_snapshot.json
+scripts/coverage_gap_snapshot.json

@@ -1,0 +1,12 @@
+[run]
+relative_files = True
+source =
+    scripts
+    shared
+    skills
+omit =
+    */tests/*
+    */fixtures/*
+
+[json]
+pretty_print = False

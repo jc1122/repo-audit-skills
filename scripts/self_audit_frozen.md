@@ -9,6 +9,7 @@ Each entry: path :: leaf/metric :: reason.
 - **R3** (fix): fixed B904 in the umbrella + wrapped 13 E501 across the six code-health scripts (+ ruff-format polish on structure_audit.py). Baseline 176 -> 162. 0 real regressions (duplication line-range symbols churned, which is expected and absorbed by the ratchet).
 - **R4** (converge): froze the 36 residual actionable findings (17 duplication, 9 module-MI, 5 cyclomatic, 5 nloc) with concrete per-finding justifications + the 126 non-actionable test-audit findings (Actionability Rule). Baseline stays 162 (no code change). **Actionable set is now empty — converged.**
 - **SP3-T1**: added TEST to SIGNALS + EFFORT; re-vendored; ratchet absorbed duplication line-range churn (no net new findings).
+- **SP3-T7**: added `check:coverage` gate (`scripts/check_coverage_gap.py`, ruff-clean). Self-audit 165 -> 168 (+3): +1 module-MI (section D) + 2 clones of the shared snapshot/baseline ratchet idiom (section C). Froze the initial coverage-gap baseline (9 entries: 6 gate/self-audit scripts = Phase 2 worklist + 3 `skills/test-*/scripts` rule-frozen). SANITY verified: snapshot contains NO covered file (shared/health_common, the 6 code-health leaves, the coverage-gap leaf are all absent) -> pytest-cov subprocess tracing confirmed working.
 - **SP3-T4**: added the `coverage-gap-audit` leaf (`coverage_gap_audit.py`, ruff-clean + formatted). Self-audit 162 -> 165 (+3 net): +1 module-MI (section D) and +7 cross-leaf CLI/parse clones involving the new leaf (section C), offset by -5 pre-existing clone-pairs that jscpd re-attributed to the leaf's clone groups. All churn is 100% attributable to introducing the leaf into duplication scope; frozen by the same standalone-vendored-leaf rationale (this front-loads the freeze the plan placed at T5, to keep every commit green).
 
 ## Frozen findings (Phase 1 R4 — convergence)
@@ -23,7 +24,7 @@ Every remaining baseline finding is justified below: each ACTIONABLE finding has
 **Reason:** `shared/health_common.py` is vendored byte-identical into all five leaves (the `check:vendored` gate enforces this). The clone *is* the vendoring contract; it cannot be removed without breaking standalone-skill installability.
 - `shared/health_common.py` :: duplication/duplicate_tokens :: skills/complexity-audit/scripts/health_common.py:1-98 :: intentional vendored copy; must stay byte-identical to shared/health_common.py
 
-### C. Cross-leaf CLI/parse duplication (18)
+### C. Cross-leaf CLI/parse duplication (20)
 **Reason:** each code-health leaf is an independently-installable skill with a self-contained `scripts/` dir (only `health_common.py` is shared/vendored). The residual overlaps are small argparse/CLI skeletons and tool-output-parsing idioms that cannot be deduped without forbidden cross-skill imports. Empirically (Phase 1 R2), hoisting shared helpers into `health_common` did **not** reduce duplication — it relocated clones into the 6×-vendored module and added 6 `maintainability_index` findings (net +2). Frozen as intrinsic to the standalone-vendored-leaf architecture.
 - `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: duplication/duplicate_tokens :: skills/complexity-audit/scripts/complexity_audit.py:243-255 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/dead-code-audit/scripts/dead_code_audit.py:239-260 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
@@ -43,8 +44,10 @@ Every remaining baseline finding is justified below: each ACTIONABLE finding has
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:29-42 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:42-52 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/structure-audit/scripts/structure_audit.py:337-344 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `scripts/check_coverage_gap.py` :: duplication/duplicate_tokens :: scripts/check_self_audit.py:23-31 :: shared snapshot/baseline ratchet idiom across the gate scripts; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `scripts/check_coverage_gap.py` :: duplication/duplicate_tokens :: scripts/self_audit.py:23-31 :: shared snapshot/baseline ratchet idiom across the gate scripts; dedup needs forbidden cross-skill imports (see R2 evidence)
 
-### D. Module-level maintainability_index (10)
+### D. Module-level maintainability_index (11)
 **Reason:** whole-module MI for single-file standalone tools. Each leaf/gate script is intentionally one self-contained file (required for vendored install); lowering module MI means splitting into multi-file packages, which breaks the single-file install model and is out of scope (spec: structure preserved, no cross-skill imports).
 - `scripts/check_release.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
 - `scripts/check_vendored_common.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
@@ -56,6 +59,7 @@ Every remaining baseline finding is justified below: each ACTIONABLE finding has
 - `skills/quality-audit/scripts/quality_audit.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
 - `skills/structure-audit/scripts/structure_audit.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
+- `scripts/check_coverage_gap.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
 
 ### E. cyclomatic_complexity (5)
 - `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: complexity/cyclomatic_complexity :: decide :: cohesive tool logic (leaf-result aggregation / tool-output parsing); extraction relocates branches without net reduction and churns clone detection
@@ -70,3 +74,9 @@ Every remaining baseline finding is justified below: each ACTIONABLE finding has
 - `skills/quality-audit/scripts/quality_audit.py` :: complexity/function_nloc :: _ruff_lint :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
 - `skills/quality-audit/scripts/quality_audit.py` :: complexity/function_nloc :: _type_findings :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
 - `skills/structure-audit/scripts/structure_audit.py` :: complexity/function_nloc :: analyze_tree :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
+
+## Coverage-gap baseline (initial freeze, SP3-T7)
+
+Rule: entries under `skills/test-*/scripts/` are frozen by the Actionability Rule
+(spec SP3 decision 9) until Sub-project 4 writes their tests. All other entries are
+the Phase 2 worklist and must be fixed (tests added) or individually justified below.
