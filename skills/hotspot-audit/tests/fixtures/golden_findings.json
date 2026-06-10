@@ -1,0 +1,94 @@
+[
+  {
+    "id": "bd7d959bf892e5f8",
+    "leaf": "hotspot",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "a.py",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "a.py<->b.py"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "value": 1.0,
+      "threshold": 0.7
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "5 co-changes of a.py and b.py in last 8 commits (max 500) from d12c61b58127"
+    },
+    "confidence": "medium",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "id": "2b2948b528976b16",
+    "leaf": "hotspot",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "a.py",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "a.py<->hot.py"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "value": 1.0,
+      "threshold": 0.7
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "5 co-changes of a.py and hot.py in last 8 commits (max 500) from d12c61b58127"
+    },
+    "confidence": "medium",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "id": "0ed570d82e3d948d",
+    "leaf": "hotspot",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "b.py",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "b.py<->hot.py"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "value": 0.83,
+      "threshold": 0.7
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "5 co-changes of b.py and hot.py in last 8 commits (max 500) from d12c61b58127"
+    },
+    "confidence": "medium",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "id": "3c80e0c09e713408",
+    "leaf": "hotspot",
+    "signal": "DECOMPOSE",
+    "severity": "low",
+    "path": "hot.py",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "hot.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "value": 1200.0,
+      "threshold": 1000.0
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "6 commits x 200 nloc in last 8 commits (max 500) from d12c61b58127"
+    },
+    "confidence": "medium",
+    "suggested_action": "Hotspot: hot.py changes often and is large; split along change axes"
+  }
+]
