@@ -55,7 +55,10 @@ def _resolve_base(node: ast.ImportFrom, current_module: str, is_pkg: bool) -> st
 
 
 def _imported_names(path: Path, current_module: str, is_pkg: bool) -> list[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"))
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+    except (SyntaxError, UnicodeDecodeError, OSError):
+        return []
     names: list[str] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
