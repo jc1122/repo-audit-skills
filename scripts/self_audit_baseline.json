@@ -9,12 +9,6 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "scripts/check_coverage_gap.py",
-    "symbol": "scripts/check_self_audit.py:23-31"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "scripts/check_coverage_gap.py",
     "symbol": "scripts/self_audit.py:23-31"
   },
   {
