@@ -63,25 +63,25 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:207-221"
+    "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
     "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:239-260"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:261-266"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:266-274"
   },
   {
     "leaf": "duplication",
@@ -100,6 +100,36 @@
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
     "symbol": "skills/structure-audit/scripts/structure_audit.py:352-358"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:31-58"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:29-42"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:42-52"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "symbol": "skills/structure-audit/scripts/structure_audit.py:337-344"
   },
   {
     "leaf": "complexity",
@@ -130,18 +160,6 @@
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
     "symbol": "skills/duplication-audit/scripts/duplication_audit.py:184-210"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:29-42"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:42-52"
   },
   {
     "leaf": "duplication",
