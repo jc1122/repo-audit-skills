@@ -15,14 +15,14 @@ description: >
 A code-health leaf skill that audits documentation files (``*.md``) for
 consistency with the codebase. It checks four groups:
 
-1. **Unknown flags in documented commands** — extracts fenced shell blocks,
+1. **Unknown flags in documented commands** -- extracts fenced shell blocks,
    introspects target scripts via ``argparse``, and flags flags present in docs
    but absent from the parser.
-2. **Dead doc paths** — finds inline code spans referencing files that do not
+2. **Dead doc paths** -- finds inline code spans referencing files that do not
    exist on disk.
-3. **Stale version pins** — detects version strings in docs that lag behind
+3. **Stale version pins** -- detects version strings in docs that lag behind
    ``pyproject.toml`` or ``package.json``.
-4. **Docstring coverage** — reports the percentage of public symbols with
+4. **Docstring coverage** -- reports the percentage of public symbols with
    docstrings (opt-in via ``--config``).
 
 All findings emit the ``LINT`` signal.
@@ -63,14 +63,14 @@ Where ``thresholds.json`` contains:
 
 ## Exit Codes
 
-- ``0`` — clean: no findings.
-- ``1`` — advisory findings present.
-- ``2`` — tool or config error.
+- ``0`` -- clean: no findings.
+- ``1`` -- advisory findings present.
+- ``2`` -- tool or config error.
 
 ## Output
 
-- ``docs-consistency_findings.json`` — sorted findings (shared schema, signal ``LINT``).
-- ``docs-consistency_report.md`` — human-readable summary.
+- ``docs-consistency_findings.json`` -- sorted findings (shared schema, signal ``LINT``).
+- ``docs-consistency_report.md`` -- human-readable summary.
 
 ## Thresholds
 
@@ -83,7 +83,7 @@ produces a finding with ``metric_name="docstring_percent"``.
 
 ## Finding Groups
 
-### Group 1 — Unknown flags in documented commands
+### Group 1 -- Unknown flags in documented commands
 Confidence: ``medium``. Fenced blocks tagged ``bash``, ``sh``, ``shell``, or
 ``console`` are parsed; lines beginning with ``$ `` are split via
 ``shlex.split``. When the command is ``python``/``python3`` referencing an
@@ -94,18 +94,18 @@ build_parser`` are ever imported. Flags are enumerated from
 tested to fail loudly if it vanishes). Doc flags not in the parser's known
 option strings produce a finding.
 
-### Group 2 — Dead doc paths
+### Group 2 -- Dead doc paths
 Confidence: ``medium``. Inline code spans matching
 ``^[A-Za-z0-9_.\-/]+$`` containing ``/`` (but not ``://``) with a source-file
 suffix are checked for existence on disk. Missing paths produce a finding.
 
-### Group 3 — Stale version pins
+### Group 3 -- Stale version pins
 Confidence: ``high``. Package name and version are read from
 ``pyproject.toml`` ``[project]`` or ``package.json``; if neither exists the
 group is skipped. ``CHANGELOG*.md`` files are **excluded** from version-pin
 checks. Mismatches produce a finding.
 
-### Group 4 — Docstring coverage
+### Group 4 -- Docstring coverage
 Confidence: ``medium``. Off by default; enabled only via ``--config``. See
 Thresholds above.
 
@@ -117,6 +117,4 @@ guard uses ``parser._actions``, a private attribute pinned after verifying it
 exists on the current ``argparse`` version; a future ``argparse`` release could
 rename it, and the guard test is written to fail loudly if that happens.
 
-**Import-introspection caveat:** targets are imported; only modules defining
-build_parser and importing argparse are eligible; never point --root at untrusted
-code you would not import.
+**Import-introspection caveat:** targets are imported; only modules defining build_parser and importing argparse are eligible; never point --root at untrusted code you would not import.
