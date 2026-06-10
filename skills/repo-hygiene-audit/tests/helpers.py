@@ -105,6 +105,8 @@ def make_dirty_repo(tmp_path):
 
     # commit everything
     _g(repo, "add", "-A")
+    # Force-add debug.log despite .gitignore *.log so it becomes tracked-but-ignored
+    _g(repo, "add", "-f", "debug.log")
     _g(repo, "commit", "-q", "-m", "initial")
 
     return repo, symlink_ok
