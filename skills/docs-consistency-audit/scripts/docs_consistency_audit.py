@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Docs-consistency audit -- checks documentation commands, paths, and versions against reality."""
+"""Docs-consistency audit.
+
+Checks documentation commands, paths, and versions against reality.
+"""
 
 from __future__ import annotations
 
@@ -11,7 +14,9 @@ import re as _re
 import shlex as _shlex
 import sys
 import tomllib
+from collections.abc import Iterator
 from pathlib import Path
+from types import ModuleType
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
@@ -46,13 +51,28 @@ def _rel(root: Path, path: Path) -> str:
     return path.resolve().relative_to(root.resolve()).as_posix()
 
 
+def _read_text(path: Path) -> str | None:
+    """Return file text (UTF-8, errors replaced), or None when unreadable."""
+    try:
+        return path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+
+
+def _in_scope_files(root_path: Path, pattern: str, prefixes: list[str]) -> list[Path]:
+    """Return sorted in-scope files matching *pattern* (byte-determinism)."""
+    return sorted(
+        f for f in root_path.rglob(pattern) if _in_scope(_rel(root_path, f), prefixes)
+    )
+
+
 # -- Group 1: unknown flags in fenced commands ------------------------------
 
 
 def _extract_fenced_blocks(
     text: str,
 ) -> list[tuple[int, list[str]]]:
-    """Return [(fence_start_line, [enclosed_lines])] for bash/sh/shell/console fences."""
+    """Return [(fence_start_line, [lines])] for bash/sh/shell/console fences."""
     blocks: list[tuple[int, list[str]]] = []
     in_fence = False
     fence_start = 0
@@ -75,47 +95,28 @@ def _extract_fenced_blocks(
     return blocks
 
 
-def _known_flags(script_path: Path, root_path: Path) -> set[str] | None:
-    """Return known long-flag set for a script, or None to skip.
-
-    Uses an AST guard: only imports the module when its AST contains
-    ``import argparse`` (or ``from argparse import ...``) AND a
-    top-level ``def build_parser``.  Modules failing this guard are
-    skipped silently (never imported).
-    """
-    try:
-        source = script_path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        return None
-    try:
-        tree = _ast.parse(source)
-    except SyntaxError:
-        return None
-
-    # Guard: argparse import anywhere in the AST.
-    has_argparse = False
+def _has_argparse_import(tree: _ast.Module) -> bool:
+    """Return True when the module AST imports argparse in any form."""
     for node in _ast.walk(tree):
-        if isinstance(node, _ast.Import):
-            for alias in node.names:
-                if alias.name == "argparse":
-                    has_argparse = True
-        elif isinstance(node, _ast.ImportFrom):
-            if node.module == "argparse":
-                has_argparse = True
+        if isinstance(node, _ast.Import) and any(
+            alias.name == "argparse" for alias in node.names
+        ):
+            return True
+        if isinstance(node, _ast.ImportFrom) and node.module == "argparse":
+            return True
+    return False
 
-    # Guard: top-level ``def build_parser``.
-    has_build_parser = False
-    for node in _ast.iter_child_nodes(tree):
-        if isinstance(node, _ast.FunctionDef) and node.name == "build_parser":
-            has_build_parser = True
-            break
 
-    if not has_argparse or not has_build_parser:
-        return None  # skip silently -- never imported
+def _has_top_level_build_parser(tree: _ast.Module) -> bool:
+    """Return True when the module AST has a top-level ``def build_parser``."""
+    return any(
+        isinstance(node, _ast.FunctionDef) and node.name == "build_parser"
+        for node in _ast.iter_child_nodes(tree)
+    )
 
-    # Import the module without mutating sys.argv.
-    rel = _rel(root_path, script_path)
-    module_name = rel.replace("/", ".").removesuffix(".py")
+
+def _load_script_module(script_path: Path, module_name: str) -> ModuleType | None:
+    """Import *script_path* as *module_name*, returning None on failure."""
     spec = _importlib_util.spec_from_file_location(module_name, script_path)
     if spec is None:
         return None
@@ -124,97 +125,148 @@ def _known_flags(script_path: Path, root_path: Path) -> set[str] | None:
         spec.loader.exec_module(mod)  # type: ignore[union-attr]
     except Exception:
         return None  # import failed -- skip silently
+    return mod
 
+
+def _parser_flags(parser: argparse.ArgumentParser, rel: str) -> set[str]:
+    """Return every option string exposed by *parser*.
+
+    Pinned private argparse API: ``parser._actions``.  argparse has no
+    public action enumeration; pin the attribute here.
+    """
+    if not hasattr(parser, "_actions"):
+        raise ToolError(f"argparse parser has no _actions attribute for {rel}")
+    flags: set[str] = set()
+    for action in parser._actions:
+        flags.update(action.option_strings)
+    return flags
+
+
+def _known_flags(script_path: Path, root_path: Path) -> set[str] | None:
+    """Return known long-flag set for a script, or None to skip.
+
+    Uses an AST guard: only imports the module when its AST contains
+    ``import argparse`` (or ``from argparse import ...``) AND a
+    top-level ``def build_parser``.  Modules failing this guard are
+    skipped silently (never imported).
+    """
+    source = _read_text(script_path)
+    if source is None:
+        return None
+    try:
+        tree = _ast.parse(source)
+    except SyntaxError:
+        return None
+    if not (_has_argparse_import(tree) and _has_top_level_build_parser(tree)):
+        return None  # guard failed -- never imported
+    rel = _rel(root_path, script_path)
+    mod = _load_script_module(script_path, rel.replace("/", ".").removesuffix(".py"))
+    if mod is None:
+        return None
     try:
         parser = mod.build_parser()
     except Exception:
         return None
+    return _parser_flags(parser, rel)
 
-    # Pinned private argparse API: ``parser._actions``.
-    # argparse has no public action enumeration; pin the attribute here.
-    if not hasattr(parser, "_actions"):
-        raise ToolError(
-            f"argparse parser has no _actions attribute for {rel}"
-        )
 
-    flags: set[str] = set()
-    for action in parser._actions:  # type: ignore[attr-defined]
-        for opt in action.option_strings:
-            flags.add(opt)
-    return flags
+class _FlagCache:
+    """Per-run cache of script flag introspection (one import per script)."""
+
+    def __init__(self, root_path: Path) -> None:
+        self.root_path = root_path
+        self._flags: dict[str, set[str] | None] = {}
+
+    def flags_for(self, script_path: Path) -> set[str] | None:
+        """Return known flags for *script_path*, introspecting at most once."""
+        key = str(script_path)
+        if key not in self._flags:
+            self._flags[key] = _known_flags(script_path, self.root_path)
+        return self._flags[key]
+
+
+def _line_tokens(line: str) -> list[str]:
+    """Shell-tokenize one fenced-block line, stripping a leading ``$ `` prompt."""
+    stripped = line.strip()
+    if stripped.startswith("$ "):
+        stripped = stripped[2:]
+    try:
+        return _shlex.split(stripped)
+    except ValueError:
+        return []
+
+
+def _script_for_tokens(tokens: list[str], root_path: Path) -> tuple[str, Path] | None:
+    """Return (token, path) for the first token naming an existing .py file."""
+    for tok in tokens[1:]:
+        if tok.endswith(".py"):
+            candidate = root_path / tok
+            if candidate.is_file():
+                return tok, candidate
+    return None
+
+
+def _unknown_flag_finding(
+    md_relpath: str, fence_start: int, script_token: str, flag: str
+) -> hc.Finding:
+    """Build the finding for one unknown ``--flag`` occurrence."""
+    return hc.Finding(
+        leaf=LEAF,
+        signal="LINT",
+        severity="medium",
+        path=md_relpath,
+        line_start=fence_start,
+        line_end=fence_start,
+        symbol=script_token,
+        metric_name="doc_flag_unknown",
+        metric_value=1.0,
+        metric_threshold=0.0,
+        evidence_tool="argparse",
+        evidence_raw=f"flag {flag} unknown for {script_token}",
+        confidence="medium",
+        suggested_action=(
+            f"Remove or fix unknown flag {flag} "
+            f"in {md_relpath} references to {script_token}"
+        ),
+    )
 
 
 def _check_fenced_flags(
     md_relpath: str,
     fence_start: int,
     fence_lines: list[str],
-    root_path: Path,
+    cache: _FlagCache,
     findings: list[hc.Finding],
-    _flag_cache: dict[str, set[str] | None],
 ) -> None:
     """Check each line in a fenced block for unknown flags."""
     for line in fence_lines:
-        stripped = line.strip()
-        # Strip leading ``$ `` prompt.
-        if stripped.startswith("$ "):
-            stripped = stripped[2:]
-        try:
-            tokens = _shlex.split(stripped)
-        except ValueError:
-            continue
-
+        tokens = _line_tokens(line)
         if not tokens or tokens[0] not in ("python", "python3"):
             continue
-
-        # Find the .py script token that exists under root.
-        script_token = ""
-        script_path: Path | None = None
-        for tok in tokens[1:]:
-            if tok.endswith(".py"):
-                candidate = root_path / tok
-                if candidate.is_file():
-                    script_token = tok
-                    script_path = candidate
-                    break
-
-        if not script_token or script_path is None:
+        script = _script_for_tokens(tokens, cache.root_path)
+        if script is None:
             continue
-
-        # Introspect the script (cached per absolute path).
-        cache_key = str(script_path)
-        if cache_key not in _flag_cache:
-            _flag_cache[cache_key] = _known_flags(script_path, root_path)
-        known = _flag_cache[cache_key]
-
+        script_token, script_path = script
+        known = cache.flags_for(script_path)
         if known is None:
             continue  # guard rejected -- skip silently
-
-        # Check each ``--`` flag in the line.
         for tok in tokens[1:]:
-            if tok.startswith("--"):
-                flag = tok.split("=", 1)[0]
-                if flag not in known:
-                    findings.append(
-                        hc.Finding(
-                            leaf=LEAF,
-                            signal="LINT",
-                            severity="medium",
-                            path=md_relpath,
-                            line_start=fence_start,
-                            line_end=fence_start,
-                            symbol=script_token,
-                            metric_name="doc_flag_unknown",
-                            metric_value=1.0,
-                            metric_threshold=0.0,
-                            evidence_tool="argparse",
-                            evidence_raw=f"flag {flag} unknown for {script_token}",
-                            confidence="medium",
-                            suggested_action=(
-                                f"Remove or fix unknown flag {flag} "
-                                f"in {md_relpath} references to {script_token}"
-                            ),
-                        )
-                    )
+            if not tok.startswith("--"):
+                continue
+            flag = tok.split("=", 1)[0]
+            if flag not in known:
+                findings.append(
+                    _unknown_flag_finding(md_relpath, fence_start, script_token, flag)
+                )
+
+
+def _check_markdown_fences(
+    md_relpath: str, text: str, cache: _FlagCache, findings: list[hc.Finding]
+) -> None:
+    """Run the unknown-flag check over every fenced block in *text*."""
+    for fence_start, fence_lines in _extract_fenced_blocks(text):
+        if fence_lines:
+            _check_fenced_flags(md_relpath, fence_start, fence_lines, cache, findings)
 
 
 # -- Group 2: dead doc paths ------------------------------------------------
@@ -305,9 +357,8 @@ def _check_version_pins(
         rel = _rel(root_path, md_file)
         if md_file.name.startswith("CHANGELOG"):
             continue
-        try:
-            text = md_file.read_text(encoding="utf-8", errors="replace")
-        except OSError:
+        text = _read_text(md_file)
+        if text is None:
             continue
         for i, line in enumerate(text.split("\n"), start=1):
             for match in version_re.finditer(line):
@@ -327,13 +378,11 @@ def _check_version_pins(
                             metric_threshold=0.0,
                             evidence_tool="semver",
                             evidence_raw=(
-                                f"found {name}=={found}, "
-                                f"current version is {version}"
+                                f"found {name}=={found}, current version is {version}"
                             ),
                             confidence="high",
                             suggested_action=(
-                                f"Update version pin in {rel} "
-                                f"from {found} to {version}"
+                                f"Update version pin in {rel} from {found} to {version}"
                             ),
                         )
                     )
@@ -342,7 +391,9 @@ def _check_version_pins(
 # -- Group 4: docstring coverage (config-gated) -----------------------------
 
 
-def _has_docstring(node: _ast.FunctionDef | _ast.ClassDef | _ast.AsyncFunctionDef) -> bool:
+def _has_docstring(
+    node: _ast.FunctionDef | _ast.ClassDef | _ast.AsyncFunctionDef,
+) -> bool:
     """Return True when *node* starts with a docstring expression."""
     if node.body:
         first = node.body[0]
@@ -355,6 +406,68 @@ def _has_docstring(node: _ast.FunctionDef | _ast.ClassDef | _ast.AsyncFunctionDe
     return False
 
 
+def _iter_public_methods(
+    cls: _ast.ClassDef,
+) -> Iterator[_ast.FunctionDef | _ast.AsyncFunctionDef]:
+    """Yield public function members of *cls*."""
+    for member in _ast.iter_child_nodes(cls):
+        if isinstance(
+            member, (_ast.FunctionDef, _ast.AsyncFunctionDef)
+        ) and not member.name.startswith("_"):
+            yield member
+
+
+def _iter_public_symbols(
+    tree: _ast.Module,
+) -> Iterator[_ast.FunctionDef | _ast.AsyncFunctionDef | _ast.ClassDef]:
+    """Yield public top-level defs/classes and public methods of public classes."""
+    for node in _ast.iter_child_nodes(tree):
+        if isinstance(
+            node, (_ast.FunctionDef, _ast.AsyncFunctionDef)
+        ) and not node.name.startswith("_"):
+            yield node
+        elif isinstance(node, _ast.ClassDef) and not node.name.startswith("_"):
+            yield node
+            yield from _iter_public_methods(node)
+
+
+def _docstring_stats(tree: _ast.Module) -> tuple[int, int]:
+    """Return (public_total, documented) docstring counts for *tree*."""
+    public_total = 0
+    documented = 0
+    for node in _iter_public_symbols(tree):
+        public_total += 1
+        if _has_docstring(node):
+            documented += 1
+    return public_total, documented
+
+
+def _docstring_finding(
+    rel: str, pct: float, documented: int, public_total: int, threshold: float
+) -> hc.Finding:
+    """Build the docstring_percent finding for one module."""
+    return hc.Finding(
+        leaf=LEAF,
+        signal="LINT",
+        severity="low",
+        path=rel,
+        line_start=1,
+        line_end=1,
+        symbol="<module>",
+        metric_name="docstring_percent",
+        metric_value=pct,
+        metric_threshold=threshold,
+        evidence_tool="ast",
+        evidence_raw=(
+            f"{documented}/{public_total} public symbols documented ({pct}%)"
+        ),
+        confidence="medium",
+        suggested_action=(
+            f"Add docstrings to undocumented functions in {rel} to reach {threshold}%"
+        ),
+    )
+
+
 def _check_docstring_coverage(
     root_path: Path,
     py_files: list[Path],
@@ -364,62 +477,20 @@ def _check_docstring_coverage(
     """Emit docstring_percent findings for modules below *threshold*."""
     for py_file in py_files:
         rel = _rel(root_path, py_file)
-        try:
-            tree = _ast.parse(py_file.read_text(encoding="utf-8", errors="replace"))
-        except (OSError, SyntaxError):
+        source = _read_text(py_file)
+        if source is None:
             continue
-
-        public_total = 0
-        documented = 0
-
-        for node in _ast.iter_child_nodes(tree):
-            if isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
-                if not node.name.startswith("_"):
-                    public_total += 1
-                    if _has_docstring(node):
-                        documented += 1
-            elif isinstance(node, _ast.ClassDef):
-                if not node.name.startswith("_"):
-                    public_total += 1
-                    if _has_docstring(node):
-                        documented += 1
-                    # Also count public methods of public classes.
-                    for member in _ast.iter_child_nodes(node):
-                        if isinstance(member, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
-                            if not member.name.startswith("_"):
-                                public_total += 1
-                                if _has_docstring(member):
-                                    documented += 1
-
+        try:
+            tree = _ast.parse(source)
+        except SyntaxError:
+            continue
+        public_total, documented = _docstring_stats(tree)
         if public_total == 0:
             continue
-
         pct = round(100 * documented / public_total, 1)
-
         if pct < threshold:
             findings.append(
-                hc.Finding(
-                    leaf=LEAF,
-                    signal="LINT",
-                    severity="low",
-                    path=rel,
-                    line_start=1,
-                    line_end=1,
-                    symbol="<module>",
-                    metric_name="docstring_percent",
-                    metric_value=pct,
-                    metric_threshold=threshold,
-                    evidence_tool="ast",
-                    evidence_raw=(
-                        f"{documented}/{public_total} "
-                        f"public symbols documented ({pct}%)"
-                    ),
-                    confidence="medium",
-                    suggested_action=(
-                        f"Add docstrings to undocumented functions "
-                        f"in {rel} to reach {threshold}%"
-                    ),
-                )
+                _docstring_finding(rel, pct, documented, public_total, threshold)
             )
 
 
@@ -437,38 +508,21 @@ def analyze_tree(
         raise ToolError(f"--root is not a directory: {root}")
 
     findings: list[hc.Finding] = []
-
-    # Collect in-scope files (sorted for byte-determinism).
-    md_files = sorted(
-        f for f in root_path.rglob("*.md")
-        if _in_scope(_rel(root_path, f), source_prefixes)
-    )
-    py_files = sorted(
-        f for f in root_path.rglob("*.py")
-        if _in_scope(_rel(root_path, f), source_prefixes)
-    )
+    md_files = _in_scope_files(root_path, "*.md", source_prefixes)
+    py_files = _in_scope_files(root_path, "*.py", source_prefixes)
 
     # Group 1: unknown flags in fenced commands
-    flag_cache: dict[str, set[str] | None] = {}
+    cache = _FlagCache(root_path)
     for md_file in md_files:
-        rel = _rel(root_path, md_file)
-        try:
-            text = md_file.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
-        for fence_start, fence_lines in _extract_fenced_blocks(text):
-            if not fence_lines:
-                continue
-            _check_fenced_flags(rel, fence_start, fence_lines, root_path, findings, flag_cache)
+        text = _read_text(md_file)
+        if text is not None:
+            _check_markdown_fences(_rel(root_path, md_file), text, cache, findings)
 
     # Group 2: dead doc paths
     for md_file in md_files:
-        rel = _rel(root_path, md_file)
-        try:
-            text = md_file.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
-        _check_dead_paths(rel, text, root_path, findings)
+        text = _read_text(md_file)
+        if text is not None:
+            _check_dead_paths(_rel(root_path, md_file), text, root_path, findings)
 
     # Group 3: stale version pins
     pkg_name, pkg_version = _get_package_version(root_path)
@@ -486,23 +540,35 @@ def analyze_tree(
 # -- CLI --------------------------------------------------------------------
 
 
-def render_report(findings: list[hc.Finding]) -> str:
-    lines = ["# docs-consistency-audit report", ""]
-    if not findings:
-        lines.append("No findings.")
-        return "\n".join(lines) + "\n"
+def _group_by_signal(findings: list[hc.Finding]) -> dict[str, list[hc.Finding]]:
+    """Group findings by signal, preserving insertion order within groups."""
     by_signal: dict[str, list[hc.Finding]] = {}
     for f in findings:
         by_signal.setdefault(f.signal, []).append(f)
-    for signal in sorted(by_signal):
-        lines.append(f"## {signal} ({len(by_signal[signal])})")
-        for f in by_signal[signal]:
-            lines.append(
-                f"- `{f.path}:{f.line_start}` {f.symbol} -- "
-                f"{f.metric_name}={f.metric_value:g} [{f.severity}]"
-            )
-        lines.append("")
-    return "\n".join(lines) + "\n"
+    return by_signal
+
+
+def _signal_section(signal: str, group: list[hc.Finding]) -> list[str]:
+    """Render one ``## SIGNAL (n)`` report section."""
+    lines = [f"## {signal} ({len(group)})"]
+    for f in group:
+        lines.append(
+            f"- `{f.path}:{f.line_start}` {f.symbol} -- "
+            f"{f.metric_name}={f.metric_value:g} [{f.severity}]"
+        )
+    lines.append("")
+    return lines
+
+
+def render_report(findings: list[hc.Finding]) -> str:
+    """Render the advisory markdown report grouped by signal."""
+    header = ["# docs-consistency-audit report", ""]
+    if not findings:
+        return "\n".join([*header, "No findings."]) + "\n"
+    sections: list[str] = header
+    for signal, group in sorted(_group_by_signal(findings).items()):
+        sections.extend(_signal_section(signal, group))
+    return "\n".join(sections) + "\n"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -522,32 +588,42 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def load_thresholds(config_path: str | None) -> dict:
-    thresholds = dict(DEFAULT_THRESHOLDS)
-    if config_path:
-        try:
-            thresholds.update(json.loads(Path(config_path).read_text(encoding="utf-8")))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise ToolError(f"invalid --config: {exc}") from exc
-    return thresholds
-
-
-def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
-    if not args.root or not args.out_dir:
-        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
-        return hc.EXIT_ERROR
+    """Return DEFAULT_THRESHOLDS overlaid with the optional JSON config."""
+    merged = dict(DEFAULT_THRESHOLDS)
+    if not config_path:
+        return merged
     try:
-        thresholds = load_thresholds(args.config)
-        findings = analyze_tree(args.root, args.source_prefixes, thresholds)
+        raw = Path(config_path).read_text(encoding="utf-8")
+        merged.update(json.loads(raw))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ToolError(f"invalid --config: {exc}") from exc
+    return merged
+
+
+def _run_audit(args: argparse.Namespace) -> int:
+    """Execute the audit for parsed *args*; emit the summary JSON on stdout."""
+    try:
+        findings = analyze_tree(
+            args.root, args.source_prefixes, load_thresholds(args.config)
+        )
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
     data = hc.write_findings(findings, args.out_dir, LEAF)
-    Path(args.out_dir, f"{LEAF}_report.md").write_text(
-        render_report(findings), encoding="utf-8"
-    )
+    report_path = Path(args.out_dir, f"{LEAF}_report.md")
+    report_path.write_text(render_report(findings), encoding="utf-8")
     print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI entry point: validate required args, then run the audit."""
+    args = build_parser().parse_args(argv)
+    if args.root and args.out_dir:
+        return _run_audit(args)
+    error = {"status": "error", "message": "--root and --out-dir are required"}
+    print(json.dumps(error))
+    return hc.EXIT_ERROR
 
 
 if __name__ == "__main__":
