@@ -59,3 +59,7 @@ def test_write_findings_is_byte_stable(tmp_path):
 
 def test_exit_code_constants():
     assert (hc.EXIT_CLEAN, hc.EXIT_FINDINGS, hc.EXIT_ERROR) == (0, 1, 2)
+
+
+def test_test_signal_is_in_schema():
+    assert "TEST" in hc.SIGNALS

@@ -23,6 +23,7 @@ EFFORT = {
     "LINT": 1,
     "FORMAT": 1,
     "TYPE": 2,
+    "TEST": 3,
     "SIMPLIFY": 2,
     "MERGE": 2,
     "EXTRACT": 3,

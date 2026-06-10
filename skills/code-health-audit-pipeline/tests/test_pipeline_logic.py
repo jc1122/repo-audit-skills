@@ -39,3 +39,7 @@ def test_decide_gate_on_import_cycle():
     f = finding(signal="RESTRUCTURE", metric={"name": "import_cycle_size", "value": 2, "threshold": 1})
     decision, code = ch.decide([f], {"structure": 1}, ch.DEFAULT_GATE)
     assert (decision, code) == ("GATE", 2)
+
+
+def test_test_signal_has_effort_weight():
+    assert ch.EFFORT["TEST"] == 3

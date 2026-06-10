@@ -26,6 +26,7 @@ SIGNALS = frozenset(
         "LINT",
         "FORMAT",
         "TYPE",
+        "TEST",
     }
 )
 SEVERITIES = ("info", "low", "medium", "high")
