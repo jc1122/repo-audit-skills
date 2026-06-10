@@ -35,3 +35,28 @@ def test_no_manifest_returns_zero_with_manifest_false(tmp_path, capsys):
     stdout = capsys.readouterr().out
     payload = json.loads(stdout)
     assert payload["manifest"] is False
+
+
+def test_pyproject_without_project_table_is_no_manifest(tmp_path, capsys):
+    """pyproject.toml without [project] is not a dependency manifest."""
+    root = tmp_path / "root"
+    (root / "src").mkdir(parents=True)
+    (root / "pyproject.toml").write_text(
+        "[tool.black]\nline-length = 88\n",
+        encoding="utf-8",
+    )
+    (root / "src" / "app.py").write_text(
+        "import requests\n",
+        encoding="utf-8",
+    )
+    mod = load_module()
+    out = tmp_path / "out"
+
+    rc = mod.main(["--root", str(root), "--out-dir", str(out)])
+
+    assert rc == 0
+    data = json.loads((out / "dependency_findings.json").read_text())
+    assert data == []
+    stdout = capsys.readouterr().out
+    payload = json.loads(stdout)
+    assert payload["manifest"] is False
