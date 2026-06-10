@@ -1,0 +1,11 @@
+interface:
+  display_name: "Test Redundancy Triage — Safe Pruning Engine"
+  short_description: "Empirical test deduplication with branch-equivalence and confidence tiers"
+  categories:
+    - testing
+    - refactoring
+    - code-quality
+  default_prompt: >
+    Evaluate test redundancy in this repository. Classify each candidate as
+    delete, merge, or keep using empirical deselection, branch coverage
+    equivalence, and assertion dominance analysis.

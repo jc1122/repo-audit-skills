@@ -1,0 +1,11 @@
+interface:
+  display_name: "Test Audit Pipeline — Unified Quality + Redundancy Check"
+  short_description: "Parallel pipeline: coverage → TDD scoring → redundancy triage → unified report"
+  categories:
+    - testing
+    - code-quality
+    - automation
+  default_prompt: >
+    Run a full test-suite health check: collect coverage, score quality
+    against the TDD rubric, triage redundancy, and produce a unified
+    report with prioritized actions.
