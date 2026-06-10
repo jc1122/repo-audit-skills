@@ -57,6 +57,30 @@ def test_parse_results_text_preserves_whitespace_in_status():
     assert problems == {"a.x_f__mutmut_1": "survived"}
 
 
+def test_parse_results_text_ignores_non_mutmut_lines():
+    """Lines without '__mutmut_' are skipped per the verbatim guard."""
+    mod = _get_mod()
+    text = "    a.x_f__mutmut_1: survived\n    some other output\n    b.x_g__mutmut_2: timeout\n"
+    problems = mod.parse_results_text(text)
+    assert problems == {
+        "a.x_f__mutmut_1": "survived",
+        "b.x_g__mutmut_2": "timeout",
+    }
+
+
+def test_captured_results_shape():
+    """The committed captured results.txt must contain exactly the four weak
+    mutants with 'no tests'.  The add() mutant is killed and therefore absent
+    from mutmut results output."""
+    text = (FIXTURES / "captured" / "results.txt").read_text()
+    assert "calc.x_weak__mutmut_1: no tests" in text
+    assert "calc.x_weak__mutmut_2: no tests" in text
+    assert "calc.x_weak__mutmut_3: no tests" in text
+    assert "calc.x_weak__mutmut_4: no tests" in text
+    # The add() mutant was killed — killed mutants do not appear in results
+    assert "x_add" not in text
+
+
 def test_parse_results_text_empty_input():
     mod = _get_mod()
     assert mod.parse_results_text("") == {}
@@ -86,8 +110,8 @@ def test_module_totals_multiple_files(tmp_path: Path):
     mod = _get_mod()
     work = tmp_path / "work"
     mutants_dir = work / "mutants"
-    (mutants_dir / "a.py.meta").mkdir(parents=True)
-    (mutants_dir / "b.py.meta").mkdir(parents=True)
+    mutants_dir.mkdir(parents=True)
+    # Write as files, not directories
     (mutants_dir / "a.py.meta").write_text(
         json.dumps({"exit_code_by_key": {"k1": 1, "k2": 1}})
     )
@@ -126,7 +150,13 @@ def test_key_to_module_single_component():
 
 def test_only_survived_and_no_tests_are_problems(tmp_path: Path):
     """Only survived and 'no tests' statuses count as problems;
-    timeout, suspicious, skipped do NOT count as problems."""
+    timeout, suspicious, skipped do NOT count as problems.
+
+    parse_results_text() returns EVERY entry that mutmut results outputs
+    (verbatim plan contract: it preserves all statuses).  The A6 kill-rate
+    rule then filters problems to {survived, no tests}; timeout/suspicious/
+    skipped count as killed so they do not drag the rate down.
+    """
     mod = _get_mod()
     work = tmp_path / "work"
     mutants_dir = work / "mutants" / "pkg"
@@ -159,19 +189,31 @@ def test_only_survived_and_no_tests_are_problems(tmp_path: Path):
     pkg.mod.x_susp__mutmut_1: suspicious
 """
 
-    problems = mod.parse_results_text(results_text)
+    all_entries = mod.parse_results_text(results_text)
 
-    # Only survived + no_tests
-    assert "pkg.mod.x_surv__mutmut_1" in problems
-    assert "pkg.mod.x_surv__mutmut_2" in problems
-    assert "pkg.mod.x_notest__mutmut_1" in problems
-    assert "pkg.mod.x_notest__mutmut_2" in problems
-    # Timeout/suspicious/skipped should NOT be in problems
-    assert "pkg.mod.x_timeout__mutmut_1" not in problems
-    assert "pkg.mod.x_susp__mutmut_1" not in problems
+    # parse_results_text returns EVERY entry (killed mutants are absent from
+    # mutmut results output entirely, so they are naturally excluded).
+    assert "pkg.mod.x_surv__mutmut_1" in all_entries
+    assert "pkg.mod.x_surv__mutmut_2" in all_entries
+    assert "pkg.mod.x_notest__mutmut_1" in all_entries
+    assert "pkg.mod.x_notest__mutmut_2" in all_entries
+    # Timeout and suspicious ARE returned by parse_results_text (verbatim contract)
+    assert "pkg.mod.x_timeout__mutmut_1" in all_entries
+    assert "pkg.mod.x_susp__mutmut_1" in all_entries
+    # Killed mutants are absent from results text (mutmut only lists problems)
+    assert "pkg.mod.x_killed__mutmut_1" not in all_entries
 
-    # Verify the count matches the plan expectation: 4 problems out of 7
+    # The A6 kill-rate rule: problems = subset with status in {survived, no tests}
+    PROBLEM_STATUSES = {"survived", "no tests"}
+    problems = {
+        k: v for k, v in all_entries.items() if v in PROBLEM_STATUSES
+    }
+
     assert len(problems) == 4
-    assert all(
-        status in {"survived", "no tests"} for status in problems.values()
-    ), f"problem statuses should only be 'survived' or 'no tests', got: {problems}"
+    assert set(problems.keys()) == {
+        "pkg.mod.x_surv__mutmut_1",
+        "pkg.mod.x_surv__mutmut_2",
+        "pkg.mod.x_notest__mutmut_1",
+        "pkg.mod.x_notest__mutmut_2",
+    }
+    assert all(v in PROBLEM_STATUSES for v in problems.values())
