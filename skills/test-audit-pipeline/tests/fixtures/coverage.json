@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "version": "7.6.12",
+    "timestamp": "2025-01-15T10:30:00",
+    "branch_coverage": true
+  },
+  "files": {
+    "src/module_a.py": {
+      "executed_lines": [1, 2, 3, 5, 6],
+      "missing_lines": [4],
+      "summary": {
+        "covered_lines": 5,
+        "missing_lines": 1,
+        "num_statements": 6,
+        "percent_covered": 83.33,
+        "percent_covered_display": "83%",
+        "covered_branches": 2,
+        "missing_branches": 0,
+        "num_branches": 2
+      }
+    },
+    "src/module_b.py": {
+      "executed_lines": [1, 2, 3],
+      "missing_lines": [],
+      "summary": {
+        "covered_lines": 3,
+        "missing_lines": 0,
+        "num_statements": 3,
+        "percent_covered": 100.0,
+        "percent_covered_display": "100%",
+        "covered_branches": 1,
+        "missing_branches": 1,
+        "num_branches": 2
+      }
+    }
+  },
+  "totals": {
+    "covered_lines": 8,
+    "missing_lines": 1,
+    "num_statements": 9,
+    "percent_covered": 88.89,
+    "percent_covered_display": "89%",
+    "covered_branches": 3,
+    "missing_branches": 1,
+    "num_branches": 4
+  }
+}
