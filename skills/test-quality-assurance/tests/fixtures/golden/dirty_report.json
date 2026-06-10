@@ -27,7 +27,7 @@
       "given_count": 0,
       "internal_imports": 3,
       "markers": {},
-      "path": "/home/jakub/projects/sp4-worktrees/t3b-tqa/skills/test-quality-assurance/tests/fixtures/dirty/tests/test_engine.py",
+      "path": "<FIXTURE_ROOT>/tests/test_engine.py",
       "private_method_calls": 3,
       "public_call_hints": 0,
       "raises_broad_tuple": 0,
@@ -46,7 +46,7 @@
       "given_count": 0,
       "internal_imports": 2,
       "markers": {},
-      "path": "/home/jakub/projects/sp4-worktrees/t3b-tqa/skills/test-quality-assurance/tests/fixtures/dirty/tests/test_more_dirty.py",
+      "path": "<FIXTURE_ROOT>/tests/test_more_dirty.py",
       "private_method_calls": 0,
       "public_call_hints": 0,
       "raises_broad_tuple": 0,
@@ -55,7 +55,7 @@
       "test_functions": 4
     }
   ],
-  "root": "/home/jakub/projects/sp4-worktrees/t3b-tqa/skills/test-quality-assurance/tests/fixtures/dirty",
+  "root": "<FIXTURE_ROOT>",
   "rubric_scores": {
     "Assertion Quality": {
       "max": 3,
