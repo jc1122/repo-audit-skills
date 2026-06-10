@@ -39,13 +39,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "skills/complexity-audit/scripts/complexity_audit.py:231-243"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B904",
-    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "B904@229:13"
+    "symbol": "skills/complexity-audit/scripts/complexity_audit.py:243-255"
   },
   {
     "leaf": "complexity",
@@ -69,31 +63,31 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:205-219"
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:207-221"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:237-258"
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:239-260"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:259-264"
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:261-266"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:264-272"
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:266-274"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:140-151"
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:143-154"
   },
   {
     "leaf": "duplication",
@@ -105,31 +99,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/structure-audit/scripts/structure_audit.py:344-350"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "E501@112:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "E501@161:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "E501@74:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "E501@93:89"
+    "symbol": "skills/structure-audit/scripts/structure_audit.py:352-358"
   },
   {
     "leaf": "complexity",
@@ -153,13 +123,13 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:167-179"
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:171-183"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:180-206"
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:184-210"
   },
   {
     "leaf": "duplication",
@@ -198,34 +168,10 @@
     "symbol": "skills/quality-audit/scripts/quality_audit.py:68-89"
   },
   {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "E501@118:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "E501@26:89"
-  },
-  {
     "leaf": "complexity",
     "metric": "maintainability_index",
     "path": "skills/duplication-audit/scripts/duplication_audit.py",
     "symbol": "<module>"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/duplication-audit/scripts/duplication_audit.py",
-    "symbol": "E501@117:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/duplication-audit/scripts/duplication_audit.py",
-    "symbol": "E501@151:89"
   },
   {
     "leaf": "complexity",
@@ -244,12 +190,6 @@
     "metric": "maintainability_index",
     "path": "skills/quality-audit/scripts/quality_audit.py",
     "symbol": "<module>"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/quality-audit/scripts/quality_audit.py",
-    "symbol": "E501@243:89"
   },
   {
     "leaf": "complexity",
@@ -274,30 +214,6 @@
     "metric": "maintainability_index",
     "path": "skills/structure-audit/scripts/structure_audit.py",
     "symbol": "<module>"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "E501@250:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "E501@279:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "E501@281:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "E501@296:89"
   },
   {
     "leaf": "complexity",
