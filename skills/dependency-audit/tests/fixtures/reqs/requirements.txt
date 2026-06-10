@@ -1,0 +1,2 @@
+requests>=2.25.0
+left-pad-py==1.0.0
