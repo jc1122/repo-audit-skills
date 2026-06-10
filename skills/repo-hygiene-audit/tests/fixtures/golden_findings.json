@@ -1,0 +1,186 @@
+[
+  {
+    "id": "3ecc5347d96223a7",
+    "leaf": "repo-hygiene",
+    "signal": "RESTRUCTURE",
+    "severity": "low",
+    "path": ".github",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "<ci>"
+    },
+    "metric": {
+      "name": "ci_missing",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "filesystem",
+      "raw": "No .github/workflows/*.yml or .github/workflows/*.yaml found"
+    },
+    "confidence": "high",
+    "suggested_action": "Add a CI workflow under .github/workflows/"
+  },
+  {
+    "id": "c56e0e2b2d62eefa",
+    "leaf": "repo-hygiene",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "CHANGELOG.md",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "version"
+    },
+    "metric": {
+      "name": "version_mismatch",
+      "value": 2.0,
+      "threshold": 1.0
+    },
+    "evidence": {
+      "tool": "filesystem",
+      "raw": "Found 2 distinct versions: pyproject.toml=1.0.0, CHANGELOG.md=1.1.0"
+    },
+    "confidence": "high",
+    "suggested_action": "Align version strings across all sources: pyproject.toml=1.0.0, CHANGELOG.md=1.1.0"
+  },
+  {
+    "id": "4c248aa0a294dcfd",
+    "leaf": "repo-hygiene",
+    "signal": "RESTRUCTURE",
+    "severity": "low",
+    "path": "LICENSE",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "<license>"
+    },
+    "metric": {
+      "name": "license_missing",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "filesystem",
+      "raw": "No LICENSE file found at repository root"
+    },
+    "confidence": "high",
+    "suggested_action": "Add a LICENSE file to the repository root"
+  },
+  {
+    "id": "8f9e21d45a077d90",
+    "leaf": "repo-hygiene",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "blob.bin",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "blob.bin"
+    },
+    "metric": {
+      "name": "tracked_file_bytes",
+      "value": 2048.0,
+      "threshold": 1024.0
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "File size 2048 bytes exceeds threshold 1024 bytes"
+    },
+    "confidence": "high",
+    "suggested_action": "Move large file out of the repository or use Git LFS"
+  },
+  {
+    "id": "ff75d578c13bc81b",
+    "leaf": "repo-hygiene",
+    "signal": "DELETE",
+    "severity": "low",
+    "path": "dangling",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "dangling"
+    },
+    "metric": {
+      "name": "broken_symlink",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "Broken symlink: dangling -> nowhere"
+    },
+    "confidence": "high",
+    "suggested_action": "Remove the broken symlink or fix its target"
+  },
+  {
+    "id": "f7a584ca624c7847",
+    "leaf": "repo-hygiene",
+    "signal": "DELETE",
+    "severity": "medium",
+    "path": "debug.log",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "debug.log"
+    },
+    "metric": {
+      "name": "tracked_ignored",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "Tracked by git but excluded by .gitignore patterns"
+    },
+    "confidence": "high",
+    "suggested_action": "Remove from git tracking: git rm --cached debug.log"
+  },
+  {
+    "id": "cbfb04132f6d6a24",
+    "leaf": "repo-hygiene",
+    "signal": "DELETE",
+    "severity": "medium",
+    "path": "pkg/__pycache__/x.pyc",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "pkg/__pycache__/x.pyc"
+    },
+    "metric": {
+      "name": "tracked_artifact",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "git",
+      "raw": "Tracked build artifact: path contains __pycache__"
+    },
+    "confidence": "high",
+    "suggested_action": "Remove from git tracking and add to .gitignore if appropriate"
+  },
+  {
+    "id": "8964ea1821de44de",
+    "leaf": "repo-hygiene",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "pyproject.toml",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "pytest-config"
+    },
+    "metric": {
+      "name": "conflicting_configs",
+      "value": 2.0,
+      "threshold": 1.0
+    },
+    "evidence": {
+      "tool": "filesystem",
+      "raw": "Found 2 pytest configs (limit 1): pytest.ini, pyproject.toml"
+    },
+    "confidence": "high",
+    "suggested_action": "Consolidate pytest configuration into a single file"
+  }
+]

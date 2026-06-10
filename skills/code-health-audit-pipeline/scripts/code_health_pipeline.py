@@ -106,7 +106,11 @@ def load_registry(registry_path: Path) -> list[dict]:
 
 def select_leaves(leaves: list[dict], languages: list[str]) -> list[dict]:
     wanted = set(languages)
-    return [leaf for leaf in leaves if wanted & set(leaf.get("languages", []))]
+    return [
+        leaf
+        for leaf in leaves
+        if "*" in leaf.get("languages", []) or wanted & set(leaf.get("languages", []))
+    ]
 
 
 def _partition_leaves(

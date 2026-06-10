@@ -21,6 +21,15 @@ def test_select_leaves_filters_by_language():
     assert [s["name"] for s in selected] == ["py"]
 
 
+def test_select_leaves_wildcard_always_selected():
+    leaves = [
+        {"name": "py", "skill": "py", "script": "x", "languages": ["python"], "findings_file": "py_findings.json"},
+        {"name": "any", "skill": "any", "script": "x", "languages": ["*"], "findings_file": "any_findings.json"},
+    ]
+    assert [s["name"] for s in ch.select_leaves(leaves, ["python"])] == ["py", "any"]
+    assert [s["name"] for s in ch.select_leaves(leaves, ["rust"])] == ["any"]
+
+
 def test_run_leaves_collects_findings_and_exits(tmp_path):
     leaves = [
         {"name": "stub", "skill": "stub", "script": str(FIXTURES / "stub_leaf.py"),

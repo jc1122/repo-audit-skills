@@ -30,6 +30,7 @@ SUITES = [
     "skills/test-quality-assurance/tests",
     "skills/test-redundancy-triage/tests",
     "skills/hotspot-audit/tests",
+    "skills/repo-hygiene-audit/tests",
 ]
 SUITE_TIMEOUT = 600
 

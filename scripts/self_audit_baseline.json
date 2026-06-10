@@ -216,6 +216,12 @@
     "symbol": "<module>"
   },
   {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "symbol": "skills/repo-hygiene-audit/scripts/_git_utils.py:36-53"
+  },
+  {
     "leaf": "complexity",
     "metric": "function_nloc",
     "path": "skills/quality-audit/scripts/quality_audit.py",
