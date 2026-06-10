@@ -1,0 +1,12 @@
+{
+  "files": {
+    "pkg/covered.py": {
+      "executed_lines": [1, 2, 5, 6],
+      "summary": {"num_statements": 4}
+    },
+    "pkg/partial.py": {
+      "executed_lines": [1, 2],
+      "summary": {"num_statements": 8}
+    }
+  }
+}
