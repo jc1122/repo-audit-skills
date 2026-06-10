@@ -609,84 +609,24 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1286-1293"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1290-1297"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1323-1343"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1327-1347"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:374-407"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:377-411"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:845-867"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@335:17"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@337:17"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@342:23"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@344:35"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@346:35"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@353:49"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@377:23"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@379:35"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@381:35"
-  },
-  {
-    "leaf": "quality",
-    "metric": "B023",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "B023@388:49"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:849-871"
   }
 ]
