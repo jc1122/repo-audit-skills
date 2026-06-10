@@ -1,21 +1,6 @@
 import json
-import os
-from pathlib import Path
 
 from helpers import _g, load_module
-
-# Re-use helpers module-level definitions
-PIN_ENV = {
-    "GIT_AUTHOR_NAME": "alice",
-    "GIT_AUTHOR_EMAIL": "alice@x.test",
-    "GIT_COMMITTER_NAME": "alice",
-    "GIT_COMMITTER_EMAIL": "alice@x.test",
-    "GIT_AUTHOR_DATE": "2026-01-01T00:00:00 +0000",
-    "GIT_COMMITTER_DATE": "2026-01-01T00:00:00 +0000",
-    "HOME": "/tmp",
-    "GIT_CONFIG_GLOBAL": "/dev/null",
-    "GIT_CONFIG_SYSTEM": "/dev/null",
-}
 
 
 def test_conflicting_pytest_configs(tmp_path):

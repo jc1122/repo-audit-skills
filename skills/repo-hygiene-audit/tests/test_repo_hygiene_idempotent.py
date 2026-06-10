@@ -1,12 +1,11 @@
 import json
-from pathlib import Path
 
 from helpers import load_module, make_dirty_repo
 
 
 def test_findings_byte_identical_across_runs(tmp_path):
     """Two runs against the same dirty repo yield byte-identical findings JSON."""
-    repo = make_dirty_repo(tmp_path)
+    repo, _ = make_dirty_repo(tmp_path)
     cfg = tmp_path / "cfg.json"
     cfg.write_text('{"max_tracked_file_bytes": 1024}')
 

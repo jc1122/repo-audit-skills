@@ -54,12 +54,16 @@ def _g(repo, *args):
 def make_dirty_repo(tmp_path):
     """Create a git repo with intentional hygiene problems.
 
-    Returns the repo Path.  Problems planted:
+    Returns ``(repo, symlink_ok)`` where *symlink_ok* is True when the
+    broken-symlink fixture was created successfully (``os.symlink`` is
+    available and did not raise).  *repo* is the :class:`Path`.
+
+    Problems planted:
       - committed pkg/__pycache__/x.pyc  (tracked artifact)
       - .gitignore with ``*.log`` + committed debug.log  (tracked-but-ignored)
       - committed blob.bin of 2048 bytes  (oversized tracked file,
         surfaced with config ``{"max_tracked_file_bytes": 1024}``)
-      - broken symlink ``dangling -> nowhere``
+      - broken symlink ``dangling -> nowhere`` (when symlink supported)
       - pytest.ini + pyproject.toml [tool.pytest.ini_options]  (conflicting configs)
       - pyproject.toml version ``1.0.0`` vs CHANGELOG.md ``## 1.1.0``  (mismatch)
       - no .github/workflows  (missing CI)
@@ -82,8 +86,10 @@ def make_dirty_repo(tmp_path):
     (repo / "blob.bin").write_bytes(b"\x00" * 2048)
 
     # broken symlink (skip gracefully on platforms without os.symlink)
+    symlink_ok = False
     try:
         os.symlink("nowhere", str(repo / "dangling"))
+        symlink_ok = True
     except OSError:
         pass
 
@@ -101,7 +107,7 @@ def make_dirty_repo(tmp_path):
     _g(repo, "add", "-A")
     _g(repo, "commit", "-q", "-m", "initial")
 
-    return repo
+    return repo, symlink_ok
 
 
 def make_clean_repo(tmp_path):

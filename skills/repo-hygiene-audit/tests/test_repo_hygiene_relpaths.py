@@ -5,7 +5,7 @@ from helpers import load_module, make_dirty_repo
 
 def test_findings_use_root_relative_posix_paths(tmp_path):
     """All finding paths are root-relative POSIX (no absolute, no backslashes)."""
-    repo = make_dirty_repo(tmp_path)
+    repo, _ = make_dirty_repo(tmp_path)
     out = tmp_path / "out"
     cfg = tmp_path / "cfg.json"
     cfg.write_text('{"max_tracked_file_bytes": 1024}')
@@ -26,8 +26,4 @@ def test_findings_use_root_relative_posix_paths(tmp_path):
         )
         assert "\\" not in path, (
             f"backslash in path (not POSIX): {path!r}"
-        )
-        # Paths should use / as separator
-        assert "/" in path or path == path.lower(), (
-            f"path should use forward slashes: {path!r}"
         )
