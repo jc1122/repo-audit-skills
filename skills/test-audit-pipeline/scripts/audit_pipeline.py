@@ -253,6 +253,62 @@ def _extract_triage_summary(triage_dir: Path) -> dict[str, Any]:
     return summary
 
 
+def build_summary(
+    stage_results: dict,
+    findings: list,
+    *,
+    root: str = "",
+    stages_run: list[str] | None = None,
+    stage_status: dict[str, str] | None = None,
+    parallel_stages: list[str] | None = None,
+    cov_summary: dict[str, Any] | None = None,
+    tqa_data: dict[str, Any] | None = None,
+    triage_summary: dict[str, Any] | None = None,
+    now: str | None = None,
+) -> dict[str, Any]:
+    """Build the canonical pipeline summary dict (pure, no side effects).
+
+    Timestamps and wall-clock values live under ``"meta"`` so the canonical
+    body is deterministic.
+    """
+    if stages_run is None:
+        stages_run = []
+    if stage_status is None:
+        stage_status = {}
+    if parallel_stages is None:
+        parallel_stages = []
+    if cov_summary is None:
+        cov_summary = {}
+    if tqa_data is None:
+        tqa_data = {}
+    if triage_summary is None:
+        triage_summary = {}
+    if now is None:
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    summary: dict[str, Any] = {
+        "meta": {"generated_at": now},
+        "root": root,
+        "stages_run": stages_run,
+        "stage_status": stage_status,
+        "parallel_stages": parallel_stages,
+    }
+    if cov_summary:
+        summary["coverage"] = cov_summary
+    if tqa_data:
+        summary["tqa"] = {
+            "rubric_scores": tqa_data.get("rubric_scores", tqa_data.get("scores", {})),
+            "overall_score": tqa_data.get("overall_score", tqa_data.get("grade")),
+            "findings_count": len(tqa_data.get("findings", tqa_data.get("action_items", []))),
+        }
+    if triage_summary.get("decisions"):
+        summary["triage"] = {
+            "decisions": triage_summary["decisions"],
+            "total_candidates": len(triage_summary.get("candidates", [])),
+        }
+    return summary
+
+
 def stage_report(
     *,
     out_dir: Path,
@@ -415,30 +471,23 @@ def stage_report(
     _log(f"  → Wrote {report_md}")
 
     # --- JSON summary ---
-    summary: dict[str, Any] = {
-        "generated_at": now,
-        "root": str(root),
-        "stages_run": stages_run,
-        "stage_status": {
-            "coverage": "ok" if coverage_ok else ("skipped" if skip_coverage else "failed"),
-            "tqa": "ok" if tqa_ok else "failed",
-            "triage": "ok" if triage_ok else ("skipped" if skip_triage else "failed"),
-        },
-        "parallel_stages": parallel_stages,
+    stage_status_dict = {
+        "coverage": "ok" if coverage_ok else ("skipped" if skip_coverage else "failed"),
+        "tqa": "ok" if tqa_ok else "failed",
+        "triage": "ok" if triage_ok else ("skipped" if skip_triage else "failed"),
     }
-    if cov_summary:
-        summary["coverage"] = cov_summary
-    if tqa_data:
-        summary["tqa"] = {
-            "rubric_scores": tqa_data.get("rubric_scores", tqa_data.get("scores", {})),
-            "overall_score": tqa_data.get("overall_score", tqa_data.get("grade")),
-            "findings_count": len(tqa_data.get("findings", tqa_data.get("action_items", []))),
-        }
-    if triage_summary.get("decisions"):
-        summary["triage"] = {
-            "decisions": triage_summary["decisions"],
-            "total_candidates": len(triage_summary.get("candidates", [])),
-        }
+    summary = build_summary(
+        {},  # stage_results — reserved for future extensibility
+        [],  # findings — reserved for future extensibility
+        root=str(root),
+        stages_run=stages_run,
+        stage_status=stage_status_dict,
+        parallel_stages=parallel_stages,
+        cov_summary=cov_summary,
+        tqa_data=tqa_data,
+        triage_summary=triage_summary,
+        now=now,
+    )
 
     summary_json = out_dir / "pipeline_summary.json"
     summary_json.write_text(json.dumps(summary, indent=2))
