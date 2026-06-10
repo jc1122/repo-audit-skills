@@ -1,23 +1,7 @@
 [
   {
     "metric": "file_coverage_percent",
-    "path": "scripts/check_coverage_gap.py"
-  },
-  {
-    "metric": "file_coverage_percent",
-    "path": "scripts/check_release.py"
-  },
-  {
-    "metric": "file_coverage_percent",
     "path": "scripts/check_self_audit.py"
-  },
-  {
-    "metric": "file_coverage_percent",
-    "path": "scripts/check_skill_fixtures.py"
-  },
-  {
-    "metric": "file_coverage_percent",
-    "path": "scripts/check_vendored_common.py"
   },
   {
     "metric": "file_coverage_percent",
