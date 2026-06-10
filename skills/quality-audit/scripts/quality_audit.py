@@ -32,6 +32,16 @@ class ToolError(RuntimeError):
     pass
 
 
+def _rel(name: str, root: Path) -> str:
+    p = Path(name)
+    if p.is_absolute():
+        try:
+            return p.resolve().relative_to(root.resolve()).as_posix()
+        except ValueError:
+            return p.as_posix()
+    return p.as_posix()
+
+
 def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
     files = sorted(p for p in root.rglob("*.py") if p.is_file())
     if not source_prefixes:
@@ -63,7 +73,7 @@ def _ruff_lint(root: Path, rel_files: list[str], config: dict) -> list[hc.Findin
         end_row = int((item.get("end_location") or {}).get("row", row))
         findings.append(hc.Finding(
             leaf=LEAF, signal="LINT", severity="medium",
-            path=Path(item.get("filename", "")).as_posix(), line_start=row, line_end=end_row,
+            path=_rel(item.get("filename", ""), root), line_start=row, line_end=end_row,
             symbol=f"{code}@{row}:{col}", metric_name=code, metric_value=0.0, metric_threshold=0.0,
             evidence_tool="ruff", evidence_raw=item.get("message", ""),
             confidence="high", suggested_action=item.get("message", f"Fix {code}"),
@@ -86,7 +96,7 @@ def _ruff_format(root: Path, rel_files: list[str]) -> list[hc.Finding]:
             continue
         path = line.split("Would reformat:", 1)[1].strip()
         findings.append(hc.Finding(
-            leaf=LEAF, signal="FORMAT", severity="low", path=Path(path).as_posix(),
+            leaf=LEAF, signal="FORMAT", severity="low", path=_rel(path, root),
             line_start=1, line_end=1, symbol=path, metric_name="format_drift",
             metric_value=0.0, metric_threshold=0.0, evidence_tool="ruff format",
             evidence_raw=line, confidence="high",
@@ -117,7 +127,7 @@ def _type_findings(root: Path, rel_files: list[str], config: dict) -> list[hc.Fi
         row = int(m.group("line"))
         code = m.group("code") or "type-error"
         findings.append(hc.Finding(
-            leaf=LEAF, signal="TYPE", severity="high", path=Path(m.group("path")).as_posix(),
+            leaf=LEAF, signal="TYPE", severity="high", path=_rel(m.group("path"), root),
             line_start=row, line_end=row, symbol=f"{code}@{row}", metric_name=code,
             metric_value=0.0, metric_threshold=0.0, evidence_tool=checker,
             evidence_raw=m.group("msg"), confidence="high",

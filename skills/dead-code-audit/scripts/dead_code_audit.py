@@ -31,6 +31,16 @@ class ToolError(RuntimeError):
     pass
 
 
+def _rel(name: str, root: Path) -> str:
+    p = Path(name)
+    if p.is_absolute():
+        try:
+            return p.resolve().relative_to(root.resolve()).as_posix()
+        except ValueError:
+            return p.as_posix()
+    return p.as_posix()
+
+
 def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
     files = sorted(p for p in root.rglob("*.py") if p.is_file())
     if not source_prefixes:
@@ -77,7 +87,7 @@ def _vulture_findings(root: Path, files: list[Path], thresholds: dict, allowlist
         ln = int(m.group("line"))
         findings.append(hc.Finding(
             leaf=LEAF, signal="DELETE", severity=_severity_for_conf(conf),
-            path=Path(m.group("path")).as_posix(), line_start=ln, line_end=ln,
+            path=_rel(m.group("path"), root), line_start=ln, line_end=ln,
             symbol=m.group("name"),
             metric_name="dead_code_confidence", metric_value=float(conf),
             metric_threshold=float(thresholds["min_confidence"]),
@@ -111,7 +121,7 @@ def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
         row = int(loc.get("row", 1))
         col = int(loc.get("column", 1))
         end_row = int((item.get("end_location") or {}).get("row", row))
-        path = Path(item.get("filename", "")).as_posix()
+        path = _rel(item.get("filename", ""), root)
         findings.append(hc.Finding(
             leaf=LEAF, signal="DELETE", severity="medium", path=path,
             line_start=row, line_end=end_row, symbol=f"{code}@{row}:{col}",
