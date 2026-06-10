@@ -61,9 +61,9 @@ def check_package(defects: list[str]) -> str:
     version = str(package.get("version", ""))
     if not SEMVER_RE.match(version):
         defects.append(f"package.json version is not semver: {version!r}")
-    if package.get("name") != "code-health-skills":
-        defects.append("package.json name must be code-health-skills")
-    for path in ["bin/install-code-health-skills.js", "scripts/check_release.py",
+    if package.get("name") != "repo-audit-skills":
+        defects.append("package.json name must be repo-audit-skills")
+    for path in ["bin/install-repo-audit-skills.js", "scripts/check_release.py",
                  "scripts/check_skill_fixtures.py", "scripts/check_vendored_common.py",
                  "shared/health_common.py"]:
         if not (ROOT / path).exists():
@@ -94,9 +94,9 @@ def check_skills(version: str, defects: list[str]) -> None:
 
 def check_installer(defects: list[str]) -> None:
     checks = [
-        ["node", "bin/install-code-health-skills.js", "--version"],
-        ["node", "bin/install-code-health-skills.js", "--list"],
-        ["node", "bin/install-code-health-skills.js", "--dry-run", "--dest", "/tmp/code-health-skills-release-check", "--force"],
+        ["node", "bin/install-repo-audit-skills.js", "--version"],
+        ["node", "bin/install-repo-audit-skills.js", "--list"],
+        ["node", "bin/install-repo-audit-skills.js", "--dry-run", "--dest", "/tmp/repo-audit-skills-release-check", "--force"],
     ]
     for cmd in checks:
         result = run(cmd)

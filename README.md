@@ -1,4 +1,4 @@
-# Code Health Skills
+# Repo Audit Skills
 
 Standalone package of deterministic, advisory code-health skills.
 
@@ -21,7 +21,7 @@ here, installed once to a skills root, then run against any target repo via `--r
 ## Install
 
 ```bash
-node bin/install-code-health-skills.js --dest /absolute/path/to/skills --force
+node bin/install-repo-audit-skills.js --dest /absolute/path/to/skills --force
 ```
 
 Default destination is `$CODEX_HOME/skills` when `CODEX_HOME` is set, otherwise
@@ -33,8 +33,4 @@ Default destination is `$CODEX_HOME/skills` when `CODEX_HOME` is set, otherwise
 npm run check
 ```
 
-## Coexistence
 
-This package installs alongside `repo-audit-skills` into the same skills root. Skill
-names are disjoint and each package's installer touches only its own skills, so the
-two never collide.

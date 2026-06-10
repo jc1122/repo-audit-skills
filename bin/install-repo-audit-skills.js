@@ -18,9 +18,9 @@ const skills = [
 
 function usage() {
   return [
-    "Usage: install-code-health-skills [--dest DIR] [--force] [--dry-run] [--list] [--version]",
+    "Usage: install-repo-audit-skills [--dest DIR] [--force] [--dry-run] [--list] [--version]",
     "",
-    "Installs code-health skills into $CODEX_HOME/skills or ~/.codex/skills by default.",
+    "Installs repo-audit skills into $CODEX_HOME/skills or ~/.codex/skills by default.",
   ].join("\n");
 }
 

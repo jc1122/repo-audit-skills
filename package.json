@@ -1,11 +1,11 @@
 {
-  "name": "code-health-skills",
+  "name": "repo-audit-skills",
   "version": "0.1.0",
-  "description": "Deterministic, advisory code-health leaf skills (complexity, duplication, dead-code, structure, quality) and a code-health-audit-pipeline umbrella.",
+  "description": "Deterministic, advisory repo-audit skills: a code-health family (complexity, duplication, dead-code, structure, quality) with the code-health-audit-pipeline umbrella, plus a test-audit family (test-quality-assurance, test-redundancy-triage) with the test-audit-pipeline umbrella.",
   "license": "MIT",
   "bin": {
-    "code-health-skills": "./bin/install-code-health-skills.js",
-    "install-code-health-skills": "./bin/install-code-health-skills.js"
+    "repo-audit-skills": "./bin/install-repo-audit-skills.js",
+    "install-repo-audit-skills": "./bin/install-repo-audit-skills.js"
   },
   "scripts": {
     "check": "npm run check:vendored && npm run check:fixtures && npm run check:release",
@@ -32,7 +32,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jc1122/code-health-skills.git"
+    "url": "git+https://github.com/jc1122/repo-audit-skills.git"
   },
   "engines": {
     "node": ">=18"
