@@ -53,7 +53,7 @@
 | A5 | `security-audit` | `security` | `scripts/security_audit.py` | `sp7/security-audit` | `../ras-sp7-security-audit` |
 | A6 | `test-effectiveness-audit` | `test-effectiveness` | `scripts/test_effectiveness_audit.py` | `sp7/test-effectiveness-audit` | `../ras-sp7-test-effectiveness-audit` |
 
-Worktree creation (record the SHA): `git -C /home/jakub/projects/repo-audit-skills rev-parse HEAD && git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-<leaf> -b sp7/<leaf>`. Expected base SHA `6938fb50031956b2df6237e76f67456d6f93422f`; if main moved, record the new SHA and proceed only if `npm run check` is green there.
+Worktree creation (record the SHA): `git -C /home/jakub/projects/repo-audit-skills rev-parse HEAD && git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-<leaf> -b sp7/<leaf>`. Expected base SHA `1e02186f9864378d63f2663cf1d1f130da7c4e4d` (v0.3.0 code tree + this plan; `npm run check` verified green there 2026-06-10); if main moved, record the new SHA and proceed only if `npm run check` is green there.
 
 ### C-2. Leaf CLI contract (= the existing leaves' contract, verified)
 
@@ -1177,7 +1177,7 @@ VERBATIM via TDD. Also read skills/coverage-gap-audit/ and skills/structure-audi
 the living pattern.
 
 PRE-FLIGHT (any failure -> STOP and report): repo-audit-skills main clean; create the worktree:
-git -C /home/jakub/projects/repo-audit-skills rev-parse HEAD   (expect 6938fb50..., record it)
+git -C /home/jakub/projects/repo-audit-skills rev-parse HEAD   (expect 1e02186..., record it)
 git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-hotspot-audit -b sp7/hotspot-audit
 Then IN the worktree: npm install (jscpd devDep -> node_modules present; npm run check:selfaudit
 baseline comparison meaningful — else duplication findings silently vanish); python3 -m pytest --collect-only -q -> 461 tests collected;
@@ -1218,7 +1218,7 @@ READ FIRST, authoritative:
 — Contracts C-1..C-10 (note C-8 advisory shape) and "Task A2". Implement VERBATIM via TDD.
 Pattern reference: skills/coverage-gap-audit/ end-to-end.
 
-PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 6938fb50..., record);
+PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 1e02186..., record);
 git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-dependency-audit -b sp7/dependency-audit
 In worktree: npm install (jscpd devDep -> node_modules present; npm run check:selfaudit
 baseline comparison meaningful — else duplication findings silently vanish); collect-only = 461; check:selfaudit pass (104);
@@ -1258,7 +1258,7 @@ READ FIRST, authoritative:
 — Contracts C-1..C-10 and "Task A3". Implement VERBATIM via TDD. Pattern:
 skills/structure-audit/ end-to-end.
 
-PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 6938fb50..., record);
+PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 1e02186..., record);
 git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-repo-hygiene-audit -b sp7/repo-hygiene-audit
 In worktree: npm install (jscpd devDep -> node_modules present; npm run check:selfaudit
 baseline comparison meaningful — else duplication findings silently vanish); collect-only = 461; check:selfaudit pass (104).
@@ -1299,7 +1299,7 @@ READ FIRST, authoritative:
 — Contracts C-1..C-10 and "Task A4". Implement VERBATIM via TDD. Pattern:
 skills/coverage-gap-audit/ end-to-end.
 
-PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 6938fb50..., record);
+PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 1e02186..., record);
 git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-docs-consistency-audit -b sp7/docs-consistency-audit
 In worktree: npm install (jscpd devDep -> node_modules present; npm run check:selfaudit
 baseline comparison meaningful — else duplication findings silently vanish); collect-only = 461; check:selfaudit pass (104).
@@ -1339,7 +1339,7 @@ READ FIRST, authoritative:
 /home/jakub/projects/repo-audit-skills/docs/superpowers/plans/2026-06-10-sp7-parallel-skill-tracks.md
 — Contracts C-1..C-10 (C-6 SIGNALS verbatim, C-8 advisory shape) and "Task A5". VERBATIM TDD.
 
-PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 6938fb50..., record);
+PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 1e02186..., record);
 git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-security-audit -b sp7/security-audit
 In worktree: npm install (jscpd devDep -> node_modules present; npm run check:selfaudit
 baseline comparison meaningful — else duplication findings silently vanish); collect-only = 461; check:selfaudit pass (104);
@@ -1384,7 +1384,7 @@ READ FIRST, authoritative:
 — Contracts C-1..C-10 and "Task A6" (the mutmut facts in Empirical pre-flight row 10 are
 load-bearing). VERBATIM TDD.
 
-PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 6938fb50..., record);
+PRE-FLIGHT (failure -> STOP): main clean; rev-parse HEAD (expect 1e02186..., record);
 git -C /home/jakub/projects/repo-audit-skills worktree add ../ras-sp7-test-effectiveness-audit -b sp7/test-effectiveness-audit
 In worktree: npm install (jscpd devDep -> node_modules present; npm run check:selfaudit
 baseline comparison meaningful — else duplication findings silently vanish); collect-only = 461; check:selfaudit pass (104);
@@ -1555,3 +1555,29 @@ byte-deterministic; repo-B suite green + check_release pass after C4. Commits lo
 repos; do NOT push, tag, or release anywhere. Final report: drift list, golden verdict
 outputs, both repos' final test counts.
 ```
+
+## Codex orchestrator variant (transformation rule)
+
+The launch blocks above are written for Opus orchestrators. To run any session under a
+**Codex orchestrator (model gpt-5.5, reasoning effort xhigh)** apply exactly three edits to the
+block — nothing else changes (worktree/branch ownership, contracts, waves, gates, DoD are
+backend-independent):
+
+1. Identity line: `You are the ORCHESTRATOR (Opus)` → `You are the ORCHESTRATOR (Codex, model
+   gpt-5.5, reasoning effort xhigh)`.
+2. Fallback sentence: `native Opus subagent workers` → `NATIVE CODEX SUBAGENTS (spawned by you,
+   isolated git worktree each, identical packet + gates)`. Same one-way, infra-failure-only rule.
+3. Append to READ FIRST: `Ignore Claude-specific sub-skill notes in the plan header
+   (superpowers:*); implement plan tasks directly from the plan text.`
+
+## Status notes (2026-06-10, post-SP6)
+
+- SP6 CONVERGED and merged in perf-benchmark-skill (verified: 89 passed, v0.2.0, --max-cv /
+  --findings-out / --baseline-ledger present, CI committed, Phase 2 honest no-win recorded).
+  Track C's gate is now only "Track B merged"; C-0 drift check still mandatory at C launch.
+- SP6 T8 (repo-B commit 6ce0f05) already added PERF rows to references/remediation-playbook.md
+  AFTER this plan was drafted. Track B's B5 ADDS the RESTRUCTURE-at-architecture-scale section
+  WITHOUT touching the PERF rows; if B5's plan anchors conflict with the current file, STOP and
+  surface — do not improvise. Track B pre-flight "53 passed" re-verified post-T8.
+- repo-A main moved to 1e02186 (this plan's commit; docs-only). npm run check verified green
+  there; launch-block SHA expectations updated accordingly.
