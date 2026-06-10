@@ -142,14 +142,13 @@ def _extract_mark_names(node: ast.AST, out: list[str]) -> None:
             _extract_mark_names(elt, out)
     elif isinstance(node, ast.Call):
         _extract_mark_names(node.func, out)
-    elif isinstance(node, ast.Attribute):
-        if (
-            isinstance(node.value, ast.Attribute)
-            and node.value.attr == "mark"
-            and isinstance(node.value.value, ast.Name)
-            and node.value.value.id == "pytest"
-        ):
-            out.append(node.attr)
+    elif isinstance(node, ast.Attribute) and (
+        isinstance(node.value, ast.Attribute)
+        and node.value.attr == "mark"
+        and isinstance(node.value.value, ast.Name)
+        and node.value.value.id == "pytest"
+    ):
+        out.append(node.attr)
 
 
 def _collect_pytestmark_names(tree: ast.AST) -> list[str]:
@@ -178,18 +177,22 @@ def _is_pytest_raises_call(node: ast.Call) -> bool:
 def _count_test_functions(tree: ast.AST) -> int:
     count = 0
     for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if node.name.startswith("test_"):
-                count += 1
+        if isinstance(
+            node, (ast.FunctionDef, ast.AsyncFunctionDef)
+        ) and node.name.startswith("test_"):
+            count += 1
     return count
 
 
 def _count_given_usage(tree: ast.AST) -> int:
     count = 0
     for node in ast.walk(tree):
-        if isinstance(node, ast.Call):
-            if isinstance(node.func, ast.Name) and node.func.id == "given":
-                count += 1
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "given"
+        ):
+            count += 1
     return count
 
 
@@ -202,9 +205,12 @@ def _count_pytest_raises(tree: ast.AST) -> tuple[int, int, int]:
             total += 1
             if any(k.arg == "match" for k in node.keywords if k.arg is not None):
                 with_match += 1
-            if node.args and isinstance(node.args[0], ast.Tuple):
-                if len(node.args[0].elts) > 1:
-                    broad_tuple += 1
+            if (
+                node.args
+                and isinstance(node.args[0], ast.Tuple)
+                and len(node.args[0].elts) > 1
+            ):
+                broad_tuple += 1
     return total, with_match, broad_tuple
 
 
@@ -648,7 +654,8 @@ def render_markdown(report: dict[str, Any]) -> str:
         "## Classification Counts",
         f"- White-box candidates: {classes.get('white_box_candidate', 0)}",
         f"- Black-box candidates: {classes.get('black_box_candidate', 0)}",
-        f"- Change-indicator candidates: {classes.get('change_indicator_candidate', 0)}",
+        f"- Change-indicator candidates: "
+        f"{classes.get('change_indicator_candidate', 0)}",
         "",
         "## Marker Breakdown",
     ]
@@ -677,13 +684,15 @@ def render_markdown(report: dict[str, Any]) -> str:
     flags: list[str] = []
     if not config["public_hints"]:
         flags.append(
-            "- Public call hints list is empty; black-box classification is disabled for this run."
+            "- Public call hints list is empty; black-box classification "
+            "is disabled for this run."
         )
     if config["public_hints"] and ratios["private_to_public_call_ratio"] > 1.0:
         flags.append("- High private API coupling signal (private/public ratio > 1).")
     if totals["raises_total"] > 0 and ratios["raises_with_match_ratio"] < 0.5:
         flags.append(
-            "- Low exception precision signal (fewer than half of raises use message matching)."
+            "- Low exception precision signal "
+            "(fewer than half of raises use message matching)."
         )
     if totals["raises_total"] > 0 and ratios["broad_tuple_raises_ratio"] > 0.25:
         flags.append("- Broad exception tuple usage may hide contract precision.")
@@ -720,10 +729,12 @@ def render_markdown(report: dict[str, Any]) -> str:
             entry = rubric.get(dim, {})
             if isinstance(entry, dict) and "score" in entry:
                 lines.append(
-                    f"| {dim} | {entry['score']} | {entry['max']} | {entry['rationale']} |"
+                    f"| {dim} | {entry['score']} | {entry['max']} | "
+                    f"{entry['rationale']} |"
                 )
         lines.append(
-            f"| **Total** | **{rubric.get('total', '?')}** | **{rubric.get('max_total', 24)}** | |"
+            f"| **Total** | **{rubric.get('total', '?')}** | "
+            f"**{rubric.get('max_total', 24)}** | |"
         )
 
     # Delta Report section
@@ -776,7 +787,8 @@ def render_markdown(report: dict[str, Any]) -> str:
                     change = info.get("change", "")
                     sign = "+" if isinstance(change, int) and change > 0 else ""
                     lines.append(
-                        f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
+                        f"- {key}: {info['before']} \u2192 "
+                        f"{info['after']} ({sign}{change})"
                     )
             lines.append("")
 
@@ -804,24 +816,28 @@ def parse_args() -> argparse.Namespace:
         "--internal-import-pattern",
         action="append",
         default=[],
-        help="Regex identifying implementation-coupled imports. Repeat or comma-separate.",
+        help="Regex identifying implementation-coupled imports. "
+        "Repeat or comma-separate.",
     )
     parser.add_argument(
         "--public-hint",
         action="append",
         default=[],
-        help="Public API call hint substring (e.g., compute(). Repeat or comma-separate.",
+        help="Public API call hint substring (e.g., compute(). "
+        "Repeat or comma-separate.",
     )
     parser.add_argument(
         "--no-auto-public-hints",
         action="store_true",
-        help="Disable automatic public hint inference from package __init__.py exports.",
+        help="Disable automatic public hint inference "
+        "from package __init__.py exports.",
     )
     parser.add_argument(
         "--exact-eq-pattern",
         default="",
         help=(
-            "Override the regex used to detect exact-equality change-indicator asserts. "
+            "Override the regex used to detect exact-equality "
+            "change-indicator asserts. "
             "Defaults to the built-in EXACT_EQ_ASSERT_RE pattern."
         ),
     )
@@ -834,12 +850,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--cov-json",
         default="",
-        help="Path to a coverage.json file (from `coverage json`). Used to score the Coverage/Mutation rubric dimension.",
+        help="Path to a coverage.json file (from `coverage json`). "
+        "Used to score the Coverage/Mutation rubric dimension.",
     )
     parser.add_argument(
         "--baseline-json",
         default="",
-        help="Path to a previous JSON report. When provided, a delta report is included showing changes.",
+        help="Path to a previous JSON report. "
+        "When provided, a delta report is included showing changes.",
     )
     return parser.parse_args()
 

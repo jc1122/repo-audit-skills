@@ -477,7 +477,8 @@ def has_xdist_plugin(root: Path, python_exe: str, env: dict[str, str]) -> bool:
         [
             python_exe,
             "-c",
-            "import importlib.util,sys;sys.exit(0 if importlib.util.find_spec('xdist') else 1)",
+            "import importlib.util,sys;"
+            "sys.exit(0 if importlib.util.find_spec('xdist') else 1)",
         ],
         cwd=root,
         env=env,
@@ -1437,7 +1438,8 @@ def write_branch_equiv_artifacts(
             }
 
     def _needs_live_collection(nodeid: str) -> bool:
-        """Return True when the branch cache entry is absent or a ranked-mode placeholder."""
+        """Return True when the branch cache entry is absent
+        or a ranked-mode placeholder."""
         cached = branch_cache.get(nodeid)
         return cached is None or cached.get("status") == "from_ranked"
 
@@ -1570,7 +1572,8 @@ def write_branch_equiv_artifacts(
         "",
         "## Pair Results",
         "",
-        "| candidate | anchor | exact_branch_match | jaccard | cand_only | anchor_only |",
+        "| candidate | anchor | exact_branch_match | jaccard | cand_only "
+        "| anchor_only |",
         "|---|---|---:|---:|---:|---:|",
     ]
     for r in sorted(
@@ -1582,8 +1585,11 @@ def write_branch_equiv_artifacts(
     ):
         md.append(
             "| "
-            f"{r.get('candidate', '')} | {r.get('anchor', '')} | {r.get('exact_branch_match', '')} | "
-            f"{r.get('branch_jaccard', '')} | {r.get('candidate_only_branches', '')} | {r.get('anchor_only_branches', '')} |"
+            f"{r.get('candidate', '')} | {r.get('anchor', '')} | "
+            f"{r.get('exact_branch_match', '')} | "
+            f"{r.get('branch_jaccard', '')} | "
+            f"{r.get('candidate_only_branches', '')} | "
+            f"{r.get('anchor_only_branches', '')} |"
         )
     md_path.write_text("\n".join(md) + "\n", encoding="utf-8")
 
@@ -1597,7 +1603,8 @@ def bool_low_signal(
     *,
     branch_equiv_row: dict | None = None,
 ) -> bool:
-    # If branch-equivalence data shows this test has unique branches, it is NOT low-signal.
+    # If branch-equivalence data shows this test has unique branches,
+    # it is NOT low-signal.
     if branch_equiv_row is not None:
         cand_only = as_int(branch_equiv_row.get("branch_candidate_only_count", 0))
         if cand_only > 0:
@@ -1798,7 +1805,8 @@ def write_confidence_gate_artifact(
                 note = "all measured gates passed with exact branch-equivalence"
             elif measured_good:
                 tier = "SILVER_DELETE_CANDIDATE"
-                note = "all measured core gates passed; branch gate is high-similarity or strict gate unavailable"
+                note = "all measured core gates passed; branch gate "
+                "is high-similarity or strict gate unavailable"
             else:
                 tier = "BRONZE_DELETE_REVIEW"
                 note = "delete candidate failed one or more measured gates"
@@ -1873,7 +1881,8 @@ def enforce_cluster_anchor(rows: list[dict[str, Any]]) -> None:
         )
         anchor["validation_decision"] = "KEEP_FOR_CONTRACT"
         anchor["validation_reason"] = (
-            "cluster anchor retained; deleting all flagged tests would empty this entrypoint+intent cluster"
+            "cluster anchor retained; deleting all flagged tests would empty "
+            "this entrypoint+intent cluster"
         )
 
 
@@ -1937,7 +1946,8 @@ def apply_mutation_probe(overlay_root: Path, probe: MutationProbe) -> tuple[bool
     if count != 1:
         return (
             False,
-            f"probe {probe.probe_id} replacement count mismatch: expected 1, got {count}",
+            f"probe {probe.probe_id} replacement count mismatch: "
+            f"expected 1, got {count}",
         )
     target.write_text(text.replace(probe.old, probe.new, 1), encoding="utf-8")
     return True, ""
@@ -2098,7 +2108,8 @@ def run_mutation_probe_kills(
             "applied_probes": 0,
             "failed_to_apply": len(probes),
             "details": details,
-            "error": f"all {len(probes)} probe(s) failed to apply ({failed_ids}); mutation gate is not exercised",
+            "error": f"all {len(probes)} probe(s) failed to apply ({failed_ids}); "
+            "mutation gate is not exercised",
         }
 
     if applied_count < len(probes):
@@ -2111,7 +2122,8 @@ def run_mutation_probe_kills(
             "details": details,
             "error": (
                 f"{failed_count}/{len(probes)} probe(s) failed to apply "
-                f"({failed_ids}); strict mutation gate requires all selected probes to apply"
+                f"({failed_ids}); strict mutation gate requires all selected "
+                "probes to apply"
             ),
         }
 
@@ -2177,10 +2189,7 @@ def run_strict_delete_gate(
     ]
 
     if not post_suite_files:
-        if (root / "tests").exists():
-            post_suite_files = ["tests"]
-        else:
-            post_suite_files = list(suite_files)
+        post_suite_files = ["tests"] if (root / "tests").exists() else list(suite_files)
     post_suite_files = unique_preserve(post_suite_files)
 
     if not delete_rows:
@@ -2325,7 +2334,8 @@ def run_strict_delete_gate(
                         mutation_pass = False
                         mutation_note = (
                             f"mutation kill regression: baseline={baseline_kills}, "
-                            f"batch={batch_kills}, allowed_drop={max(0, mutation_max_drop)}"
+                            f"batch={batch_kills}, "
+                            f"allowed_drop={max(0, mutation_max_drop)}"
                         )
 
         candidate_pass = repeat_pass and target_pass and post_pass and mutation_pass
@@ -2442,7 +2452,8 @@ def run_strict_delete_gate(
 
 def main() -> int:
     ap = argparse.ArgumentParser(
-        description="Evaluate test redundancy with empirical deselection, coverage, mutation, and branch-equivalence signals.",
+        description="Evaluate test redundancy with empirical deselection, coverage,"
+        "mutation, and branch-equivalence signals.",
     )
     ap.add_argument(
         "--root",
@@ -2452,45 +2463,54 @@ def main() -> int:
     ap.add_argument(
         "--python",
         default="python3",
-        help="Python interpreter to use. Accepts a PATH name or an absolute path (default: python3).",
+        help="Python interpreter to use. Accepts a PATH name or an absolute path"
+        "(default: python3).",
     )
     ap.add_argument(
         "--suite",
         action="append",
         default=[],
-        help="Test file or directory to evaluate for redundancy (repeatable). At least one --suite is required.",
+        help="Test file or directory to evaluate for redundancy (repeatable). At least"
+        "one --suite is required.",
     )
     ap.add_argument(
         "--comparator-suite",
         action="append",
         default=[],
-        help="Additional test file or directory used only for cross-suite overlap calculation (repeatable, optional).",
+        help="Additional test file or directory used only for cross-suite overlap"
+        "calculation (repeatable, optional).",
     )
     ap.add_argument(
         "--ranked-csv",
         default="",
-        help="Path to a pre-computed ranked report CSV with coverage/mutation columns. When omitted, the script collects live coverage signal.",
+        help="Path to a pre-computed ranked report CSV with coverage/mutation columns."
+        "When omitted, the script collects live coverage signal.",
     )
     ap.add_argument(
         "--inventory-csv",
         default="",
-        help="Path to an inventory CSV with assertion-type overrides per test nodeid (optional).",
+        help="Path to an inventory CSV with assertion-type overrides per test nodeid"
+        "(optional).",
     )
     ap.add_argument(
         "--out-dir",
         default="artifacts/redundancy/api",
-        help="Output directory for all generated artifacts (default: artifacts/redundancy/api).",
+        help="Output directory for all generated artifacts (default:"
+        "artifacts/redundancy/api).",
     )
     ap.add_argument(
         "--source-prefix",
         default="",
-        help="Restrict coverage token collection to source files whose repo-relative path starts with this prefix (e.g. src/mypackage/). When omitted, coverage is collected from all source files.",
+        help="Restrict coverage token collection to source files whose repo-relative"
+        "path starts with this prefix (e.g. src/mypackage/). When omitted,"
+        "coverage is collected from all source files.",
     )
     ap.add_argument(
         "--max-workers",
         type=int,
         default=max(1, min(os.cpu_count() or 2, 4)),
-        help="Maximum parallel worker threads for candidate evaluation (default: min(cpu_count, 4)).",
+        help="Maximum parallel worker threads for candidate evaluation (default:"
+        "min(cpu_count, 4)).",
     )
     ap.add_argument(
         "--timeout-seconds",
@@ -2501,55 +2521,65 @@ def main() -> int:
     ap.add_argument(
         "--strict-delete-gate",
         action="store_true",
-        help="Enable the strict delete gate: repeated deselection, staged batch simulation, post-suite pass, and mutation-probe delta checks before confirming DELETE_SAFE_HIGH.",
+        help="Enable the strict delete gate: repeated deselection, staged batch"
+        "simulation, post-suite pass, and mutation-probe delta checks before"
+        "confirming DELETE_SAFE_HIGH.",
     )
     ap.add_argument(
         "--strict-repeats",
         type=int,
         default=3,
-        help="Number of repeated deselection runs required for strict gate stability (default: 3).",
+        help="Number of repeated deselection runs required for strict gate stability"
+        "(default: 3).",
     )
     ap.add_argument(
         "--strict-batch-size",
         type=int,
         default=8,
-        help="Number of candidates to deselect together in each strict gate batch (default: 8).",
+        help="Number of candidates to deselect together in each strict gate batch"
+        "(default: 8).",
     )
     ap.add_argument(
         "--strict-max-batches",
         type=int,
         default=0,
-        help="Maximum number of batches to process in the strict gate; 0 means unlimited (default: 0).",
+        help="Maximum number of batches to process in the strict gate; 0 means"
+        "unlimited (default: 0).",
     )
     ap.add_argument(
         "--strict-post-suite",
         action="append",
         default=[],
-        help="Test file or directory to run as a full post-suite check after each strict gate batch (repeatable). Defaults to tests/ if it exists.",
+        help="Test file or directory to run as a full post-suite check after each"
+        "strict gate batch (repeatable). Defaults to tests/ if it exists.",
     )
     ap.add_argument(
         "--strict-mutation-probes",
         type=int,
         default=3,
-        help="Maximum number of mutation probes to use from --mutation-probes-config (default: 3).",
+        help="Maximum number of mutation probes to use from --mutation-probes-config"
+        "(default: 3).",
     )
     ap.add_argument(
         "--strict-mutation-max-drop",
         type=int,
         default=0,
-        help="Maximum allowed drop in mutation kills between baseline and deselected batch (default: 0).",
+        help="Maximum allowed drop in mutation kills between baseline and deselected"
+        "batch (default: 0).",
     )
     ap.add_argument(
         "--allow-numba-stub",
         action="store_true",
-        help="Allow injecting a lightweight numba stub into PYTHONPATH when numba is missing. "
+        help="Allow injecting a lightweight numba stub into PYTHONPATH "
+        "when numba is missing. "
         "Disabled by default for repo-agnostic safety.",
     )
     ap.add_argument(
         "--mutation-probes-config",
         default=None,
         help="Path to a JSON file defining mutation probes for the strict gate. "
-        'Format: [{"probe_id": "P001", "file": "src/...", "old": "...", "new": "..."}]. '
+        'Format: [{"probe_id": "P001", "file": "src/...", '
+        '"old": "...", "new": "..."}]. '
         "When omitted, no mutation probes are used and the mutation gate is skipped.",
     )
     ap.add_argument(
@@ -2571,7 +2601,8 @@ def main() -> int:
 
     if not args.suite:
         raise SystemExit(
-            "No suite files provided. Use --suite to specify test files or directories to analyse.\n"
+            "No suite files provided. Use --suite to specify test "
+            "files or directories to analyse.\n"
             "Example: --suite tests/test_api.py --suite tests/test_core.py"
         )
     suite_files = resolve_and_validate_suite_paths(root, args.suite, arg_name="--suite")
@@ -2696,7 +2727,8 @@ def main() -> int:
     else:
 
         def peer_superset(t: TestMeta) -> bool:
-            """True when a cluster peer's assertion types strictly dominate the candidate's.
+            """True when a cluster peer's assertion types
+            strictly dominate the candidate's.
 
             Also returns True for equal assertion type sets: if two tests assert
             the same things and one can be deselected, either is a deletion candidate.
@@ -2780,7 +2812,8 @@ def main() -> int:
                 reason = "deselect pass + dominated by peer + low unique signal"
             elif max_src_sim >= 0.90 and (low_signal or dominated):
                 decision = "DELETE_SAFE_HIGH"
-                reason = f"deselect pass + near-duplicate source (sim={max_src_sim:.2f}) + dominated/low-signal"
+                reason = "deselect pass + near-duplicate source "
+                f"(sim={max_src_sim:.2f}) + dominated/low-signal"
             elif dominated or max_src_sim >= 0.80 or max_name_sim >= 0.85:
                 # Guard: if the nearest neighbour is already parametrized, merging
                 # into it would create a false overlap signal after a prior merge.
@@ -2799,7 +2832,9 @@ def main() -> int:
                     decision = "MERGE_RECOMMENDED"
                     reason = (
                         f"deselect pass + overlap candidate "
-                        f"(dominated={dominated}, src_sim={max_src_sim:.2f}, name_sim={max_name_sim:.2f})"
+                        f"(dominated={dominated}, "
+                        f"src_sim={max_src_sim:.2f}, "
+                        f"name_sim={max_name_sim:.2f})"
                     )
             else:
                 decision = "KEEP_FOR_SIGNAL"
@@ -3019,16 +3054,22 @@ def main() -> int:
             "",
             "## Results",
             "",
-            "| test_nodeid | entrypoint | intent | decision | confidence_tier | strict | branch_exact | branch_jaccard | deselect_pass | reason |",
+            "| test_nodeid | entrypoint | intent | decision | confidence_tier "
+            "| strict | branch_exact | branch_jaccard | deselect_pass | reason |",
             "|---|---|---|---|---|---|---:|---:|---:|---|",
         ]
     )
     for r in rows:
         md.append(
             "| "
-            f"{r.get('test_nodeid', '')} | {r.get('entrypoint', '')} | {r.get('intent', '')} | "
-            f"{r.get('validation_decision', '')} | {r.get('confidence_tier', '')} | {r.get('strict_gate_status', '')} | "
-            f"{r.get('branch_exact_match', '')} | {r.get('branch_jaccard', '')} | {r.get('deselect_suite_pass', '')} | "
+            f"{r.get('test_nodeid', '')} | {r.get('entrypoint', '')} | "
+            f"{r.get('intent', '')} | "
+            f"{r.get('validation_decision', '')} | "
+            f"{r.get('confidence_tier', '')} | "
+            f"{r.get('strict_gate_status', '')} | "
+            f"{r.get('branch_exact_match', '')} | "
+            f"{r.get('branch_jaccard', '')} | "
+            f"{r.get('deselect_suite_pass', '')} | "
             f"{r.get('validation_reason', '')} |"
         )
 
