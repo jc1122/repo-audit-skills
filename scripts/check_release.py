@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release checks for the code-health-skills package."""
+"""Release checks for the repo-audit-skills package."""
 
 from __future__ import annotations
 

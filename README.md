@@ -1,6 +1,6 @@
 # Repo Audit Skills
 
-Standalone package of deterministic, advisory code-health skills.
+Standalone package of deterministic, advisory repo-audit skills — a code-health family and a test-audit family.
 
 Leaf skills (each independently runnable, never mutate source):
 
@@ -22,8 +22,9 @@ Test-audit family:
 - `test-quality-assurance` — scores a suite against an 8-dimension TDD rubric.
 - `test-redundancy-triage` — classifies tests DELETE / MERGE / KEEP with confidence tiers.
 
-Each skill emits findings to one shared schema. Skills are developed and released
-here, installed once to a skills root, then run against any target repo via `--root`.
+The code-health leaves emit findings to one shared schema; the test-audit skills keep
+their own report formats. Skills are developed and released here, installed once to a
+skills root, then run against any target repo via `--root`.
 
 ## Install
 
