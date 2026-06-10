@@ -1,0 +1,94 @@
+[
+  {
+    "id": "9c0703b4e00dd21e",
+    "leaf": "docs-consistency",
+    "signal": "LINT",
+    "severity": "medium",
+    "path": "README.md",
+    "location": {
+      "line_start": 5,
+      "line_end": 5,
+      "symbol": "tools/cli.py"
+    },
+    "metric": {
+      "name": "doc_flag_unknown",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "argparse",
+      "raw": "flag --no-such-flag unknown for tools/cli.py"
+    },
+    "confidence": "medium",
+    "suggested_action": "Remove or fix unknown flag --no-such-flag in README.md references to tools/cli.py"
+  },
+  {
+    "id": "fe21485079d5ec7f",
+    "leaf": "docs-consistency",
+    "signal": "LINT",
+    "severity": "medium",
+    "path": "README.md",
+    "location": {
+      "line_start": 7,
+      "line_end": 7,
+      "symbol": "mypkg"
+    },
+    "metric": {
+      "name": "doc_version_stale",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "semver",
+      "raw": "found mypkg==9.9.9, current version is 1.0.0"
+    },
+    "confidence": "high",
+    "suggested_action": "Update version pin in README.md from 9.9.9 to 1.0.0"
+  },
+  {
+    "id": "06c845441a1d8fb1",
+    "leaf": "docs-consistency",
+    "signal": "LINT",
+    "severity": "low",
+    "path": "README.md",
+    "location": {
+      "line_start": 10,
+      "line_end": 10,
+      "symbol": "missing/file.py"
+    },
+    "metric": {
+      "name": "doc_path_missing",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "markdown",
+      "raw": "missing/file.py"
+    },
+    "confidence": "medium",
+    "suggested_action": "Create missing/file.py or update README.md reference"
+  },
+  {
+    "id": "85884506cedf211c",
+    "leaf": "docs-consistency",
+    "signal": "LINT",
+    "severity": "low",
+    "path": "pkg/mod.py",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "<module>"
+    },
+    "metric": {
+      "name": "docstring_percent",
+      "value": 33.3,
+      "threshold": 80.0
+    },
+    "evidence": {
+      "tool": "ast",
+      "raw": "1/3 public symbols documented (33.3%)"
+    },
+    "confidence": "medium",
+    "suggested_action": "Add docstrings to undocumented functions in pkg/mod.py to reach 80.0%"
+  }
+]
