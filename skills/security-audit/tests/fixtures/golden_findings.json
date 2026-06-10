@@ -1,0 +1,71 @@
+[
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "089ecee45d1a9339",
+    "leaf": "security",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "pkg/insecure.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at pkg/insecure.py:1"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "Possible hardcoded password: 'hunter2' [B105]",
+      "tool": "bandit"
+    },
+    "id": "7866f404d5253796",
+    "leaf": "security",
+    "location": {
+      "line_end": 3,
+      "line_start": 3,
+      "symbol": "hardcoded_password_string"
+    },
+    "metric": {
+      "name": "bandit_B105",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "pkg/insecure.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B105 at pkg/insecure.py:3"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call with shell=True identified, security issue. [B602]",
+      "tool": "bandit"
+    },
+    "id": "450efecb41b131a5",
+    "leaf": "security",
+    "location": {
+      "line_end": 7,
+      "line_start": 7,
+      "symbol": "subprocess_popen_with_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B602",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "pkg/insecure.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B602 at pkg/insecure.py:7"
+  }
+]
