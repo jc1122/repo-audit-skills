@@ -212,6 +212,12 @@
   {
     "leaf": "complexity",
     "metric": "maintainability_index",
+    "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
     "path": "skills/duplication-audit/scripts/duplication_audit.py",
     "symbol": "<module>"
   },

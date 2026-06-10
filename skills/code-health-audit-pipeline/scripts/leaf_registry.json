@@ -7,6 +7,7 @@
     {"name": "quality", "skill": "quality-audit", "script": "quality-audit/scripts/quality_audit.py", "languages": ["python"], "findings_file": "quality_findings.json"},
     {"name": "coverage-gap", "skill": "coverage-gap-audit", "script": "coverage-gap-audit/scripts/coverage_gap_audit.py", "languages": ["python"], "findings_file": "coverage-gap_findings.json", "requires": {"coverage_json": true}},
     {"name": "repo-hygiene", "skill": "repo-hygiene-audit", "script": "repo-hygiene-audit/scripts/repo_hygiene_audit.py", "languages": ["*"], "findings_file": "repo-hygiene_findings.json"},
-    {"name": "dependency", "skill": "dependency-audit", "script": "dependency-audit/scripts/dependency_audit.py", "languages": ["python"], "findings_file": "dependency_findings.json"}
+    {"name": "dependency", "skill": "dependency-audit", "script": "dependency-audit/scripts/dependency_audit.py", "languages": ["python"], "findings_file": "dependency_findings.json"},
+    {"name": "docs-consistency", "skill": "docs-consistency-audit", "script": "docs-consistency-audit/scripts/docs_consistency_audit.py", "languages": ["python"], "findings_file": "docs-consistency_findings.json"}
   ]
 }
