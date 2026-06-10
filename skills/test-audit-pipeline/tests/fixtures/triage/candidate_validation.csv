@@ -1,0 +1,7 @@
+candidate,validation_decision,confidence,reason
+test_redundant_a.py::test_foo,DELETE,gold,Exact duplicate of test_bar
+test_redundant_b.py::test_baz,MERGE,silver,Overlapping assertions with test_qux
+test_valid.py::test_important,KEEP,gold,Unique coverage contribution
+test_shadow.py::test_dup,DELETE,bronze,Shadowed by test_primary
+test_overlap.py::test_wrapper,MERGE,silver,Consolidate with test_core
+test_unique.py::test_edge,KEEP,gold,Covers edge case not tested elsewhere
