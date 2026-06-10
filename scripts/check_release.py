@@ -12,7 +12,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Append one entry per skill as later plans land. Name on left == skill dir == SKILL.md name.
+# Append one entry per skill as later plans land.
+# Name on left == skill dir == SKILL.md name.
 REQUIRED_SKILLS = {
     "complexity-audit": "complexity-audit",
     "duplication-audit": "duplication-audit",
@@ -98,11 +99,13 @@ def check_skills(version: str, defects: list[str]) -> None:
             continue
         if meta.get("name") != expected_name:
             defects.append(
-                f"{skill_dir}/SKILL.md name is {meta.get('name')!r}, expected {expected_name!r}"
+                f"{skill_dir}/SKILL.md name is {meta.get('name')!r}, "
+                f"expected {expected_name!r}"
             )
         if meta.get("version") != version:
             defects.append(
-                f"{skill_dir}/SKILL.md version is {meta.get('version')!r}, expected {version!r}"
+                f"{skill_dir}/SKILL.md version is {meta.get('version')!r}, "
+                f"expected {version!r}"
             )
         for rel_path in REQUIRED_SCRIPTS[skill_dir]:
             if not (skill_root / rel_path).exists():
@@ -126,7 +129,8 @@ def check_installer(defects: list[str]) -> None:
         result = run(cmd)
         if result.returncode != 0:
             defects.append(
-                f"{' '.join(cmd)} failed: {result.stderr.strip() or result.stdout.strip()}"
+                f"{' '.join(cmd)} failed: "
+                f"{result.stderr.strip() or result.stdout.strip()}"
             )
 
 
