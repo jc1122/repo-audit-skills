@@ -9,6 +9,7 @@ Leaf skills (each independently runnable, never mutate source):
 - `dead-code-audit` — vulture + ruff F-codes → DELETE
 - `structure-audit` — grimp import graph → RESTRUCTURE
 - `quality-audit` — ruff + ruff format + ty → LINT / FORMAT / TYPE
+- `coverage-gap-audit` — coverage.py JSON → TEST (untested / under-tested files)
 
 Umbrellas:
 
