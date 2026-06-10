@@ -1,0 +1,14 @@
+{
+  "source": "pip-audit",
+  "generated_utc": "2026-06-10T00:00:00Z",
+  "packages": [
+    {
+      "name": "requests",
+      "installed_version": "2.19.0",
+      "latest_version": null,
+      "vulns": [
+        {"id": "PYSEC-2018-28", "severity": "high", "fix_versions": ["2.20.0"]}
+      ]
+    }
+  ]
+}
