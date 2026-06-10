@@ -192,15 +192,21 @@ def findings_from_mutmut(
     if not totals:
         return []
 
-    # Run mutmut results
-    proc = subprocess.run(
-        [sys.executable, "-m", "mutmut", "results"],
-        cwd=str(work),
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    results_text = proc.stdout
+    # Prefer captured results.txt when present (deterministic fixture mode);
+    # otherwise shell out to real mutmut results.
+    captured_results = work / "results.txt"
+    if captured_results.exists():
+        results_text = captured_results.read_text(encoding="utf-8")
+    else:
+        proc = subprocess.run(
+            [sys.executable, "-m", "mutmut", "results"],
+            cwd=str(work),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        results_text = proc.stdout
+
     problem_entries = parse_results_text(results_text)
 
     # Map problem keys to module keys
@@ -232,23 +238,29 @@ def findings_from_mutmut(
         if len(survivor_keys) > 10:
             evidence_raw += f" ...(+{len(survivor_keys) - 10} more)"
 
-        # mutmut show for first 3 survivors — append @@ hunk headers
-        for survivor_key in survivor_keys[:3]:
-            try:
-                show = subprocess.run(
-                    [sys.executable, "-m", "mutmut", "show", survivor_key],
-                    cwd=str(work),
-                    text=True,
-                    capture_output=True,
-                    timeout=30,
-                    check=False,
-                )
-                for line in show.stdout.splitlines() + show.stderr.splitlines():
-                    stripped = line.strip()
-                    if stripped.startswith("@@"):
-                        evidence_raw += "\n" + stripped
-            except (subprocess.TimeoutExpired, OSError):
-                pass
+        # mutmut show for first 3 survivors — append @@ hunk headers.
+        # Skip when no setup.cfg (can't run mutmut show) or when results
+        # came from a captured file (mutant database is absent).
+        run_mutmut_show = (
+            not captured_results.exists() and (work / "setup.cfg").exists()
+        )
+        if run_mutmut_show:
+            for survivor_key in survivor_keys[:3]:
+                try:
+                    show = subprocess.run(
+                        [sys.executable, "-m", "mutmut", "show", survivor_key],
+                        cwd=str(work),
+                        text=True,
+                        capture_output=True,
+                        timeout=30,
+                        check=False,
+                    )
+                    for line in show.stdout.splitlines() + show.stderr.splitlines():
+                        stripped = line.strip()
+                        if stripped.startswith("@@"):
+                            evidence_raw += "\n" + stripped
+                except (subprocess.TimeoutExpired, OSError):
+                    pass
 
         findings.append(
             hc.Finding(
