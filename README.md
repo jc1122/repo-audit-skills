@@ -10,10 +10,17 @@ Leaf skills (each independently runnable, never mutate source):
 - `structure-audit` — grimp import graph → RESTRUCTURE
 - `quality-audit` — ruff + ruff format + ty → LINT / FORMAT / TYPE
 
-Umbrella:
+Umbrellas:
 
-- `code-health-audit-pipeline` — runs the leaves in parallel, merges and ranks
-  findings, and emits a supervisor decision with exit codes 0/1/2.
+- `code-health-audit-pipeline` — runs the code-health leaves in parallel, merges and
+  ranks findings, and emits a supervisor decision with exit codes 0/1/2.
+- `test-audit-pipeline` — orchestrates coverage collection, test-quality scoring, and
+  redundancy triage into a unified test-health report.
+
+Test-audit family:
+
+- `test-quality-assurance` — scores a suite against an 8-dimension TDD rubric.
+- `test-redundancy-triage` — classifies tests DELETE / MERGE / KEEP with confidence tiers.
 
 Each skill emits findings to one shared schema. Skills are developed and released
 here, installed once to a skills root, then run against any target repo via `--root`.

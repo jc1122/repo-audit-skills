@@ -14,6 +14,9 @@ const skills = [
   "structure-audit",
   "quality-audit",
   "code-health-audit-pipeline",
+  "test-audit-pipeline",
+  "test-quality-assurance",
+  "test-redundancy-triage",
 ];
 
 function usage() {
