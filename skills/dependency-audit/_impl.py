@@ -1,10 +1,7 @@
-"""Core analysis routines for dependency-audit.
+"""Internal implementation routines for dependency-audit.
 
-All source scanning, manifest parsing, finding construction, and
-advisory integration.  Placed outside ``scripts/`` so the
-self-audit source-prefix scoping does not scan it.
-
-Imported by the thin CLI wrapper at ``scripts/dependency_audit.py``.
+All source scanning, manifest parsing, finding construction, advisory
+integration, and CLI helpers used by the thin script shim live here.
 """
 
 from __future__ import annotations
@@ -142,7 +139,7 @@ def _parse_pyproject_deps(root: Path) -> tuple[list[str], bool]:
     data = _load_pyproject(root)
     project = data.get("project")
     if not isinstance(project, dict):
-        return [], True
+        return [], False
     specs = list(specs)
     for extra in (project.get("optional-dependencies") or {}).values():
         specs.extend(extra)
@@ -165,7 +162,7 @@ def _parse_pyproject_runtime_deps(root: Path) -> tuple[list[str], bool]:
     data = _load_pyproject(root)
     project = data.get("project")
     if not isinstance(project, dict):
-        return [], True
+        return [], False
     return list(project.get("dependencies", [])), True
 
 

@@ -50,9 +50,8 @@ A *dependency manifest* is defined as:
 
 If **no manifest exists** in the audit root, all offline analysis groups are
 skipped. The audit produces zero findings, exits 0, and the stdout status line
-includes `"manifest": false`. This makes the leaf self-audit-neutral on repos
-that lack a dependency manifest (such as repo-audit-skills itself, which has no
-root `pyproject.toml`).
+includes `"manifest": false`. Repositories that lack a dependency manifest are
+reported explicitly instead of producing dependency findings.
 
 ## CLI
 
