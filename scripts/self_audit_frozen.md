@@ -97,3 +97,14 @@ the 2 justified freezes above plus the 3 `skills/test-*/scripts` rule-frozen ent
 SP4 T3 in-process suites; coverage-gap baseline ratcheted 5 → 2; coverage gate
 suites expanded 8 → 11. The two justified freezes (`self_audit.py`,
 `check_self_audit.py`) remain as-is.
+- **SP4 T5**: added `--coverage-json` plumbing to `_run_one` and `run_leaves`
+  (artifact-gated leaf support).  +2 `parameter_count` findings: both functions
+  gained one optional `coverage_json` parameter — the smallest possible API delta
+  to implement the requires gate.  Extracting a config dict or dataclass would
+  obscure the data flow without reducing actual complexity; the existing
+  `build_summary` and `stage_report`/`stage_coverage` functions already exceed
+  the same threshold and are frozen.  Baseline 168 → 170.
+
+### G. T5 parameter_count freezes (2)
+- `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: complexity/parameter_count :: _run_one :: T5 artifact-gated leaf support; added optional `coverage_json` param — minimal API delta; a config-dict refactor would obscure data flow without reducing complexity
+- `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: complexity/parameter_count :: run_leaves :: T5 artifact-gated leaf support; added optional `coverage_json` param — minimal API delta; a config-dict refactor would obscure data flow without reducing complexity

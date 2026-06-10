@@ -109,6 +109,43 @@ def select_leaves(leaves: list[dict], languages: list[str]) -> list[dict]:
     return [leaf for leaf in leaves if wanted & set(leaf.get("languages", []))]
 
 
+def _partition_leaves(
+    leaves: list[dict], coverage_json: str | None
+) -> tuple[list[dict], list[dict]]:
+    """Split leaves into (runnable, skipped) based on requires.
+
+    A leaf without ``requires`` is always runnable.  For leaves with
+    ``requires``, each key is checked: ``coverage_json`` is satisfied when
+    *coverage_json* is not None; any other key is treated as NOT satisfied
+    (fail-safe).  Skipped records are sorted by leaf name.
+    """
+    runnable: list[dict] = []
+    skipped: list[dict] = []
+    for leaf in leaves:
+        requires = leaf.get("requires", {})
+        if not requires:
+            runnable.append(leaf)
+            continue
+        skip_reason = None
+        for key, required in requires.items():
+            if not required:
+                continue
+            if key == "coverage_json":
+                if not coverage_json:
+                    skip_reason = "requires coverage_json artifact"
+                    break
+            else:
+                # Unknown requirement key — fail safe
+                skip_reason = f"requires {key} artifact"
+                break
+        if skip_reason:
+            skipped.append({"leaf": leaf["name"], "reason": skip_reason})
+        else:
+            runnable.append(leaf)
+    skipped.sort(key=lambda s: s["leaf"])
+    return runnable, skipped
+
+
 def _resolve_script(leaf: dict, overrides: dict[str, str]) -> Path:
     if leaf["name"] in overrides:
         return Path(overrides[leaf["name"]])
@@ -123,12 +160,15 @@ def _run_one(
     source_prefixes: list[str],
     out_dir: Path,
     overrides: dict[str, str],
+    coverage_json: str | None = None,
 ):
     script = _resolve_script(leaf, overrides)
     leaf_out = out_dir / leaf["name"]
     cmd = [sys.executable, str(script), "--root", root, "--out-dir", str(leaf_out)]
     for pre in source_prefixes:
         cmd += ["--source-prefix", pre]
+    if coverage_json and leaf.get("requires", {}).get("coverage_json"):
+        cmd += ["--coverage-json", coverage_json]
     if not script.exists():
         return leaf["name"], 2, []
     try:
@@ -153,6 +193,7 @@ def run_leaves(
     source_prefixes: list[str],
     out_dir: Path,
     overrides: dict[str, str],
+    coverage_json: str | None = None,
 ):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -161,7 +202,9 @@ def run_leaves(
     with ThreadPoolExecutor(max_workers=max(1, len(leaves))) as pool:
         results = list(
             pool.map(
-                lambda leaf: _run_one(leaf, root, source_prefixes, out_dir, overrides),
+                lambda leaf: _run_one(
+                    leaf, root, source_prefixes, out_dir, overrides, coverage_json
+                ),
                 leaves,
             )
         )
@@ -269,6 +312,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override: name=PATH. Repeatable.",
     )
     parser.add_argument("--config", help="JSON gate overrides.")
+    parser.add_argument(
+        "--coverage-json",
+        default=None,
+        help="Path to coverage JSON for artifact-gated leaves.",
+    )
     return parser
 
 
@@ -286,9 +334,16 @@ def main(argv: list[str] | None = None) -> int:
     leaves = select_leaves(
         load_registry(Path(args.registry)), args.languages.split(",")
     )
+    coverage_json = args.coverage_json
+    runnable_leaves, skipped = _partition_leaves(leaves, coverage_json)
     out_dir = Path(args.out_dir)
     findings, leaf_exit = run_leaves(
-        leaves, args.root, args.source_prefixes, out_dir, overrides
+        runnable_leaves,
+        args.root,
+        args.source_prefixes,
+        out_dir,
+        overrides,
+        coverage_json,
     )
     ranked = rank(merge_and_dedupe(findings))
     decision, code = decide(ranked, leaf_exit, gate)
@@ -300,7 +355,16 @@ def main(argv: list[str] | None = None) -> int:
     (out_dir / "code_health_report.md").write_text(
         render_report(ranked, decision), encoding="utf-8"
     )
-    print(json.dumps({"status": "ok", "supervisor": decision, "findings": len(ranked)}))
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "supervisor": decision,
+                "findings": len(ranked),
+                "skipped": skipped,
+            }
+        )
+    )
     return code
 
 
