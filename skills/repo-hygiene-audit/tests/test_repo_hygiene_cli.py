@@ -140,7 +140,7 @@ def test_git_missing_exits_two(tmp_path, capsys, monkeypatch):
     def _mock_run(*args, **kwargs):
         raise FileNotFoundError("git not found")
 
-    monkeypatch.setattr(mod, "_git", _mock_run)
+    monkeypatch.setattr(mod._git_utils, "_git", _mock_run)
 
     repo, _ = make_dirty_repo(tmp_path)
     out = tmp_path / "out"
