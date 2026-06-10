@@ -29,8 +29,8 @@
     "severity": "medium",
     "path": "README.md",
     "location": {
-      "line_start": 7,
-      "line_end": 7,
+      "line_start": 8,
+      "line_end": 8,
       "symbol": "mypkg"
     },
     "metric": {
@@ -52,8 +52,8 @@
     "severity": "low",
     "path": "README.md",
     "location": {
-      "line_start": 10,
-      "line_end": 10,
+      "line_start": 11,
+      "line_end": 11,
       "symbol": "missing/file.py"
     },
     "metric": {

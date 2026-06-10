@@ -111,11 +111,16 @@ def test_unreadable_root_exits_two(tmp_path):
 # ── guard test (mandatory per plan) ────────────────────────────────
 
 def test_guard_never_imports_module_without_build_parser(tmp_path):
-    """The sideeffect.py module has no build_parser → guard skips it.
+    """The sideeffect.py module appears in a fenced shell block.
 
-    This test asserts that running the audit on the dirty fixture does
-    NOT raise RuntimeError("must never be imported") and completes with
-    exit code 1 (findings present).
+    It has ``import argparse`` but no top-level ``def build_parser``.
+    The AST guard must skip it: the audit completes with exit code 1,
+    does NOT raise RuntimeError("must never be imported"), and no
+    finding references ``tools/sideeffect.py``.
+
+    A broken guard that checks only ``import argparse`` without also
+    checking for ``def build_parser`` would import sideeffect.py and
+    the RuntimeError at its top level would crash this test.
     """
     mod = load_module()
     out = tmp_path / "out"
@@ -124,5 +129,10 @@ def test_guard_never_imports_module_without_build_parser(tmp_path):
         "--out-dir", str(out),
     ])
     assert rc == 1
-    # sideeffect.py was mentioned in README but has no build_parser
-    # → the guard prevented its import; no RuntimeError was raised
+    # sideeffect.py is in the fenced block now; guard must skip it
+    findings = read_findings(out)
+    assert len(findings) > 0, "expected findings from other groups"
+    symbols = [f["location"]["symbol"] for f in findings]
+    assert "tools/sideeffect.py" not in symbols, (
+        "sideeffect.py was introspected despite lacking build_parser"
+    )
