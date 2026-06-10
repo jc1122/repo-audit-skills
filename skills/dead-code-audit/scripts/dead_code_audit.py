@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
 
 LEAF = "dead-code"
+TOOL_TIMEOUT = 120
 
 DEFAULT_THRESHOLDS = {
     "min_confidence": 60,
@@ -59,9 +60,11 @@ def _vulture_findings(root: Path, files: list[Path], thresholds: dict, allowlist
     if allowlist:
         cmd.append(allowlist)
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
+        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
     except FileNotFoundError as exc:
         raise ToolError("vulture is not installed") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ToolError(f"vulture timed out after {TOOL_TIMEOUT}s") from exc
     findings: list[hc.Finding] = []
     for line in proc.stdout.splitlines():
         m = _VULTURE_RE.match(line.strip())
@@ -90,9 +93,11 @@ def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
     cmd = ["ruff", "check", "--select", ",".join(OWNED_RUFF_CODES),
            "--output-format", "json", "--no-cache", *rel_files]
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
+        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
     except FileNotFoundError as exc:
         raise ToolError("ruff is not installed") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ToolError(f"ruff timed out after {TOOL_TIMEOUT}s") from exc
     try:
         items = json.loads(proc.stdout or "[]")
     except json.JSONDecodeError as exc:

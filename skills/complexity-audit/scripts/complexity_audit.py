@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
 
 LEAF = "complexity"
+TOOL_TIMEOUT = 120
 
 DEFAULT_THRESHOLDS = {
     "cc_medium": 10,
@@ -90,9 +91,11 @@ def _radon_mi_findings(root: Path, files: list[Path], thresholds: dict) -> list[
         return []
     cmd = ["radon", "mi", "-j", *[str(p) for p in files]]
     try:
-        proc = subprocess.run(cmd, text=True, capture_output=True, check=False)
+        proc = subprocess.run(cmd, text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
     except FileNotFoundError as exc:
         raise ToolError("radon is not installed") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ToolError(f"radon timed out after {TOOL_TIMEOUT}s") from exc
     if proc.returncode != 0:
         raise ToolError(f"radon mi failed: {proc.stderr.strip() or proc.stdout.strip()}")
     data = json.loads(proc.stdout or "{}")

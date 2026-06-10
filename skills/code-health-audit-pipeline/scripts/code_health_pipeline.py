@@ -29,6 +29,8 @@ DEFAULT_GATE = {
     "max_high_severity": 1_000_000,
 }
 
+TOOL_TIMEOUT = 120
+
 
 def _dedupe_key(f: dict) -> tuple:
     return (f.get("path"), f.get("location", {}).get("line_start"), f.get("metric", {}).get("name"))
@@ -101,7 +103,10 @@ def _run_one(leaf: dict, root: str, source_prefixes: list[str], out_dir: Path, o
         cmd += ["--source-prefix", pre]
     if not script.exists():
         return leaf["name"], 2, []
-    proc = subprocess.run(cmd, text=True, capture_output=True, check=False)
+    try:
+        proc = subprocess.run(cmd, text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return leaf["name"], 2, []
     findings_path = leaf_out / leaf["findings_file"]
     findings: list[dict] = []
     if proc.returncode != 2 and findings_path.exists():

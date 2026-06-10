@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
 
 LEAF = "quality"
+TOOL_TIMEOUT = 120
 
 DEFAULT_CONFIG = {
     "type_checker": "mypy",
@@ -42,9 +43,11 @@ def _ruff_lint(root: Path, rel_files: list[str], config: dict) -> list[hc.Findin
     cmd = ["ruff", "check", "--no-cache", "--output-format", "json",
            "--select", config["ruff_select"], "--ignore", config["ruff_ignore"], *rel_files]
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
+        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
     except FileNotFoundError as exc:
         raise ToolError("ruff is not installed") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ToolError(f"ruff timed out after {TOOL_TIMEOUT}s") from exc
     try:
         items = json.loads(proc.stdout or "[]")
     except json.JSONDecodeError as exc:
@@ -71,9 +74,11 @@ def _ruff_lint(root: Path, rel_files: list[str], config: dict) -> list[hc.Findin
 def _ruff_format(root: Path, rel_files: list[str]) -> list[hc.Finding]:
     cmd = ["ruff", "format", "--check", *rel_files]
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
+        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
     except FileNotFoundError as exc:
         raise ToolError("ruff is not installed") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ToolError(f"ruff timed out after {TOOL_TIMEOUT}s") from exc
     findings: list[hc.Finding] = []
     for line in (proc.stdout + proc.stderr).splitlines():
         line = line.strip()
@@ -99,9 +104,11 @@ def _type_findings(root: Path, rel_files: list[str], config: dict) -> list[hc.Fi
             cmd = ["mypy", "--no-error-summary", "--no-color-output", "--ignore-missing-imports",
                    "--no-incremental", "--cache-dir", cache, *rel_files]
         try:
-            proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
+            proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
         except FileNotFoundError as exc:
             raise ToolError(f"{checker} is not installed") from exc
+        except subprocess.TimeoutExpired as exc:
+            raise ToolError(f"{checker} timed out after {TOOL_TIMEOUT}s") from exc
     findings: list[hc.Finding] = []
     for line in (proc.stdout + proc.stderr).splitlines():
         m = _TYPE_RE.match(line.strip())

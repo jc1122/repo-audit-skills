@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
 
 LEAF = "duplication"
+TOOL_TIMEOUT = 120
 
 DEFAULT_THRESHOLDS = {
     "min_tokens": 50,
@@ -50,9 +51,11 @@ def _run_jscpd(root: Path, files: list[Path], thresholds: dict, out_dir: Path) -
            "--min-tokens", str(thresholds["min_tokens"]), "--min-lines", str(thresholds["min_lines"]),
            *rel_files]
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
+        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
     except FileNotFoundError as exc:
         raise ToolError("local jscpd binary not found at node_modules/.bin/jscpd (run npm install)") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ToolError(f"jscpd timed out after {TOOL_TIMEOUT}s") from exc
     report_path = out_dir / "jscpd-report.json"
     if not report_path.exists():
         raise ToolError(f"jscpd produced no report: {proc.stderr.strip() or proc.stdout.strip()}")
