@@ -247,7 +247,9 @@ def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
                     evidence_tool="ast",
                     evidence_raw=f"{m} is imported by {in_degree[m]} modules",
                     confidence="high",
-                    suggested_action=f"Split god-module: {m} is imported by {in_degree[m]} modules",
+                    suggested_action=(
+                        f"Split god-module: {m} is imported by {in_degree[m]} modules"
+                    ),
                 )
             )
 
@@ -276,9 +278,14 @@ def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
                             metric_value=float(src_layer - dst_layer),
                             metric_threshold=0.0,
                             evidence_tool="ast",
-                            evidence_raw=f"{src} (layer {src_layer}) imports {dst} (layer {dst_layer})",
+                            evidence_raw=(
+                                f"{src} (layer {src_layer}) imports "
+                                f"{dst} (layer {dst_layer})"
+                            ),
                             confidence="high",
-                            suggested_action=f"Layering violation: {src} must not import {dst}",
+                            suggested_action=(
+                                f"Layering violation: {src} must not import {dst}"
+                            ),
                         )
                     )
 
@@ -293,7 +300,8 @@ def render_report(findings: list[hc.Finding]) -> str:
     lines.append(f"## RESTRUCTURE ({len(findings)})")
     for f in findings:
         lines.append(
-            f"- `{f.path}` {f.symbol} — {f.metric_name}={f.metric_value:g} [{f.severity}]"
+            f"- `{f.path}` {f.symbol} — "
+            f"{f.metric_name}={f.metric_value:g} [{f.severity}]"
         )
     lines.append("")
     return "\n".join(lines) + "\n"

@@ -226,7 +226,7 @@ def load_gate(config_path: str | None) -> dict:
         try:
             gate.update(json.loads(Path(config_path).read_text(encoding="utf-8")))
         except (OSError, json.JSONDecodeError) as exc:
-            raise SystemExit(f"invalid --config: {exc}")
+            raise SystemExit(f"invalid --config: {exc}") from exc
     return gate
 
 

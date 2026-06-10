@@ -71,7 +71,10 @@ def _lizard_findings(
                         evidence_tool="lizard",
                         evidence_raw=f"{fn.long_name} CCN={cc}",
                         confidence="high",
-                        suggested_action=f"Split {fn.name}() — complexity {cc} exceeds {thresholds['cc_medium']}",
+                        suggested_action=(
+                            f"Split {fn.name}() — complexity {cc} exceeds "
+                            f"{thresholds['cc_medium']}"
+                        ),
                     )
                 )
             if fn.nloc > thresholds["nloc_medium"]:
@@ -90,7 +93,10 @@ def _lizard_findings(
                         evidence_tool="lizard",
                         evidence_raw=f"{fn.long_name} NLOC={fn.nloc}",
                         confidence="high",
-                        suggested_action=f"Shorten {fn.name}() — {fn.nloc} lines exceeds {thresholds['nloc_medium']}",
+                        suggested_action=(
+                            f"Shorten {fn.name}() — {fn.nloc} lines exceeds "
+                            f"{thresholds['nloc_medium']}"
+                        ),
                     )
                 )
             if fn.parameter_count > thresholds["max_params"]:
@@ -109,7 +115,10 @@ def _lizard_findings(
                         evidence_tool="lizard",
                         evidence_raw=f"{fn.long_name} params={fn.parameter_count}",
                         confidence="high",
-                        suggested_action=f"Reduce parameters of {fn.name}() — {fn.parameter_count} exceeds {thresholds['max_params']}",
+                        suggested_action=(
+                            f"Reduce parameters of {fn.name}() — "
+                            f"{fn.parameter_count} exceeds {thresholds['max_params']}"
+                        ),
                     )
                 )
     return findings
@@ -158,7 +167,10 @@ def _radon_mi_findings(
                 evidence_tool="radon",
                 evidence_raw=f"MI={mi:.1f} rank={info.get('rank', '?')}",
                 confidence="high",
-                suggested_action=f"Improve maintainability of {rel} — MI {mi:.1f} below {thresholds['mi_low']}",
+                suggested_action=(
+                    f"Improve maintainability of {rel} — MI {mi:.1f} below "
+                    f"{thresholds['mi_low']}"
+                ),
             )
         )
     return findings

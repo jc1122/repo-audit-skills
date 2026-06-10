@@ -23,7 +23,8 @@ DEFAULT_THRESHOLDS = {
 OWNED_RUFF_CODES = ("F401", "F811", "F841")
 VULTURE_KEEP = {"function", "class", "method", "property"}
 _VULTURE_RE = re.compile(
-    r"^(?P<path>.+?):(?P<line>\d+): unused (?P<kind>[\w ]+?) '(?P<name>[^']+)' \((?P<conf>\d+)% confidence\)$"
+    r"^(?P<path>.+?):(?P<line>\d+): unused (?P<kind>[\w ]+?) "
+    r"'(?P<name>[^']+)' \((?P<conf>\d+)% confidence\)$"
 )
 
 
@@ -115,7 +116,8 @@ def _vulture_findings(
                 evidence_tool="vulture",
                 evidence_raw=line.strip(),
                 confidence=_confidence_for_conf(conf),
-                suggested_action=f"Remove unused {kind} '{m.group('name')}' if truly dead",
+                suggested_action=f"Remove unused {kind} '{m.group('name')}' "
+                f"if truly dead",
             )
         )
     return findings

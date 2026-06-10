@@ -114,7 +114,10 @@ def _findings_from_report(
                 metric_value=float(tokens),
                 metric_threshold=float(min_tokens),
                 evidence_tool="jscpd",
-                evidence_raw=f"{p1}:{ff['start']}-{ff['end']} == {p2}:{sf['start']}-{sf['end']} ({tokens} tokens)",
+                evidence_raw=(
+                    f"{p1}:{ff['start']}-{ff['end']} == "
+                    f"{p2}:{sf['start']}-{sf['end']} ({tokens} tokens)"
+                ),
                 confidence="high",
                 suggested_action=(
                     f"Extract shared code between {p1} and {p2}"
@@ -148,7 +151,8 @@ def render_report(findings: list[hc.Finding]) -> str:
         lines.append(f"## {signal} ({len(by_signal[signal])})")
         for f in by_signal[signal]:
             lines.append(
-                f"- `{f.path}:{f.line_start}` ↔ `{f.symbol}` — {f.metric_value:g} tokens [{f.severity}]"
+                f"- `{f.path}:{f.line_start}` ↔ `{f.symbol}` — "
+                f"{f.metric_value:g} tokens [{f.severity}]"
             )
         lines.append("")
     return "\n".join(lines) + "\n"

@@ -240,7 +240,8 @@ def render_report(findings: list[hc.Finding]) -> str:
         lines.append(f"## {signal} ({len(by_signal[signal])})")
         for f in by_signal[signal]:
             lines.append(
-                f"- `{f.path}:{f.line_start}` {f.metric_name} — {f.evidence_raw} [{f.severity}]"
+                f"- `{f.path}:{f.line_start}` {f.metric_name} — "
+                f"{f.evidence_raw} [{f.severity}]"
             )
         lines.append("")
     return "\n".join(lines) + "\n"
