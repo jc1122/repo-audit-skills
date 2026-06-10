@@ -6,66 +6,6 @@
     "symbol": "<module>"
   },
   {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/check_release.py",
-    "symbol": "E501@101:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/check_release.py",
-    "symbol": "E501@105:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/check_release.py",
-    "symbol": "E501@129:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/check_release.py",
-    "symbol": "E501@15:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E401",
-    "path": "scripts/check_self_audit.py",
-    "symbol": "E401@4:1"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/check_self_audit.py",
-    "symbol": "E501@16:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/check_self_audit.py",
-    "symbol": "E501@2:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E702",
-    "path": "scripts/check_self_audit.py",
-    "symbol": "E702@15:77"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E702",
-    "path": "scripts/check_self_audit.py",
-    "symbol": "E702@16:102"
-  },
-  {
-    "leaf": "quality",
-    "metric": "format_drift",
-    "path": "scripts/check_self_audit.py",
-    "symbol": "scripts/check_self_audit.py"
-  },
-  {
     "leaf": "complexity",
     "metric": "maintainability_index",
     "path": "scripts/check_vendored_common.py",
@@ -76,36 +16,6 @@
     "metric": "maintainability_index",
     "path": "scripts/self_audit.py",
     "symbol": "<module>"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E401",
-    "path": "scripts/self_audit.py",
-    "symbol": "E401@4:1"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/self_audit.py",
-    "symbol": "E501@19:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/self_audit.py",
-    "symbol": "E501@2:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "scripts/self_audit.py",
-    "symbol": "E501@7:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "format_drift",
-    "path": "scripts/self_audit.py",
-    "symbol": "scripts/self_audit.py"
   },
   {
     "leaf": "duplication",
