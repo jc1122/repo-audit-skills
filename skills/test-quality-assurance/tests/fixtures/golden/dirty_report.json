@@ -1,0 +1,128 @@
+{
+  "config": {
+    "auto_inferred_public_hints": false,
+    "exact_eq_pattern": "^\\s*assert\\s+\\w+\\s*==\\s*(?:expected|want|target|snapshot|golden)\\b",
+    "internal_import_patterns": [
+      "from\\s+[\\w\\.]+\\.(?:core|internal|impl|private)\\s+import",
+      "import\\s+[\\w\\.]+\\.(?:core|internal|impl|private)\\b"
+    ],
+    "public_hints": [],
+    "test_dirs": [
+      "tests"
+    ],
+    "test_globs": [
+      "test_*.py",
+      "*_test.py"
+    ]
+  },
+  "files": [
+    {
+      "classification": {
+        "black_box_candidate": false,
+        "change_indicator_candidate": true,
+        "white_box_candidate": true
+      },
+      "exact_eq_assert_count": 1,
+      "expected_literal_count": 1,
+      "given_count": 0,
+      "internal_imports": 3,
+      "markers": {},
+      "path": "/home/jakub/projects/sp4-worktrees/t3b-tqa/skills/test-quality-assurance/tests/fixtures/dirty/tests/test_engine.py",
+      "private_method_calls": 3,
+      "public_call_hints": 0,
+      "raises_broad_tuple": 0,
+      "raises_total": 0,
+      "raises_with_match": 0,
+      "test_functions": 4
+    },
+    {
+      "classification": {
+        "black_box_candidate": false,
+        "change_indicator_candidate": false,
+        "white_box_candidate": true
+      },
+      "exact_eq_assert_count": 0,
+      "expected_literal_count": 1,
+      "given_count": 0,
+      "internal_imports": 2,
+      "markers": {},
+      "path": "/home/jakub/projects/sp4-worktrees/t3b-tqa/skills/test-quality-assurance/tests/fixtures/dirty/tests/test_more_dirty.py",
+      "private_method_calls": 0,
+      "public_call_hints": 0,
+      "raises_broad_tuple": 0,
+      "raises_total": 0,
+      "raises_with_match": 0,
+      "test_functions": 4
+    }
+  ],
+  "root": "/home/jakub/projects/sp4-worktrees/t3b-tqa/skills/test-quality-assurance/tests/fixtures/dirty",
+  "rubric_scores": {
+    "Assertion Quality": {
+      "max": 3,
+      "rationale": "No pytest.raises calls detected",
+      "score": 0
+    },
+    "Behavior-First Focus": {
+      "max": 3,
+      "rationale": "Very high private/public ratio (3.0)",
+      "score": 0
+    },
+    "Contract Coverage": {
+      "max": 3,
+      "rationale": "Tests exist but no public call hints",
+      "score": 1
+    },
+    "Coverage/Mutation": {
+      "max": 3,
+      "rationale": "unknown (no coverage data provided)",
+      "score": 1
+    },
+    "Determinism/Isolation": {
+      "max": 3,
+      "rationale": "Default (static analysis cannot fully assess)",
+      "score": 2
+    },
+    "Non-Functional": {
+      "max": 3,
+      "rationale": "No benchmark markers detected",
+      "score": 1
+    },
+    "Pyramid/Scope": {
+      "max": 3,
+      "rationale": "2 files (minimal layering)",
+      "score": 1
+    },
+    "White-Box Justification": {
+      "max": 3,
+      "rationale": "White-box tests present but high internal coupling",
+      "score": 1
+    },
+    "max_total": 24,
+    "total": 7
+  },
+  "summary": {
+    "classification_counts": {
+      "change_indicator_candidate": 1,
+      "white_box_candidate": 2
+    },
+    "markers": {},
+    "ratios": {
+      "broad_tuple_raises_ratio": 0.0,
+      "private_to_public_call_ratio": 3.0,
+      "raises_with_match_ratio": 0.0
+    },
+    "totals": {
+      "exact_eq_assert_count": 1,
+      "expected_literal_count": 2,
+      "files": 2,
+      "hypothesis_given_calls": 0,
+      "internal_imports": 5,
+      "private_method_calls": 3,
+      "public_call_hints": 0,
+      "raises_broad_tuple": 0,
+      "raises_total": 0,
+      "raises_with_match": 0,
+      "test_functions": 8
+    }
+  }
+}
