@@ -1,9 +1,6 @@
 # SP7 Freeze Candidates — dependency-audit
 
-No freeze candidates yet.
+Current state for final SP7 A2: no self-audit freeze candidates.
 
-This file exists per the C-5 in-branch contract. If self-audit findings are
-genuinely unavoidable during implementation, up to 3 candidate freezes with
-rationale will be documented here for INT to adjudicate. Current state: the
-leaf has no implementation yet (SP7 A2 W1 is the docs+vendored-common wave),
-so no findings exist.
+The dependency-audit leaf has no dependency-audit-specific self-audit findings
+requiring freeze-candidate adjudication.
