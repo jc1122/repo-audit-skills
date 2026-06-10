@@ -54,6 +54,18 @@
     "symbol": "<module>"
   },
   {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "_run_one"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "run_leaves"
+  },
+  {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
@@ -408,102 +420,6 @@
     "symbol": "<module>"
   },
   {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@651:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@680:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@686:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@723:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@726:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@779:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@807:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@813:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@818:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@824:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@837:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "E501@842:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "SIM102",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "SIM102@145:5"
-  },
-  {
-    "leaf": "quality",
-    "metric": "SIM102",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "SIM102@181:9"
-  },
-  {
-    "leaf": "quality",
-    "metric": "SIM102",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "SIM102@190:9"
-  },
-  {
-    "leaf": "quality",
-    "metric": "SIM102",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "SIM102@205:13"
-  },
-  {
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
@@ -693,13 +609,13 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1285-1292"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1286-1293"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1322-1342"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1323-1343"
   },
   {
     "leaf": "duplication",
@@ -711,7 +627,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:844-866"
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:845-867"
   },
   {
     "leaf": "quality",
@@ -772,251 +688,5 @@
     "metric": "B023",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "B023@388:49"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1440:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1573:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1585:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1586:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1600:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1801:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1876:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@1940:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2101:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2114:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2328:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2445:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2455:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2461:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2467:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2472:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2477:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2482:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2487:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2493:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2504:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2510:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2516:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2522:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2528:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2534:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2540:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2545:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2552:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2574:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2699:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2783:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@2802:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@3022:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@3029:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@3030:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@3031:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "E501",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "E501@480:89"
-  },
-  {
-    "leaf": "quality",
-    "metric": "SIM108",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "SIM108@2180:9"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "_run_one"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "run_leaves"
   }
 ]
