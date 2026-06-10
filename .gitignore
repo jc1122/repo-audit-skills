@@ -8,3 +8,5 @@ __pycache__/
 node_modules/
 /tmp/
 artifacts/
+.self_audit_out/
+scripts/self_audit_snapshot.json

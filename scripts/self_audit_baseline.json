@@ -1,0 +1,1148 @@
+[
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "scripts/check_release.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/check_release.py",
+    "symbol": "E501@101:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/check_release.py",
+    "symbol": "E501@105:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/check_release.py",
+    "symbol": "E501@129:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/check_release.py",
+    "symbol": "E501@15:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E401",
+    "path": "scripts/check_self_audit.py",
+    "symbol": "E401@4:1"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/check_self_audit.py",
+    "symbol": "E501@16:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/check_self_audit.py",
+    "symbol": "E501@2:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E702",
+    "path": "scripts/check_self_audit.py",
+    "symbol": "E702@15:77"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E702",
+    "path": "scripts/check_self_audit.py",
+    "symbol": "E702@16:102"
+  },
+  {
+    "leaf": "quality",
+    "metric": "format_drift",
+    "path": "scripts/check_self_audit.py",
+    "symbol": "scripts/check_self_audit.py"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "scripts/check_vendored_common.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "scripts/self_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E401",
+    "path": "scripts/self_audit.py",
+    "symbol": "E401@4:1"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/self_audit.py",
+    "symbol": "E501@19:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/self_audit.py",
+    "symbol": "E501@2:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "scripts/self_audit.py",
+    "symbol": "E501@7:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "format_drift",
+    "path": "scripts/self_audit.py",
+    "symbol": "scripts/self_audit.py"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "shared/health_common.py",
+    "symbol": "skills/complexity-audit/scripts/health_common.py:1-98"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "decide"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "skills/complexity-audit/scripts/complexity_audit.py:231-243"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B904",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "B904@229:13"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "_radon_mi_findings"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "_lizard_findings"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:205-219"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:237-258"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:259-264"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:264-272"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:140-151"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:21-32"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "skills/structure-audit/scripts/structure_audit.py:344-350"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "E501@112:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "E501@161:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "E501@74:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "E501@93:89"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "_ruff_findings"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "_ruff_findings"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:167-179"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:180-206"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:29-42"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/duplication-audit/scripts/duplication_audit.py:42-52"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:104-114"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:121-134"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:28-58"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:68-89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "E501@118:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "E501@26:89"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "symbol": "E501@117:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "symbol": "E501@151:89"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "_ruff_lint"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "_type_findings"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "E501@243:89"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "_strongly_connected_components"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "analyze_tree"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "analyze_tree"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "E501@250:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "E501@279:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "E501@281:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "symbol": "E501@296:89"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "build_summary"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "main"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "stage_report"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "main"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "parse_args"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "stage_report"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "build_summary"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "stage_coverage"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "stage_report"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "stage_tqa"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "stage_triage"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:712-721"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:725-735"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "compute_delta"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "infer_public_hints"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "main"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "render_markdown"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "score_rubric"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "summarize"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "compute_delta"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "main"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "parse_args"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "render_markdown"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "score_rubric"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@651:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@680:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@686:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@723:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@726:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@779:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@807:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@813:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@818:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@824:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@837:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "E501@842:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "SIM102",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "SIM102@145:5"
+  },
+  {
+    "leaf": "quality",
+    "metric": "SIM102",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "SIM102@181:9"
+  },
+  {
+    "leaf": "quality",
+    "metric": "SIM102",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "SIM102@190:9"
+  },
+  {
+    "leaf": "quality",
+    "metric": "SIM102",
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "symbol": "SIM102@205:13"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "bool_low_signal"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "infer_assertion_types"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "infer_intent"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "main"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "main.evaluate"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_strict_delete_gate"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_branch_equiv_artifacts"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_confidence_gate_artifact"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "cyclomatic_complexity",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_coverage_artifacts"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "collect_node_coverage_runs"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "collect_suite_coverage_union"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "ensure_coverage_tool"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "main"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "main.evaluate"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_mutation_probe_kills"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_single_test_coverage"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_strict_delete_gate"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_branch_equiv_artifacts"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_confidence_gate_artifact"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_coverage_artifacts"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "function_nloc",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_mutation_artifacts"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "maintainability_index",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "<module>"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "collect_node_coverage_runs"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "collect_suite_coverage_union"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_mutation_probe_kills"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_single_test_coverage"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_strict_delete_gate"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_suite"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "run_suite_multi"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_branch_equiv_artifacts"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "write_coverage_artifacts"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1285-1292"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1322-1342"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:374-407"
+  },
+  {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:844-866"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@335:17"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@337:17"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@342:23"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@344:35"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@346:35"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@353:49"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@377:23"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@379:35"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@381:35"
+  },
+  {
+    "leaf": "quality",
+    "metric": "B023",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "B023@388:49"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1440:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1573:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1585:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1586:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1600:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1801:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1876:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@1940:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2101:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2114:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2328:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2445:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2455:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2461:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2467:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2472:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2477:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2482:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2487:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2493:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2504:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2510:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2516:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2522:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2528:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2534:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2540:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2545:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2552:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2574:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2699:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2783:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@2802:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@3022:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@3029:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@3030:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@3031:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "E501",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "E501@480:89"
+  },
+  {
+    "leaf": "quality",
+    "metric": "SIM108",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "SIM108@2180:9"
+  }
+]

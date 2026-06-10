@@ -74,6 +74,9 @@ def check_package(defects: list[str]) -> str:
         "scripts/check_release.py",
         "scripts/check_skill_fixtures.py",
         "scripts/check_vendored_common.py",
+        "scripts/self_audit.py",
+        "scripts/check_self_audit.py",
+        "scripts/self_audit_baseline.json",
         "shared/health_common.py",
     ]:
         if not (ROOT / path).exists():
