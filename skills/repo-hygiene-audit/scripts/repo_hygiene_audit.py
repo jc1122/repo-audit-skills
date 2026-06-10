@@ -68,6 +68,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Repo hygiene audit (advisory).",
         epilog="Thresholds are configurable via --config.",
     )
+    parser.add_argument("--format", choices=["json", "md"], default="json")
     parser.add_argument("--root")
     parser.add_argument("--out-dir")
     parser.add_argument(
@@ -82,16 +83,22 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         help="JSON file overriding thresholds.",
     )
-    parser.add_argument("--format", choices=["json", "md"], default="json")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    if not args.root or not args.out_dir:
+
+    _missing = [
+        m for m, v in (("--root", args.root), ("--out-dir", args.out_dir)) if not v
+    ]
+    if _missing:
         print(
             json.dumps(
-                {"status": "error", "message": "--root and --out-dir are required"}
+                {
+                    "status": "error",
+                    "message": "Missing required: " + ", ".join(_missing),
+                }
             )
         )
         return hc.EXIT_ERROR
@@ -105,19 +112,10 @@ def main(argv: list[str] | None = None) -> int:
         return hc.EXIT_ERROR
 
     data = hc.write_findings(findings, args.out_dir, LEAF)
-    Path(args.out_dir, f"{LEAF}_report.md").write_text(
-        _reporting.render_report(findings), encoding="utf-8"
-    )
-    print(
-        json.dumps(
-            {
-                "status": "ok",
-                "findings": len(data),
-                "leaf": LEAF,
-                "git": git_repo,
-            }
-        )
-    )
+    report_path = Path(args.out_dir) / f"{LEAF}_report.md"
+    report_path.write_text(_reporting.render_report(findings), encoding="utf-8")
+    payload = {"status": "ok", "findings": len(data), "leaf": LEAF, "git": git_repo}
+    print(json.dumps(payload))
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 
 
