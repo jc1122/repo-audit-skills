@@ -30,7 +30,13 @@ def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
     files = sorted(p for p in root.rglob("*.py") if p.is_file())
     if not source_prefixes:
         return files
-    return [p for p in files if any(p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes)]
+    return [
+        p
+        for p in files
+        if any(
+            p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes
+        )
+    ]
 
 
 def _rel(name: str, root: Path) -> str:
@@ -47,22 +53,45 @@ def _run_jscpd(root: Path, files: list[Path], thresholds: dict, out_dir: Path) -
     rel_files = [p.relative_to(root).as_posix() for p in files]
     repo_root = Path(__file__).resolve().parents[3]
     jscpd_bin = repo_root / "node_modules" / ".bin" / "jscpd"
-    cmd = [str(jscpd_bin), "--silent", "--reporters", "json", "--output", str(out_dir),
-           "--min-tokens", str(thresholds["min_tokens"]), "--min-lines", str(thresholds["min_lines"]),
-           *rel_files]
+    cmd = [
+        str(jscpd_bin),
+        "--silent",
+        "--reporters",
+        "json",
+        "--output",
+        str(out_dir),
+        "--min-tokens",
+        str(thresholds["min_tokens"]),
+        "--min-lines",
+        str(thresholds["min_lines"]),
+        *rel_files,
+    ]
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
+        proc = subprocess.run(
+            cmd,
+            cwd=str(root),
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=TOOL_TIMEOUT,
+        )
     except FileNotFoundError as exc:
-        raise ToolError("local jscpd binary not found at node_modules/.bin/jscpd (run npm install)") from exc
+        raise ToolError(
+            "local jscpd binary not found at node_modules/.bin/jscpd (run npm install)"
+        ) from exc
     except subprocess.TimeoutExpired as exc:
         raise ToolError(f"jscpd timed out after {TOOL_TIMEOUT}s") from exc
     report_path = out_dir / "jscpd-report.json"
     if not report_path.exists():
-        raise ToolError(f"jscpd produced no report: {proc.stderr.strip() or proc.stdout.strip()}")
+        raise ToolError(
+            f"jscpd produced no report: {proc.stderr.strip() or proc.stdout.strip()}"
+        )
     return json.loads(report_path.read_text(encoding="utf-8"))
 
 
-def _findings_from_report(report: dict, root: Path, thresholds: dict) -> list[hc.Finding]:
+def _findings_from_report(
+    report: dict, root: Path, thresholds: dict
+) -> list[hc.Finding]:
     findings: list[hc.Finding] = []
     min_tokens = thresholds["min_tokens"]
     for dup in report.get("duplicates", []):
@@ -72,19 +101,28 @@ def _findings_from_report(report: dict, root: Path, thresholds: dict) -> list[hc
         signal = "MERGE" if p1 == p2 else "EXTRACT"
         severity = "high" if tokens > 3 * min_tokens else "medium"
         symbol = f"{p2}:{sf['start']}-{sf['end']}"
-        findings.append(hc.Finding(
-            leaf=LEAF, signal=signal, severity=severity, path=p1,
-            line_start=int(ff["start"]), line_end=int(ff["end"]), symbol=symbol,
-            metric_name="duplicate_tokens", metric_value=float(tokens),
-            metric_threshold=float(min_tokens),
-            evidence_tool="jscpd",
-            evidence_raw=f"{p1}:{ff['start']}-{ff['end']} == {p2}:{sf['start']}-{sf['end']} ({tokens} tokens)",
-            confidence="high",
-            suggested_action=(
-                f"Extract shared code between {p1} and {p2}" if signal == "EXTRACT"
-                else f"Merge duplicated block within {p1}"
-            ),
-        ))
+        findings.append(
+            hc.Finding(
+                leaf=LEAF,
+                signal=signal,
+                severity=severity,
+                path=p1,
+                line_start=int(ff["start"]),
+                line_end=int(ff["end"]),
+                symbol=symbol,
+                metric_name="duplicate_tokens",
+                metric_value=float(tokens),
+                metric_threshold=float(min_tokens),
+                evidence_tool="jscpd",
+                evidence_raw=f"{p1}:{ff['start']}-{ff['end']} == {p2}:{sf['start']}-{sf['end']} ({tokens} tokens)",
+                confidence="high",
+                suggested_action=(
+                    f"Extract shared code between {p1} and {p2}"
+                    if signal == "EXTRACT"
+                    else f"Merge duplicated block within {p1}"
+                ),
+            )
+        )
     return findings
 
 
@@ -109,7 +147,9 @@ def render_report(findings: list[hc.Finding]) -> str:
     for signal in sorted(by_signal):
         lines.append(f"## {signal} ({len(by_signal[signal])})")
         for f in by_signal[signal]:
-            lines.append(f"- `{f.path}:{f.line_start}` ↔ `{f.symbol}` — {f.metric_value:g} tokens [{f.severity}]")
+            lines.append(
+                f"- `{f.path}:{f.line_start}` ↔ `{f.symbol}` — {f.metric_value:g} tokens [{f.severity}]"
+            )
         lines.append("")
     return "\n".join(lines) + "\n"
 
@@ -122,22 +162,37 @@ def load_thresholds(config_path: str | None) -> dict:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Deterministic duplication audit (advisory).")
+    parser = argparse.ArgumentParser(
+        description="Deterministic duplication audit (advisory)."
+    )
     parser.add_argument("--root")
-    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes",
-                        help="Path prefix(es) relative to --root to include. Repeatable.")
+    parser.add_argument(
+        "--source-prefix",
+        action="append",
+        default=[],
+        dest="source_prefixes",
+        help="Path prefix(es) relative to --root to include. Repeatable.",
+    )
     parser.add_argument("--exclude", action="append", default=[])
     parser.add_argument("--out-dir")
-    parser.add_argument("--config", help="JSON file overriding thresholds (min_tokens, min_lines).")
+    parser.add_argument(
+        "--config", help="JSON file overriding thresholds (min_tokens, min_lines)."
+    )
     parser.add_argument("--format", choices=["json", "md"], default="json")
-    parser.add_argument("--simulate-missing-tool", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--simulate-missing-tool", action="store_true", help=argparse.SUPPRESS
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.root or not args.out_dir:
-        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
+        print(
+            json.dumps(
+                {"status": "error", "message": "--root and --out-dir are required"}
+            )
+        )
         return hc.EXIT_ERROR
     try:
         if args.simulate_missing_tool:
@@ -148,7 +203,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
     data = hc.write_findings(findings, args.out_dir, LEAF)
-    Path(args.out_dir, "duplication_report.md").write_text(render_report(findings), encoding="utf-8")
+    Path(args.out_dir, "duplication_report.md").write_text(
+        render_report(findings), encoding="utf-8"
+    )
     print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 

@@ -31,9 +31,17 @@ EXACT_EQ_ASSERT_RE = re.compile(
     re.MULTILINE,
 )
 # Structural pytest markers that dominate counts but carry no test-category signal.
-PYTEST_BUILTIN_MARKERS = frozenset({
-    "parametrize", "skip", "skipif", "xfail", "usefixtures", "filterwarnings", "timeout",
-})
+PYTEST_BUILTIN_MARKERS = frozenset(
+    {
+        "parametrize",
+        "skip",
+        "skipif",
+        "xfail",
+        "usefixtures",
+        "filterwarnings",
+        "timeout",
+    }
+)
 DEFAULT_INTERNAL_IMPORT_PATTERNS = (
     r"from\s+[\w\.]+\.(?:core|internal|impl|private)\s+import",
     r"import\s+[\w\.]+\.(?:core|internal|impl|private)\b",
@@ -102,12 +110,16 @@ def infer_public_hints(root: Path) -> list[str]:
     initializers and use discovered public names as `name(` hints.
     """
     hints: set[str] = set()
-    init_files = sorted(root.glob("src/**/__init__.py")) + sorted(root.glob("*/__init__.py"))
+    init_files = sorted(root.glob("src/**/__init__.py")) + sorted(
+        root.glob("*/__init__.py")
+    )
     for init_file in init_files:
         if ".venv" in init_file.parts:
             continue
         try:
-            tree = ast.parse(init_file.read_text(encoding="utf-8"), filename=str(init_file))
+            tree = ast.parse(
+                init_file.read_text(encoding="utf-8"), filename=str(init_file)
+            )
         except Exception:
             continue
 
@@ -146,7 +158,9 @@ def _collect_pytestmark_names(tree: ast.AST) -> list[str]:
     for node in getattr(tree, "body", []):
         if not isinstance(node, ast.Assign):
             continue
-        if not any(isinstance(t, ast.Name) and t.id == "pytestmark" for t in node.targets):
+        if not any(
+            isinstance(t, ast.Name) and t.id == "pytestmark" for t in node.targets
+        ):
             continue
         _extract_mark_names(node.value, names)
     return names
@@ -222,13 +236,19 @@ def analyze_file(
         text = path.read_text(encoding="utf-8")
         tree = ast.parse(text, filename=str(path))
     except (SyntaxError, UnicodeDecodeError) as exc:
-        print(f"warning: skipping unparseable file {path}: {exc}", file=sys.stderr, flush=True)
+        print(
+            f"warning: skipping unparseable file {path}: {exc}",
+            file=sys.stderr,
+            flush=True,
+        )
         return FileMetrics(path=str(path))
     markers = Counter(MARKER_RE.findall(text))
     markers.update(_collect_pytestmark_names(tree))
     raises_total, raises_with_match, raises_broad_tuple = _count_pytest_raises(tree)
     public_call_hints = sum(text.count(hint) for hint in public_hints)
-    internal_imports = sum(len(pattern.findall(text)) for pattern in internal_import_res)
+    internal_imports = sum(
+        len(pattern.findall(text)) for pattern in internal_import_res
+    )
     return FileMetrics(
         path=str(path),
         test_functions=_count_test_functions(tree),
@@ -245,12 +265,18 @@ def analyze_file(
     )
 
 
-def collect_test_files(root: Path, test_dirs: list[str], test_globs: list[str]) -> list[Path]:
+def collect_test_files(
+    root: Path, test_dirs: list[str], test_globs: list[str]
+) -> list[Path]:
     files: set[Path] = set()
     for test_dir in test_dirs:
         base = root / test_dir
         if not base.exists():
-            print(f"warning: test dir not found, skipping: {base}", file=sys.stderr, flush=True)
+            print(
+                f"warning: test dir not found, skipping: {base}",
+                file=sys.stderr,
+                flush=True,
+            )
             continue
         for glob_pattern in test_globs:
             for path in base.rglob(glob_pattern):
@@ -287,13 +313,19 @@ def summarize(file_metrics: list[FileMetrics]) -> dict[str, Any]:
             "raises_with_match": raises_match,
             "raises_broad_tuple": broad_tuple_raises,
             "hypothesis_given_calls": sum(m.given_count for m in file_metrics),
-            "expected_literal_count": sum(m.expected_literal_count for m in file_metrics),
+            "expected_literal_count": sum(
+                m.expected_literal_count for m in file_metrics
+            ),
             "exact_eq_assert_count": sum(m.exact_eq_assert_count for m in file_metrics),
         },
         "ratios": {
-            "private_to_public_call_ratio": round(total_private / max(total_public, 1), 3),
+            "private_to_public_call_ratio": round(
+                total_private / max(total_public, 1), 3
+            ),
             "raises_with_match_ratio": round(raises_match / max(total_raises, 1), 3),
-            "broad_tuple_raises_ratio": round(broad_tuple_raises / max(total_raises, 1), 3),
+            "broad_tuple_raises_ratio": round(
+                broad_tuple_raises / max(total_raises, 1), 3
+            ),
         },
         "classification_counts": dict(classifications),
         "markers": dict(marker_totals),
@@ -311,10 +343,16 @@ def parse_coverage_json(cov_json_path: str) -> dict[str, float]:
         if "covered_branches" in totals and "num_branches" in totals:
             num = totals["num_branches"]
             if num > 0:
-                result["branch_pct"] = round(100.0 * totals["covered_branches"] / num, 2)
+                result["branch_pct"] = round(
+                    100.0 * totals["covered_branches"] / num, 2
+                )
         return result
     except (json.JSONDecodeError, FileNotFoundError, KeyError, TypeError) as exc:
-        print(f"warning: could not parse coverage JSON {cov_json_path}: {exc}", file=sys.stderr, flush=True)
+        print(
+            f"warning: could not parse coverage JSON {cov_json_path}: {exc}",
+            file=sys.stderr,
+            flush=True,
+        )
         return {}
 
 
@@ -345,57 +383,102 @@ def score_rubric(
         cc_score, cc_rationale = 1, "Tests exist but no public call hints"
     else:
         cc_score, cc_rationale = 0, "No test functions detected"
-    scores["Contract Coverage"] = {"score": cc_score, "max": 3, "rationale": cc_rationale}
+    scores["Contract Coverage"] = {
+        "score": cc_score,
+        "max": 3,
+        "rationale": cc_rationale,
+    }
 
     # 2. Behavior-First Focus
     priv_pub_ratio = ratios["private_to_public_call_ratio"]
     if priv_pub_ratio < 0.3 and totals["public_call_hints"] > 0:
-        bf_score, bf_rationale = 3, f"Low private/public ratio ({priv_pub_ratio}) with public hints"
+        bf_score, bf_rationale = (
+            3,
+            f"Low private/public ratio ({priv_pub_ratio}) with public hints",
+        )
     elif priv_pub_ratio < 0.5:
         bf_score, bf_rationale = 2, f"Moderate private/public ratio ({priv_pub_ratio})"
     elif priv_pub_ratio < 1.0:
         bf_score, bf_rationale = 1, f"High private/public ratio ({priv_pub_ratio})"
     else:
         bf_score, bf_rationale = 0, f"Very high private/public ratio ({priv_pub_ratio})"
-    scores["Behavior-First Focus"] = {"score": bf_score, "max": 3, "rationale": bf_rationale}
+    scores["Behavior-First Focus"] = {
+        "score": bf_score,
+        "max": 3,
+        "rationale": bf_rationale,
+    }
 
     # 3. White-Box Justification
     has_white_box = classes.get("white_box_candidate", 0) > 0
     has_internals = totals["internal_imports"] > 0 or totals["private_method_calls"] > 0
     if has_white_box and has_internals and priv_pub_ratio < 0.5:
-        wb_score, wb_rationale = 3, "White-box tests present with controlled internal coupling"
+        wb_score, wb_rationale = (
+            3,
+            "White-box tests present with controlled internal coupling",
+        )
     elif priv_pub_ratio < 1.0:
         wb_score, wb_rationale = 2, "Private/public ratio under control"
     elif has_white_box:
         wb_score, wb_rationale = 1, "White-box tests present but high internal coupling"
     else:
         wb_score, wb_rationale = 0, "No white-box classification signal"
-    scores["White-Box Justification"] = {"score": wb_score, "max": 3, "rationale": wb_rationale}
+    scores["White-Box Justification"] = {
+        "score": wb_score,
+        "max": 3,
+        "rationale": wb_rationale,
+    }
 
     # 4. Determinism/Isolation
     if totals["hypothesis_given_calls"] > 0:
-        di_score, di_rationale = 3, "Hypothesis property tests detected (seed discipline)"
+        di_score, di_rationale = (
+            3,
+            "Hypothesis property tests detected (seed discipline)",
+        )
     else:
         di_score, di_rationale = 2, "Default (static analysis cannot fully assess)"
-    scores["Determinism/Isolation"] = {"score": di_score, "max": 3, "rationale": di_rationale}
+    scores["Determinism/Isolation"] = {
+        "score": di_score,
+        "max": 3,
+        "rationale": di_rationale,
+    }
 
     # 5. Assertion Quality
     match_ratio = ratios["raises_with_match_ratio"]
-    if match_ratio == 1.0 and totals["exact_eq_assert_count"] > 0 and totals["raises_total"] > 0:
-        aq_score, aq_rationale = 3, "All raises use match and exact-equality asserts present"
+    if (
+        match_ratio == 1.0
+        and totals["exact_eq_assert_count"] > 0
+        and totals["raises_total"] > 0
+    ):
+        aq_score, aq_rationale = (
+            3,
+            "All raises use match and exact-equality asserts present",
+        )
     elif match_ratio >= 0.5:
         aq_score, aq_rationale = 2, f"Raises match ratio {match_ratio} >= 0.5"
     elif totals["raises_total"] > 0:
-        aq_score, aq_rationale = 1, f"Raises present but low match ratio ({match_ratio})"
+        aq_score, aq_rationale = (
+            1,
+            f"Raises present but low match ratio ({match_ratio})",
+        )
     else:
         aq_score, aq_rationale = 0, "No pytest.raises calls detected"
-    scores["Assertion Quality"] = {"score": aq_score, "max": 3, "rationale": aq_rationale}
+    scores["Assertion Quality"] = {
+        "score": aq_score,
+        "max": 3,
+        "rationale": aq_rationale,
+    }
 
     # 6. Pyramid/Scope
     n_files = totals["files"]
-    has_both = classes.get("white_box_candidate", 0) > 0 and classes.get("black_box_candidate", 0) > 0
+    has_both = (
+        classes.get("white_box_candidate", 0) > 0
+        and classes.get("black_box_candidate", 0) > 0
+    )
     if n_files >= 4 and has_both:
-        ps_score, ps_rationale = 3, f"{n_files} files with both white-box and black-box candidates"
+        ps_score, ps_rationale = (
+            3,
+            f"{n_files} files with both white-box and black-box candidates",
+        )
     elif n_files >= 3:
         ps_score, ps_rationale = 2, f"{n_files} files (layering signal)"
     elif n_files >= 2:
@@ -413,13 +496,21 @@ def score_rubric(
         branch_pct = cov_data.get("branch_pct", 0.0)
         if stmt_pct >= 85 and branch_pct >= 75:
             cm_score = 3
-            cm_rationale = f"Statement {stmt_pct:.1f}% >= 85% and branch {branch_pct:.1f}% >= 75%"
+            cm_rationale = (
+                f"Statement {stmt_pct:.1f}% >= 85% and branch {branch_pct:.1f}% >= 75%"
+            )
         elif stmt_pct >= 85:
             cm_score = 2
-            cm_rationale = f"Statement {stmt_pct:.1f}% >= 85% (branch {branch_pct:.1f}% < 75%)"
+            cm_rationale = (
+                f"Statement {stmt_pct:.1f}% >= 85% (branch {branch_pct:.1f}% < 75%)"
+            )
         else:
             cm_rationale = f"Statement {stmt_pct:.1f}% < 85%"
-    scores["Coverage/Mutation"] = {"score": cm_score, "max": 3, "rationale": cm_rationale}
+    scores["Coverage/Mutation"] = {
+        "score": cm_score,
+        "max": 3,
+        "rationale": cm_rationale,
+    }
 
     # 8. Non-Functional
     benchmark_count = markers.get("benchmark", 0)
@@ -451,7 +542,11 @@ def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str
         cur_val = cur_totals.get(key, 0)
         base_val = base_totals.get(key, 0)
         if cur_val != base_val:
-            totals_delta[key] = {"before": base_val, "after": cur_val, "change": cur_val - base_val}
+            totals_delta[key] = {
+                "before": base_val,
+                "after": cur_val,
+                "change": cur_val - base_val,
+            }
     delta["totals"] = totals_delta
 
     # Compare ratios
@@ -474,7 +569,11 @@ def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str
         cur_val = cur_classes.get(key, 0)
         base_val = base_classes.get(key, 0)
         if cur_val != base_val:
-            class_delta[key] = {"before": base_val, "after": cur_val, "change": cur_val - base_val}
+            class_delta[key] = {
+                "before": base_val,
+                "after": cur_val,
+                "change": cur_val - base_val,
+            }
     delta["classification_counts"] = class_delta
 
     # Compare rubric scores if both have them
@@ -486,12 +585,19 @@ def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str
             cur_v = cur_rubric.get(key)
             base_v = base_rubric.get(key)
             if cur_v != base_v:
-                rubric_delta[key] = {"before": base_v if base_v is not None else "N/A", "after": cur_v}
+                rubric_delta[key] = {
+                    "before": base_v if base_v is not None else "N/A",
+                    "after": cur_v,
+                }
             continue
         cur_score = cur_rubric.get(key, {}).get("score")
         base_score = base_rubric.get(key, {}).get("score")
         if cur_score is not None and base_score is not None and cur_score != base_score:
-            rubric_delta[key] = {"before": base_score, "after": cur_score, "change": cur_score - base_score}
+            rubric_delta[key] = {
+                "before": base_score,
+                "after": cur_score,
+                "change": cur_score - base_score,
+            }
     delta["rubric_scores"] = rubric_delta
 
     return delta
@@ -531,7 +637,11 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         "## Ratios",
         "- Private/Public call ratio: "
-        + (str(ratios["private_to_public_call_ratio"]) if config["public_hints"] else "N/A (no public hints)"),
+        + (
+            str(ratios["private_to_public_call_ratio"])
+            if config["public_hints"]
+            else "N/A (no public hints)"
+        ),
         f"- Raises with match ratio: {ratios['raises_with_match_ratio']}",
         f"- Broad tuple raises ratio: {ratios['broad_tuple_raises_ratio']}",
         "",
@@ -557,18 +667,24 @@ def render_markdown(report: dict[str, Any]) -> str:
         )
         lines.append(f"- Structural (filtered from signal): {summary}")
 
-    lines.extend([
-        "",
-        "## Flags",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Flags",
+        ]
+    )
 
     flags: list[str] = []
     if not config["public_hints"]:
-        flags.append("- Public call hints list is empty; black-box classification is disabled for this run.")
+        flags.append(
+            "- Public call hints list is empty; black-box classification is disabled for this run."
+        )
     if config["public_hints"] and ratios["private_to_public_call_ratio"] > 1.0:
         flags.append("- High private API coupling signal (private/public ratio > 1).")
     if totals["raises_total"] > 0 and ratios["raises_with_match_ratio"] < 0.5:
-        flags.append("- Low exception precision signal (fewer than half of raises use message matching).")
+        flags.append(
+            "- Low exception precision signal (fewer than half of raises use message matching)."
+        )
     if totals["raises_total"] > 0 and ratios["broad_tuple_raises_ratio"] > 0.25:
         flags.append("- Broad exception tuple usage may hide contract precision.")
     if classes.get("change_indicator_candidate", 0) > 0:
@@ -581,17 +697,24 @@ def render_markdown(report: dict[str, Any]) -> str:
     # Rubric Scores section
     rubric = report.get("rubric_scores")
     if rubric:
-        lines.extend([
-            "",
-            "## Rubric Scores",
-            "",
-            "| Dimension | Score | Max | Rationale |",
-            "|-----------|-------|-----|-----------|",
-        ])
+        lines.extend(
+            [
+                "",
+                "## Rubric Scores",
+                "",
+                "| Dimension | Score | Max | Rationale |",
+                "|-----------|-------|-----|-----------|",
+            ]
+        )
         dimension_order = [
-            "Contract Coverage", "Behavior-First Focus", "White-Box Justification",
-            "Determinism/Isolation", "Assertion Quality", "Pyramid/Scope",
-            "Coverage/Mutation", "Non-Functional",
+            "Contract Coverage",
+            "Behavior-First Focus",
+            "White-Box Justification",
+            "Determinism/Isolation",
+            "Assertion Quality",
+            "Pyramid/Scope",
+            "Coverage/Mutation",
+            "Non-Functional",
         ]
         for dim in dimension_order:
             entry = rubric.get(dim, {})
@@ -599,16 +722,20 @@ def render_markdown(report: dict[str, Any]) -> str:
                 lines.append(
                     f"| {dim} | {entry['score']} | {entry['max']} | {entry['rationale']} |"
                 )
-        lines.append(f"| **Total** | **{rubric.get('total', '?')}** | **{rubric.get('max_total', 24)}** | |")
+        lines.append(
+            f"| **Total** | **{rubric.get('total', '?')}** | **{rubric.get('max_total', 24)}** | |"
+        )
 
     # Delta Report section
     delta = report.get("delta")
     if delta:
-        lines.extend([
-            "",
-            "## Delta Report",
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                "## Delta Report",
+                "",
+            ]
+        )
         # Totals changes
         totals_d = delta.get("totals", {})
         if totals_d:
@@ -616,7 +743,9 @@ def render_markdown(report: dict[str, Any]) -> str:
             for key, info in sorted(totals_d.items()):
                 change = info["change"]
                 sign = "+" if change > 0 else ""
-                lines.append(f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})")
+                lines.append(
+                    f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
+                )
             lines.append("")
         # Ratio changes
         ratios_d = delta.get("ratios", {})
@@ -632,7 +761,9 @@ def render_markdown(report: dict[str, Any]) -> str:
             for key, info in sorted(class_d.items()):
                 change = info["change"]
                 sign = "+" if change > 0 else ""
-                lines.append(f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})")
+                lines.append(
+                    f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
+                )
             lines.append("")
         # Rubric score changes
         rubric_d = delta.get("rubric_scores", {})
@@ -644,7 +775,9 @@ def render_markdown(report: dict[str, Any]) -> str:
                 else:
                     change = info.get("change", "")
                     sign = "+" if isinstance(change, int) and change > 0 else ""
-                    lines.append(f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})")
+                    lines.append(
+                        f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
+                    )
             lines.append("")
 
     return "\n".join(lines) + "\n"
@@ -652,7 +785,9 @@ def render_markdown(report: dict[str, Any]) -> str:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Static test quality inventory.")
-    parser.add_argument("--root", default=".", help="Repository root path (default: current directory).")
+    parser.add_argument(
+        "--root", default=".", help="Repository root path (default: current directory)."
+    )
     parser.add_argument(
         "--tests-dir",
         action="append",
@@ -690,8 +825,12 @@ def parse_args() -> argparse.Namespace:
             "Defaults to the built-in EXACT_EQ_ASSERT_RE pattern."
         ),
     )
-    parser.add_argument("--json-out", default="", help="Optional JSON report output path.")
-    parser.add_argument("--md-out", default="", help="Optional markdown summary output path.")
+    parser.add_argument(
+        "--json-out", default="", help="Optional JSON report output path."
+    )
+    parser.add_argument(
+        "--md-out", default="", help="Optional markdown summary output path."
+    )
     parser.add_argument(
         "--cov-json",
         default="",
@@ -720,7 +859,11 @@ def main() -> int:
         try:
             internal_import_res.append(re.compile(pattern))
         except re.error as exc:
-            print(f"error: invalid --internal-import-pattern regex {pattern!r}: {exc}", file=sys.stderr, flush=True)
+            print(
+                f"error: invalid --internal-import-pattern regex {pattern!r}: {exc}",
+                file=sys.stderr,
+                flush=True,
+            )
             return 1
 
     public_hints = _split_csv_values(args.public_hint)
@@ -735,11 +878,18 @@ def main() -> int:
     try:
         exact_eq_re = re.compile(exact_eq_pattern, re.MULTILINE)
     except re.error as exc:
-        print(f"error: invalid --exact-eq-pattern regex {exact_eq_pattern!r}: {exc}", file=sys.stderr, flush=True)
+        print(
+            f"error: invalid --exact-eq-pattern regex {exact_eq_pattern!r}: {exc}",
+            file=sys.stderr,
+            flush=True,
+        )
         return 1
 
     files = collect_test_files(root, test_dirs, test_globs)
-    metrics = [analyze_file(path, internal_import_res, public_hints, exact_eq_re) for path in files]
+    metrics = [
+        analyze_file(path, internal_import_res, public_hints, exact_eq_re)
+        for path in files
+    ]
     report = {
         "root": str(root),
         "config": {

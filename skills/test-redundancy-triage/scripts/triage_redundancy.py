@@ -60,7 +60,9 @@ class MutationProbe:
     new: str
 
 
-def run_cmd(cmd: list[str], *, cwd: Path, env: dict[str, str] | None = None, timeout: int = 900) -> dict[str, Any]:
+def run_cmd(
+    cmd: list[str], *, cwd: Path, env: dict[str, str] | None = None, timeout: int = 900
+) -> dict[str, Any]:
     t0 = time.time()
     try:
         proc = subprocess.run(
@@ -80,9 +82,17 @@ def run_cmd(cmd: list[str], *, cwd: Path, env: dict[str, str] | None = None, tim
     except subprocess.TimeoutExpired as exc:
         out = ""
         if exc.stdout:
-            out += exc.stdout if isinstance(exc.stdout, str) else exc.stdout.decode("utf-8", errors="ignore")
+            out += (
+                exc.stdout
+                if isinstance(exc.stdout, str)
+                else exc.stdout.decode("utf-8", errors="ignore")
+            )
         if exc.stderr:
-            out += exc.stderr if isinstance(exc.stderr, str) else exc.stderr.decode("utf-8", errors="ignore")
+            out += (
+                exc.stderr
+                if isinstance(exc.stderr, str)
+                else exc.stderr.decode("utf-8", errors="ignore")
+            )
         out += f"\n[TIMEOUT] command exceeded {timeout}s: {' '.join(cmd)}"
         return {
             "returncode": 124,
@@ -171,7 +181,9 @@ def infer_assertion_types(fn: ast.AST, calls: set[str], src: str) -> set[str]:
         if isinstance(n, ast.With):
             for item in n.items:
                 ctx = item.context_expr
-                if isinstance(ctx, ast.Call) and dotted_name(ctx.func).endswith("raises"):
+                if isinstance(ctx, ast.Call) and dotted_name(ctx.func).endswith(
+                    "raises"
+                ):
                     out.add("exception")
 
     if "isinstance" in calls:
@@ -220,9 +232,30 @@ def tokenize_normalized(src: str) -> frozenset:
     src = re.sub(r"\b\d+\b", "NUM", src)
     tokens = re.findall(r"[a-zA-Z_]\w*", src)
     stopwords = {
-        "self", "def", "return", "import", "from", "assert", "for", "in",
-        "if", "not", "and", "or", "True", "False", "None", "with", "as",
-        "class", "pass", "raise", "else", "elif", "try", "except",
+        "self",
+        "def",
+        "return",
+        "import",
+        "from",
+        "assert",
+        "for",
+        "in",
+        "if",
+        "not",
+        "and",
+        "or",
+        "True",
+        "False",
+        "None",
+        "with",
+        "as",
+        "class",
+        "pass",
+        "raise",
+        "else",
+        "elif",
+        "try",
+        "except",
     }
     return frozenset(t for t in tokens if len(t) > 2 and t not in stopwords)
 
@@ -232,7 +265,9 @@ def jaccard_sim(a: frozenset, b: frozenset) -> float:
     return len(a & b) / union_size if union_size else 1.0
 
 
-def infer_entrypoint(calls: set[str], src: str, file_fallback: str = "", class_fallback: str = "") -> str:
+def infer_entrypoint(
+    calls: set[str], src: str, file_fallback: str = "", class_fallback: str = ""
+) -> str:
     # Generic fallback: no repo-specific API name detection.
     # When a file_fallback is provided (the test file's repo-relative path),
     # tests are clustered by file/class to keep grouping broad enough to
@@ -248,7 +283,9 @@ def infer_entrypoint(calls: set[str], src: str, file_fallback: str = "", class_f
     return "unknown"
 
 
-def infer_intent(test_name: str, entrypoint: str, assertions: set[str], src: str) -> str:
+def infer_intent(
+    test_name: str, entrypoint: str, assertions: set[str], src: str
+) -> str:
     low = test_name.lower()
     if "version" in low:
         return "introspection"
@@ -265,7 +302,13 @@ def infer_intent(test_name: str, entrypoint: str, assertions: set[str], src: str
     if "__del__" in low or "cleanup" in low or "teardown" in low or "lifecycle" in low:
         return "lifecycle_contract"
     # FFI/C-library tests
-    if "cdll" in low or "ctypes" in low or "ffi" in low or "library" in low or "lib_stream" in low:
+    if (
+        "cdll" in low
+        or "ctypes" in low
+        or "ffi" in low
+        or "library" in low
+        or "lib_stream" in low
+    ):
         return "ffi_contract"
     # Check source for monkeypatch usage
     if "monkeypatch" in src.lower():
@@ -301,11 +344,17 @@ def parse_test_metadata(root: Path, suite_files: list[str]) -> list[TestMeta]:
                     relpath = str(path.relative_to(root))
                 except ValueError:
                     relpath = str(path)
-                nodeid = f"{relpath}::{cls}::{node.name}" if cls else f"{relpath}::{node.name}"
+                nodeid = (
+                    f"{relpath}::{cls}::{node.name}"
+                    if cls
+                    else f"{relpath}::{node.name}"
+                )
                 calls = extract_calls(node)
                 fn_src = ast.get_source_segment(src, node) or ""
                 assertions = infer_assertion_types(node, calls, fn_src)
-                entry = infer_entrypoint(calls, fn_src, file_fallback=relpath, class_fallback=cls)
+                entry = infer_entrypoint(
+                    calls, fn_src, file_fallback=relpath, class_fallback=cls
+                )
                 intent = infer_intent(node.name, entry, assertions, fn_src)
                 tests.append(
                     TestMeta(
@@ -330,11 +379,17 @@ def parse_test_metadata(root: Path, suite_files: list[str]) -> list[TestMeta]:
                     relpath = str(path.relative_to(root))
                 except ValueError:
                     relpath = str(path)
-                nodeid = f"{relpath}::{cls}::{node.name}" if cls else f"{relpath}::{node.name}"
+                nodeid = (
+                    f"{relpath}::{cls}::{node.name}"
+                    if cls
+                    else f"{relpath}::{node.name}"
+                )
                 calls = extract_calls(node)
                 fn_src = ast.get_source_segment(src, node) or ""
                 assertions = infer_assertion_types(node, calls, fn_src)
-                entry = infer_entrypoint(calls, fn_src, file_fallback=relpath, class_fallback=cls)
+                entry = infer_entrypoint(
+                    calls, fn_src, file_fallback=relpath, class_fallback=cls
+                )
                 intent = infer_intent(node.name, entry, assertions, fn_src)
                 tests.append(
                     TestMeta(
@@ -404,7 +459,9 @@ def build_runtime_env(
         env.update(extra_env)
     parts = []
     if allow_numba_stub:
-        probe = run_cmd([python_exe, "-c", "import numba"], cwd=root, env=env, timeout=60)
+        probe = run_cmd(
+            [python_exe, "-c", "import numba"], cwd=root, env=env, timeout=60
+        )
         if probe["returncode"] != 0:
             parts.append(str(ensure_numba_stub(out_dir)))
     parts.extend(discover_import_roots(root))
@@ -484,7 +541,9 @@ def run_suite_multi(
         return run_cmd(cmd, cwd=root, env=env, timeout=timeout)
 
 
-def resolve_and_validate_suite_paths(root: Path, raw_paths: list[str], *, arg_name: str) -> list[str]:
+def resolve_and_validate_suite_paths(
+    root: Path, raw_paths: list[str], *, arg_name: str
+) -> list[str]:
     """Resolve suite paths and enforce they are inside --root."""
     missing: list[str] = []
     outside: list[str] = []
@@ -553,7 +612,9 @@ def normalize_source_path_for_coverage(raw_path: str, root: Path) -> str:
     return norm
 
 
-def parse_coverage_json(json_path: Path, root: Path, source_prefix: str = "") -> tuple[set[str], set[str]]:
+def parse_coverage_json(
+    json_path: Path, root: Path, source_prefix: str = ""
+) -> tuple[set[str], set[str]]:
     if not json_path.exists():
         return set(), set()
 
@@ -605,9 +666,16 @@ def ensure_coverage_tool(
     - target_bootstrap: coverage installed into runtime PYTHONPATH target dir
     - unavailable: coverage could not be made available
     """
-    probe = run_cmd([python_exe, "-m", "coverage", "--version"], cwd=root, env=env, timeout=60)
+    probe = run_cmd(
+        [python_exe, "-m", "coverage", "--version"], cwd=root, env=env, timeout=60
+    )
     if probe["returncode"] == 0:
-        return python_exe, env, "system", "coverage tool available from requested interpreter"
+        return (
+            python_exe,
+            env,
+            "system",
+            "coverage tool available from requested interpreter",
+        )
 
     tools_dir = out_dir / "_runtime_tools"
     target_dir = tools_dir / "coverage_site"
@@ -615,7 +683,12 @@ def ensure_coverage_tool(
     target_dir.mkdir(parents=True, exist_ok=True)
 
     coverage_env = prepend_pythonpath(env, str(target_dir))
-    probe_target = run_cmd([python_exe, "-m", "coverage", "--version"], cwd=root, env=coverage_env, timeout=60)
+    probe_target = run_cmd(
+        [python_exe, "-m", "coverage", "--version"],
+        cwd=root,
+        env=coverage_env,
+        timeout=60,
+    )
     if probe_target["returncode"] != 0:
         install = run_cmd(
             [
@@ -633,13 +706,33 @@ def ensure_coverage_tool(
             timeout=max(300, timeout),
         )
         if install["returncode"] != 0:
-            return "", env, "unavailable", f"failed to install coverage: {install['output'][:300]}"
+            return (
+                "",
+                env,
+                "unavailable",
+                f"failed to install coverage: {install['output'][:300]}",
+            )
 
-    verify = run_cmd([python_exe, "-m", "coverage", "--version"], cwd=root, env=coverage_env, timeout=60)
+    verify = run_cmd(
+        [python_exe, "-m", "coverage", "--version"],
+        cwd=root,
+        env=coverage_env,
+        timeout=60,
+    )
     if verify["returncode"] == 0:
-        return python_exe, coverage_env, "target_bootstrap", "coverage installed in runtime PYTHONPATH target"
+        return (
+            python_exe,
+            coverage_env,
+            "target_bootstrap",
+            "coverage installed in runtime PYTHONPATH target",
+        )
 
-    return "", env, "unavailable", f"coverage verification failed: {verify['output'][:300]}"
+    return (
+        "",
+        env,
+        "unavailable",
+        f"coverage verification failed: {verify['output'][:300]}",
+    )
 
 
 def run_single_test_coverage(
@@ -845,7 +938,9 @@ def write_coverage_artifacts(
                     "executed_branch_count": ranked.get("executed_branch_count", ""),
                     "unique_line_count": ranked.get("unique_line_count", ""),
                     "unique_branch_count": ranked.get("unique_branch_count", ""),
-                    "cross_suite_overlap_ratio": ranked.get("cross_suite_overlap_ratio", ""),
+                    "cross_suite_overlap_ratio": ranked.get(
+                        "cross_suite_overlap_ratio", ""
+                    ),
                     "source_ranked_csv": str(ranked_path) if ranked_path else "",
                     "status_note": note,
                     "error": "",
@@ -863,7 +958,9 @@ def write_coverage_artifacts(
             "comparator_status": "from_ranked",
             "coverage_python": "",
         }
-        (out_dir / "coverage_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        (out_dir / "coverage_summary.json").write_text(
+            json.dumps(summary, indent=2), encoding="utf-8"
+        )
         return {r["test_nodeid"]: r for r in rows}, summary
 
     coverage_python, coverage_env, coverage_mode, coverage_note = ensure_coverage_tool(
@@ -908,7 +1005,9 @@ def write_coverage_artifacts(
             "coverage_python": "",
             "status_note": coverage_note,
         }
-        (out_dir / "coverage_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        (out_dir / "coverage_summary.json").write_text(
+            json.dumps(summary, indent=2), encoding="utf-8"
+        )
         return {r["test_nodeid"]: r for r in rows}, summary
 
     nodeids = [t.nodeid for t in tests]
@@ -946,7 +1045,9 @@ def write_coverage_artifacts(
                 try:
                     results.append(fut.result())
                 except Exception as exc:
-                    results.append({"test_nodeid": "", "status": "error", "error": str(exc)})
+                    results.append(
+                        {"test_nodeid": "", "status": "error", "error": str(exc)}
+                    )
 
     by_nodeid = {r["test_nodeid"]: r for r in results if r.get("test_nodeid")}
     rows = []
@@ -984,10 +1085,16 @@ def write_coverage_artifacts(
         status_note = "coverage collected without comparator suite; overlap unavailable"
         if comparator["status"] == "ok":
             full_set = line_set | branch_set
-            overlap_value = round(len(full_set & comparator_union) / len(full_set), 6) if full_set else 1.0
+            overlap_value = (
+                round(len(full_set & comparator_union) / len(full_set), 6)
+                if full_set
+                else 1.0
+            )
             status_note = "coverage collected with comparator overlap"
         elif comparator["status"] == "failed":
-            status_note = "coverage collected; comparator suite failed so overlap unavailable"
+            status_note = (
+                "coverage collected; comparator suite failed so overlap unavailable"
+            )
 
         signal_available = run_row.get("status") in {"passed", "skipped"}
         if signal_available:
@@ -1028,7 +1135,9 @@ def write_coverage_artifacts(
         "comparator_runtime_ms": comparator["runtime_ms"],
         "comparator_error": comparator.get("error", ""),
     }
-    (out_dir / "coverage_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (out_dir / "coverage_summary.json").write_text(
+        json.dumps(summary, indent=2), encoding="utf-8"
+    )
     return {r["test_nodeid"]: r for r in rows}, summary
 
 
@@ -1078,7 +1187,12 @@ def write_mutation_artifacts(
     for t in tests:
         ranked = ranked_map.get(t.nodeid, {})
         has_mut_cols = bool(ranked) and any(
-            k in ranked for k in ("mutants_unique_to_api", "mutants_killed_api", "mutants_killed_non_api")
+            k in ranked
+            for k in (
+                "mutants_unique_to_api",
+                "mutants_killed_api",
+                "mutants_killed_non_api",
+            )
         )
         if has_mut_cols:
             available += 1
@@ -1124,7 +1238,9 @@ def write_mutation_artifacts(
         "ranked_csv_provided": bool(ranked_path),
         "ranked_csv_exists": bool(ranked_path and ranked_path.exists()),
     }
-    (out_dir / "mutation_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (out_dir / "mutation_summary.json").write_text(
+        json.dumps(summary, indent=2), encoding="utf-8"
+    )
 
 
 def as_bool(val: Any) -> bool:
@@ -1145,7 +1261,9 @@ def select_branch_anchor(
         return None
 
     # Prefer peers that are currently retained (non-delete decisions).
-    keep_peers = [p for p in peers if decision_by_nodeid.get(p.nodeid, "") != "DELETE_SAFE_HIGH"]
+    keep_peers = [
+        p for p in peers if decision_by_nodeid.get(p.nodeid, "") != "DELETE_SAFE_HIGH"
+    ]
     pool = keep_peers if keep_peers else peers
 
     ranked = sorted(
@@ -1219,9 +1337,13 @@ def collect_node_coverage_runs(
                 try:
                     results.append(fut.result())
                 except Exception as exc:
-                    results.append({"test_nodeid": "", "status": "error", "error": str(exc)})
+                    results.append(
+                        {"test_nodeid": "", "status": "error", "error": str(exc)}
+                    )
 
-    passed_or_skipped = sum(1 for r in results if r.get("status") in {"passed", "skipped"})
+    passed_or_skipped = sum(
+        1 for r in results if r.get("status") in {"passed", "skipped"}
+    )
     summary = {
         "mode": coverage_mode,
         "status_note": coverage_note,
@@ -1270,7 +1392,10 @@ def write_branch_equiv_artifacts(
     ]
 
     test_by_nodeid = {t.nodeid: t for t in tests}
-    decision_by_nodeid = {str(r.get("test_nodeid", "")): str(r.get("validation_decision", "")) for r in rows}
+    decision_by_nodeid = {
+        str(r.get("test_nodeid", "")): str(r.get("validation_decision", ""))
+        for r in rows
+    }
     pair_defs: list[tuple[str, str]] = []
     for r in rows:
         nodeid = str(r.get("test_nodeid", ""))
@@ -1279,10 +1404,19 @@ def write_branch_equiv_artifacts(
         if not as_bool(r.get("deselect_suite_pass", False)):
             continue
         decision = str(r.get("validation_decision", ""))
-        if decision not in {"DELETE_SAFE_HIGH", "MERGE_RECOMMENDED", "KEEP_FOR_SIGNAL", "KEEP_FOR_CONTRACT"}:
+        if decision not in {
+            "DELETE_SAFE_HIGH",
+            "MERGE_RECOMMENDED",
+            "KEEP_FOR_SIGNAL",
+            "KEEP_FOR_CONTRACT",
+        }:
             continue
         candidate = test_by_nodeid[nodeid]
-        peers = [p for p in by_cluster[(candidate.entrypoint, candidate.intent)] if p.nodeid != nodeid]
+        peers = [
+            p
+            for p in by_cluster[(candidate.entrypoint, candidate.intent)]
+            if p.nodeid != nodeid
+        ]
         anchor = select_branch_anchor(candidate, peers, decision_by_nodeid)
         if anchor:
             pair_defs.append((nodeid, anchor.nodeid))
@@ -1341,11 +1475,14 @@ def write_branch_equiv_artifacts(
         candidate_branches = set(candidate_cov.get("_branch_tokens", set()))
         anchor_branches = set(anchor_cov.get("_branch_tokens", set()))
 
-        comparable = (
-            candidate_status in {"passed", "skipped"}
-            and anchor_status in {"passed", "skipped"}
-        )
-        if candidate_status not in {"passed", "skipped"} or anchor_status not in {"passed", "skipped"}:
+        comparable = candidate_status in {"passed", "skipped"} and anchor_status in {
+            "passed",
+            "skipped",
+        }
+        if candidate_status not in {"passed", "skipped"} or anchor_status not in {
+            "passed",
+            "skipped",
+        }:
             all_tests_passed = False
 
         candidate_only = candidate_branches - anchor_branches
@@ -1354,7 +1491,11 @@ def write_branch_equiv_artifacts(
         branch_jaccard: float | str = ""
         exact_branch_match: bool | str = ""
         if comparable:
-            branch_jaccard = round(len(candidate_branches & anchor_branches) / len(union), 6) if union else 1.0
+            branch_jaccard = (
+                round(len(candidate_branches & anchor_branches) / len(union), 6)
+                if union
+                else 1.0
+            )
             exact_branch_match = candidate_branches == anchor_branches
             if exact_branch_match:
                 exact += 1
@@ -1432,11 +1573,17 @@ def write_branch_equiv_artifacts(
         "| candidate | anchor | exact_branch_match | jaccard | cand_only | anchor_only |",
         "|---|---|---:|---:|---:|---:|",
     ]
-    for r in sorted(report_rows, key=lambda rr: (str(rr.get("branch_jaccard", "")), str(rr.get("candidate", "")))):
+    for r in sorted(
+        report_rows,
+        key=lambda rr: (
+            str(rr.get("branch_jaccard", "")),
+            str(rr.get("candidate", "")),
+        ),
+    ):
         md.append(
             "| "
-            f"{r.get('candidate','')} | {r.get('anchor','')} | {r.get('exact_branch_match','')} | "
-            f"{r.get('branch_jaccard','')} | {r.get('candidate_only_branches','')} | {r.get('anchor_only_branches','')} |"
+            f"{r.get('candidate', '')} | {r.get('anchor', '')} | {r.get('exact_branch_match', '')} | "
+            f"{r.get('branch_jaccard', '')} | {r.get('candidate_only_branches', '')} | {r.get('anchor_only_branches', '')} |"
         )
     md_path.write_text("\n".join(md) + "\n", encoding="utf-8")
 
@@ -1462,7 +1609,9 @@ def bool_low_signal(
         ov = float(ranked.get("cross_suite_overlap_ratio", 1.0) or 1.0)
         return ul == 0 and ub == 0 and mu == 0 and ov >= 0.97
 
-    if coverage_row and str(coverage_row.get("coverage_signal_available", "")).lower() in {"true", "1"}:
+    if coverage_row and str(
+        coverage_row.get("coverage_signal_available", "")
+    ).lower() in {"true", "1"}:
         ov_raw = coverage_row.get("cross_suite_overlap_ratio", "")
         if ov_raw in {"", None}:
             return False
@@ -1470,7 +1619,13 @@ def bool_low_signal(
         ub = as_int(coverage_row.get("unique_branch_count", 0))
         ov = as_float(ov_raw)
         if ul == 0 and ub == 0 and ov >= 0.97:
-            complex_signals = {"exception", "mutability_contract", "dtype_contract", "array_equality", "topology_equality"}
+            complex_signals = {
+                "exception",
+                "mutability_contract",
+                "dtype_contract",
+                "array_equality",
+                "topology_equality",
+            }
             return len(meta.assertion_types & complex_signals) == 0
 
     # AST-only fallback, intentionally conservative.
@@ -1596,7 +1751,9 @@ def write_confidence_gate_artifact(
                 branch_jaccard = float(branch_jaccard_raw)
             except (TypeError, ValueError):
                 branch_jaccard = None
-        branch_high: bool | None = None if branch_jaccard is None else branch_jaccard >= 0.95
+        branch_high: bool | None = (
+            None if branch_jaccard is None else branch_jaccard >= 0.95
+        )
 
         dominated = as_bool_any(r.get("peer_superset_assertions", False))
 
@@ -1699,7 +1856,9 @@ def enforce_cluster_anchor(rows: list[dict[str, Any]]) -> None:
     for cluster_rows in clusters.values():
         if not cluster_rows:
             continue
-        if not all(r.get("validation_decision") == "DELETE_SAFE_HIGH" for r in cluster_rows):
+        if not all(
+            r.get("validation_decision") == "DELETE_SAFE_HIGH" for r in cluster_rows
+        ):
             continue
 
         anchor = max(
@@ -1748,18 +1907,24 @@ def load_mutation_probes_from_config(config_path: Path) -> list[MutationProbe]:
     try:
         raw = json.loads(config_path.read_text(encoding="utf-8"))
     except Exception as exc:
-        raise SystemExit(f"Failed to load mutation probes config {config_path}: {exc}") from exc
+        raise SystemExit(
+            f"Failed to load mutation probes config {config_path}: {exc}"
+        ) from exc
     probes: list[MutationProbe] = []
     for i, entry in enumerate(raw):
         try:
-            probes.append(MutationProbe(
-                probe_id=entry["probe_id"],
-                file=entry["file"],
-                old=entry["old"],
-                new=entry["new"],
-            ))
+            probes.append(
+                MutationProbe(
+                    probe_id=entry["probe_id"],
+                    file=entry["file"],
+                    old=entry["old"],
+                    new=entry["new"],
+                )
+            )
         except KeyError as exc:
-            raise SystemExit(f"Mutation probes config entry {i} missing required key {exc}") from exc
+            raise SystemExit(
+                f"Mutation probes config entry {i} missing required key {exc}"
+            ) from exc
     return probes
 
 
@@ -1770,12 +1935,17 @@ def apply_mutation_probe(overlay_root: Path, probe: MutationProbe) -> tuple[bool
     text = target.read_text(encoding="utf-8")
     count = text.count(probe.old)
     if count != 1:
-        return False, f"probe {probe.probe_id} replacement count mismatch: expected 1, got {count}"
+        return (
+            False,
+            f"probe {probe.probe_id} replacement count mismatch: expected 1, got {count}",
+        )
     target.write_text(text.replace(probe.old, probe.new, 1), encoding="utf-8")
     return True, ""
 
 
-def build_overlay_env(root: Path, env: dict[str, str], overlay_root: Path) -> dict[str, str]:
+def build_overlay_env(
+    root: Path, env: dict[str, str], overlay_root: Path
+) -> dict[str, str]:
     out = dict(env)
     existing = out.get("PYTHONPATH", "")
     root_import_roots = [Path(p) for p in discover_import_roots(root)]
@@ -1798,13 +1968,18 @@ def build_overlay_env(root: Path, env: dict[str, str], overlay_root: Path) -> di
     return out
 
 
-def stage_probe_file_overlay(root: Path, overlay_root: Path, probe: MutationProbe) -> tuple[bool, str]:
+def stage_probe_file_overlay(
+    root: Path, overlay_root: Path, probe: MutationProbe
+) -> tuple[bool, str]:
     """Copy only the mutated file (and package __init__.py chain) into overlay."""
     src_file = (root / probe.file).resolve()
     try:
         src_file.relative_to(root)
     except ValueError:
-        return False, f"probe {probe.probe_id} target must be inside --root: {probe.file}"
+        return (
+            False,
+            f"probe {probe.probe_id} target must be inside --root: {probe.file}",
+        )
     if not src_file.exists():
         return False, f"target file missing for probe {probe.probe_id}: {probe.file}"
 
@@ -1858,7 +2033,9 @@ def run_mutation_probe_kills(
     kills = 0
     applied_count = 0
     for probe in probes:
-        with tempfile.TemporaryDirectory(prefix=f"triage_probe_{probe.probe_id}_") as td:
+        with tempfile.TemporaryDirectory(
+            prefix=f"triage_probe_{probe.probe_id}_"
+        ) as td:
             overlay_root = Path(td)
             staged, stage_error = stage_probe_file_overlay(root, overlay_root, probe)
             if not staged:
@@ -1909,7 +2086,9 @@ def run_mutation_probe_kills(
             )
 
     failed_count = max(0, len(probes) - applied_count)
-    failed_ids = ", ".join(d["probe_id"] for d in details if not d.get("applied", False))
+    failed_ids = ", ".join(
+        d["probe_id"] for d in details if not d.get("applied", False)
+    )
 
     if applied_count == 0:
         return {
@@ -1965,7 +2144,11 @@ def run_strict_delete_gate(
     mutation_probe_count: int,
     mutation_max_drop: int,
 ) -> dict[str, Any]:
-    delete_rows = [r for r in rows if r.get("validation_decision") == "DELETE_SAFE_HIGH" and r.get("test_nodeid")]
+    delete_rows = [
+        r
+        for r in rows
+        if r.get("validation_decision") == "DELETE_SAFE_HIGH" and r.get("test_nodeid")
+    ]
     node_status: dict[str, str] = {}
     node_note: dict[str, str] = {}
     strict_rows: list[dict[str, Any]] = []
@@ -2014,7 +2197,9 @@ def run_strict_delete_gate(
             "mutation_probe_count": 0,
             "post_suite_files": post_suite_files,
         }
-        (out_dir / "strict_gate_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        (out_dir / "strict_gate_summary.json").write_text(
+            json.dumps(summary, indent=2), encoding="utf-8"
+        )
         return {"node_status": node_status, "node_note": node_note, "summary": summary}
 
     probes = probes_source[: max(0, mutation_probe_count)]
@@ -2030,17 +2215,28 @@ def run_strict_delete_gate(
     )
     baseline_probe_status = str(baseline_probe.get("status", "unknown"))
     baseline_probe_ok = baseline_probe_status == "ok"
-    baseline_kills = int(baseline_probe.get("kills", 0) or 0) if baseline_probe_ok else 0
+    baseline_kills = (
+        int(baseline_probe.get("kills", 0) or 0) if baseline_probe_ok else 0
+    )
 
     accepted: list[str] = []
-    ordered = sorted(delete_rows, key=lambda r: (r.get("entrypoint", ""), r.get("intent", ""), r.get("test_nodeid", "")))
+    ordered = sorted(
+        delete_rows,
+        key=lambda r: (
+            r.get("entrypoint", ""),
+            r.get("intent", ""),
+            r.get("test_nodeid", ""),
+        ),
+    )
     batches = chunked(ordered, max(1, batch_size))
     if max_batches > 0:
         batches = batches[:max_batches]
     processed_nodeids: set[str] = set()
 
     for batch_idx, batch in enumerate(batches, start=1):
-        batch_nodeids = [str(r.get("test_nodeid", "")) for r in batch if r.get("test_nodeid")]
+        batch_nodeids = [
+            str(r.get("test_nodeid", "")) for r in batch if r.get("test_nodeid")
+        ]
         processed_nodeids.update(batch_nodeids)
         pending = accepted + batch_nodeids
 
@@ -2095,7 +2291,10 @@ def run_strict_delete_gate(
         if probes:
             if not baseline_probe_ok:
                 mutation_pass = False
-                mutation_note = str(baseline_probe.get("error", "") or f"baseline mutation probe run failed ({baseline_probe_status})")
+                mutation_note = str(
+                    baseline_probe.get("error", "")
+                    or f"baseline mutation probe run failed ({baseline_probe_status})"
+                )
                 mutation_batch_status = "not_run"
                 mutation_applied = str(baseline_probe.get("applied_probes", ""))
                 mutation_failed_apply = str(baseline_probe.get("failed_to_apply", ""))
@@ -2115,7 +2314,10 @@ def run_strict_delete_gate(
                 mutation_failed_apply = str(batch_probe.get("failed_to_apply", ""))
                 if mutation_batch_status != "ok":
                     mutation_pass = False
-                    mutation_note = str(batch_probe.get("error", "") or f"batch mutation probe run failed ({mutation_batch_status})")
+                    mutation_note = str(
+                        batch_probe.get("error", "")
+                        or f"batch mutation probe run failed ({mutation_batch_status})"
+                    )
                     batch_kills = 0
                 else:
                     batch_kills = int(batch_probe.get("kills", 0) or 0)
@@ -2158,7 +2360,9 @@ def run_strict_delete_gate(
                 reasons.append(mutation_note or "mutation gate failed")
             if not reaudit_pass:
                 reasons.append("reaudit failed")
-            decision_note = "; ".join(reasons) if reasons else "strict gate rejected batch"
+            decision_note = (
+                "; ".join(reasons) if reasons else "strict gate rejected batch"
+            )
             decision = "rejected"
             for nodeid in batch_nodeids:
                 node_status[nodeid] = "failed"
@@ -2179,12 +2383,16 @@ def run_strict_delete_gate(
                 "mutation_batch_status": mutation_batch_status if probes else "",
                 "mutation_applied_probes": mutation_applied if probes else "",
                 "mutation_failed_to_apply": mutation_failed_apply if probes else "",
-                "mutation_baseline_kills": baseline_kills if probes and baseline_probe_ok else "",
+                "mutation_baseline_kills": baseline_kills
+                if probes and baseline_probe_ok
+                else "",
                 "mutation_batch_kills": batch_kills if probes else "",
                 "reaudit_pass": reaudit_pass,
                 "decision": decision,
                 "decision_note": decision_note,
-                "target_failure_excerpt": "" if target_pass else target_run["output"][:300],
+                "target_failure_excerpt": ""
+                if target_pass
+                else target_run["output"][:300],
                 "post_failure_excerpt": "" if post_pass else post_run["output"][:300],
                 "repeat_failure_excerpt": repeat_fail_excerpt,
             }
@@ -2205,16 +2413,26 @@ def run_strict_delete_gate(
         "processed_batches": len(strict_rows),
         "accepted_delete_count": sum(1 for s in node_status.values() if s == "passed"),
         "rejected_delete_count": sum(1 for s in node_status.values() if s == "failed"),
-        "not_processed_delete_count": sum(1 for s in node_status.values() if s == "not_processed"),
+        "not_processed_delete_count": sum(
+            1 for s in node_status.values() if s == "not_processed"
+        ),
         "baseline_probe_status": baseline_probe_status if probes else "",
         "baseline_probe_error": str(baseline_probe.get("error", "")) if probes else "",
-        "baseline_applied_probes": int(baseline_probe.get("applied_probes", 0) or 0) if probes else 0,
-        "baseline_failed_to_apply": int(baseline_probe.get("failed_to_apply", 0) or 0) if probes else 0,
-        "baseline_mutation_kills": baseline_kills if probes and baseline_probe_ok else "",
+        "baseline_applied_probes": int(baseline_probe.get("applied_probes", 0) or 0)
+        if probes
+        else 0,
+        "baseline_failed_to_apply": int(baseline_probe.get("failed_to_apply", 0) or 0)
+        if probes
+        else 0,
+        "baseline_mutation_kills": baseline_kills
+        if probes and baseline_probe_ok
+        else "",
         "mutation_probe_count": len(probes),
         "post_suite_files": post_suite_files,
     }
-    (out_dir / "strict_gate_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (out_dir / "strict_gate_summary.json").write_text(
+        json.dumps(summary, indent=2), encoding="utf-8"
+    )
     return {
         "node_status": node_status,
         "node_note": node_note,
@@ -2226,47 +2444,129 @@ def main() -> int:
     ap = argparse.ArgumentParser(
         description="Evaluate test redundancy with empirical deselection, coverage, mutation, and branch-equivalence signals.",
     )
-    ap.add_argument("--root", default=".", help="Repository root directory (default: current directory).")
-    ap.add_argument("--python", default="python3", help="Python interpreter to use. Accepts a PATH name or an absolute path (default: python3).")
-    ap.add_argument("--suite", action="append", default=[], help="Test file or directory to evaluate for redundancy (repeatable). At least one --suite is required.")
-    ap.add_argument("--comparator-suite", action="append", default=[], help="Additional test file or directory used only for cross-suite overlap calculation (repeatable, optional).")
-    ap.add_argument("--ranked-csv", default="", help="Path to a pre-computed ranked report CSV with coverage/mutation columns. When omitted, the script collects live coverage signal.")
-    ap.add_argument("--inventory-csv", default="", help="Path to an inventory CSV with assertion-type overrides per test nodeid (optional).")
-    ap.add_argument("--out-dir", default="artifacts/redundancy/api", help="Output directory for all generated artifacts (default: artifacts/redundancy/api).")
-    ap.add_argument("--source-prefix", default="", help="Restrict coverage token collection to source files whose repo-relative path starts with this prefix (e.g. src/mypackage/). When omitted, coverage is collected from all source files.")
-    ap.add_argument("--max-workers", type=int, default=max(1, min(os.cpu_count() or 2, 4)), help="Maximum parallel worker threads for candidate evaluation (default: min(cpu_count, 4)).")
-    ap.add_argument("--timeout-seconds", type=int, default=900, help="Per-candidate pytest timeout in seconds (default: 900).")
-    ap.add_argument("--strict-delete-gate", action="store_true", help="Enable the strict delete gate: repeated deselection, staged batch simulation, post-suite pass, and mutation-probe delta checks before confirming DELETE_SAFE_HIGH.")
-    ap.add_argument("--strict-repeats", type=int, default=3, help="Number of repeated deselection runs required for strict gate stability (default: 3).")
-    ap.add_argument("--strict-batch-size", type=int, default=8, help="Number of candidates to deselect together in each strict gate batch (default: 8).")
-    ap.add_argument("--strict-max-batches", type=int, default=0, help="Maximum number of batches to process in the strict gate; 0 means unlimited (default: 0).")
-    ap.add_argument("--strict-post-suite", action="append", default=[], help="Test file or directory to run as a full post-suite check after each strict gate batch (repeatable). Defaults to tests/ if it exists.")
-    ap.add_argument("--strict-mutation-probes", type=int, default=3, help="Maximum number of mutation probes to use from --mutation-probes-config (default: 3).")
-    ap.add_argument("--strict-mutation-max-drop", type=int, default=0, help="Maximum allowed drop in mutation kills between baseline and deselected batch (default: 0).")
+    ap.add_argument(
+        "--root",
+        default=".",
+        help="Repository root directory (default: current directory).",
+    )
+    ap.add_argument(
+        "--python",
+        default="python3",
+        help="Python interpreter to use. Accepts a PATH name or an absolute path (default: python3).",
+    )
+    ap.add_argument(
+        "--suite",
+        action="append",
+        default=[],
+        help="Test file or directory to evaluate for redundancy (repeatable). At least one --suite is required.",
+    )
+    ap.add_argument(
+        "--comparator-suite",
+        action="append",
+        default=[],
+        help="Additional test file or directory used only for cross-suite overlap calculation (repeatable, optional).",
+    )
+    ap.add_argument(
+        "--ranked-csv",
+        default="",
+        help="Path to a pre-computed ranked report CSV with coverage/mutation columns. When omitted, the script collects live coverage signal.",
+    )
+    ap.add_argument(
+        "--inventory-csv",
+        default="",
+        help="Path to an inventory CSV with assertion-type overrides per test nodeid (optional).",
+    )
+    ap.add_argument(
+        "--out-dir",
+        default="artifacts/redundancy/api",
+        help="Output directory for all generated artifacts (default: artifacts/redundancy/api).",
+    )
+    ap.add_argument(
+        "--source-prefix",
+        default="",
+        help="Restrict coverage token collection to source files whose repo-relative path starts with this prefix (e.g. src/mypackage/). When omitted, coverage is collected from all source files.",
+    )
+    ap.add_argument(
+        "--max-workers",
+        type=int,
+        default=max(1, min(os.cpu_count() or 2, 4)),
+        help="Maximum parallel worker threads for candidate evaluation (default: min(cpu_count, 4)).",
+    )
+    ap.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=900,
+        help="Per-candidate pytest timeout in seconds (default: 900).",
+    )
+    ap.add_argument(
+        "--strict-delete-gate",
+        action="store_true",
+        help="Enable the strict delete gate: repeated deselection, staged batch simulation, post-suite pass, and mutation-probe delta checks before confirming DELETE_SAFE_HIGH.",
+    )
+    ap.add_argument(
+        "--strict-repeats",
+        type=int,
+        default=3,
+        help="Number of repeated deselection runs required for strict gate stability (default: 3).",
+    )
+    ap.add_argument(
+        "--strict-batch-size",
+        type=int,
+        default=8,
+        help="Number of candidates to deselect together in each strict gate batch (default: 8).",
+    )
+    ap.add_argument(
+        "--strict-max-batches",
+        type=int,
+        default=0,
+        help="Maximum number of batches to process in the strict gate; 0 means unlimited (default: 0).",
+    )
+    ap.add_argument(
+        "--strict-post-suite",
+        action="append",
+        default=[],
+        help="Test file or directory to run as a full post-suite check after each strict gate batch (repeatable). Defaults to tests/ if it exists.",
+    )
+    ap.add_argument(
+        "--strict-mutation-probes",
+        type=int,
+        default=3,
+        help="Maximum number of mutation probes to use from --mutation-probes-config (default: 3).",
+    )
+    ap.add_argument(
+        "--strict-mutation-max-drop",
+        type=int,
+        default=0,
+        help="Maximum allowed drop in mutation kills between baseline and deselected batch (default: 0).",
+    )
     ap.add_argument(
         "--allow-numba-stub",
         action="store_true",
         help="Allow injecting a lightweight numba stub into PYTHONPATH when numba is missing. "
-             "Disabled by default for repo-agnostic safety.",
+        "Disabled by default for repo-agnostic safety.",
     )
     ap.add_argument(
         "--mutation-probes-config",
         default=None,
         help="Path to a JSON file defining mutation probes for the strict gate. "
-             "Format: [{\"probe_id\": \"P001\", \"file\": \"src/...\", \"old\": \"...\", \"new\": \"...\"}]. "
-             "When omitted, no mutation probes are used and the mutation gate is skipped.",
+        'Format: [{"probe_id": "P001", "file": "src/...", "old": "...", "new": "..."}]. '
+        "When omitted, no mutation probes are used and the mutation gate is skipped.",
     )
     ap.add_argument(
         "--env",
         action="append",
         default=[],
         help="Extra environment variable in KEY=VALUE format. Repeatable. "
-             "Example: --env NUMBA_DISABLE_JIT=1 --env VIRTUAL_ENV=/path/to/venv",
+        "Example: --env NUMBA_DISABLE_JIT=1 --env VIRTUAL_ENV=/path/to/venv",
     )
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
-    out_dir = (root / args.out_dir).resolve() if not Path(args.out_dir).is_absolute() else Path(args.out_dir).resolve()
+    out_dir = (
+        (root / args.out_dir).resolve()
+        if not Path(args.out_dir).is_absolute()
+        else Path(args.out_dir).resolve()
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if not args.suite:
@@ -2276,12 +2576,18 @@ def main() -> int:
         )
     suite_files = resolve_and_validate_suite_paths(root, args.suite, arg_name="--suite")
     if not suite_files:
-        raise SystemExit("None of the provided --suite paths exist under the repository root.")
-    comparator_suite_files = resolve_and_validate_suite_paths(root, args.comparator_suite, arg_name="--comparator-suite")
+        raise SystemExit(
+            "None of the provided --suite paths exist under the repository root."
+        )
+    comparator_suite_files = resolve_and_validate_suite_paths(
+        root, args.comparator_suite, arg_name="--comparator-suite"
+    )
     suite_set = set(suite_files)
     comparator_suite_files = [s for s in comparator_suite_files if s not in suite_set]
     comparator_suite_files = list(dict.fromkeys(comparator_suite_files))
-    strict_post_suite_files = resolve_and_validate_suite_paths(root, args.strict_post_suite, arg_name="--strict-post-suite")
+    strict_post_suite_files = resolve_and_validate_suite_paths(
+        root, args.strict_post_suite, arg_name="--strict-post-suite"
+    )
     strict_post_suite_files = list(dict.fromkeys(strict_post_suite_files))
 
     python_exe = resolve_python_exe(root, args.python)
@@ -2290,13 +2596,17 @@ def main() -> int:
     inventory_path = resolve_optional_path(root, args.inventory_csv)
     ranked_map = parse_ranked_by_nodeid(ranked_path) if ranked_path else {}
 
-    mutation_probes_config_path = resolve_optional_path(root, args.mutation_probes_config)
+    mutation_probes_config_path = resolve_optional_path(
+        root, args.mutation_probes_config
+    )
     probes_source = (
         load_mutation_probes_from_config(mutation_probes_config_path)
         if mutation_probes_config_path
         else build_default_mutation_probes()
     )
-    inv_assertions = parse_inventory_assertions(inventory_path) if inventory_path else {}
+    inv_assertions = (
+        parse_inventory_assertions(inventory_path) if inventory_path else {}
+    )
 
     tests = parse_test_metadata(root, suite_files)
     if not tests:
@@ -2317,7 +2627,9 @@ def main() -> int:
             extra_env[key.strip()] = value.strip()
 
     env = build_runtime_env(
-        root, out_dir, python_exe,
+        root,
+        out_dir,
+        python_exe,
         allow_numba_stub=bool(args.allow_numba_stub),
         extra_env=extra_env or None,
     )
@@ -2348,7 +2660,8 @@ def main() -> int:
     # tests would share the same cluster key and could pair with completely
     # unrelated tests, producing false redundancy signals.
     candidates = [
-        t for t in tests
+        t
+        for t in tests
         if t.entrypoint != "unknown" and len(by_cluster[(t.entrypoint, t.intent)]) > 1
     ]
     baseline = run_suite(
@@ -2362,7 +2675,11 @@ def main() -> int:
     )
 
     rows: list[dict[str, Any]] = []
-    strict_gate_result: dict[str, Any] = {"node_status": {}, "node_note": {}, "summary": {}}
+    strict_gate_result: dict[str, Any] = {
+        "node_status": {},
+        "node_note": {},
+        "summary": {},
+    }
     if baseline["returncode"] != 0:
         rows.append(
             {
@@ -2377,13 +2694,16 @@ def main() -> int:
             }
         )
     else:
+
         def peer_superset(t: TestMeta) -> bool:
             """True when a cluster peer's assertion types strictly dominate the candidate's.
 
             Also returns True for equal assertion type sets: if two tests assert
             the same things and one can be deselected, either is a deletion candidate.
             """
-            peers = [p for p in by_cluster[(t.entrypoint, t.intent)] if p.nodeid != t.nodeid]
+            peers = [
+                p for p in by_cluster[(t.entrypoint, t.intent)] if p.nodeid != t.nodeid
+            ]
             for p in peers:
                 if t.assertion_types and t.assertion_types.issubset(p.assertion_types):
                     return True
@@ -2407,22 +2727,34 @@ def main() -> int:
             low_signal = bool_low_signal(t, ranked, coverage_row)
             dominated = peer_superset(t)
             _rul = ranked.get("unique_line_count", "")
-            report_unique_line = _rul if _rul != "" else coverage_row.get("unique_line_count", "")
+            report_unique_line = (
+                _rul if _rul != "" else coverage_row.get("unique_line_count", "")
+            )
             _rub = ranked.get("unique_branch_count", "")
-            report_unique_branch = _rub if _rub != "" else coverage_row.get("unique_branch_count", "")
+            report_unique_branch = (
+                _rub if _rub != "" else coverage_row.get("unique_branch_count", "")
+            )
             _rov = ranked.get("cross_suite_overlap_ratio", "")
-            report_overlap = _rov if _rov != "" else coverage_row.get("cross_suite_overlap_ratio", "")
+            report_overlap = (
+                _rov
+                if _rov != ""
+                else coverage_row.get("cross_suite_overlap_ratio", "")
+            )
 
             peers = [p for p in cluster if p.nodeid != t.nodeid]
             max_src_sim = max(
                 (jaccard_sim(t.src_tokens, p.src_tokens) for p in peers), default=0.0
             )
             max_name_sim = max(
-                (difflib.SequenceMatcher(None, t.test_name, p.test_name).ratio() for p in peers),
+                (
+                    difflib.SequenceMatcher(None, t.test_name, p.test_name).ratio()
+                    for p in peers
+                ),
                 default=0.0,
             )
-            unique_mutability_contract = "mutability_contract" in t.assertion_types and not any(
-                "mutability_contract" in p.assertion_types for p in peers
+            unique_mutability_contract = (
+                "mutability_contract" in t.assertion_types
+                and not any("mutability_contract" in p.assertion_types for p in peers)
             )
             unique_exception_semantics = "exception" in t.assertion_types and not any(
                 "exception" in p.assertion_types for p in peers
@@ -2431,7 +2763,9 @@ def main() -> int:
             if t.is_parametrized:
                 # Parametrized tests span multiple input variants; treat conservatively.
                 decision = "KEEP_FOR_SIGNAL"
-                reason = "parametrized test — evaluate variants individually before pruning"
+                reason = (
+                    "parametrized test — evaluate variants individually before pruning"
+                )
             elif not deselect_pass:
                 decision = "KEEP_FOR_STABILITY"
                 reason = "suite failed when deselected"
@@ -2450,9 +2784,11 @@ def main() -> int:
             elif dominated or max_src_sim >= 0.80 or max_name_sim >= 0.85:
                 # Guard: if the nearest neighbour is already parametrized, merging
                 # into it would create a false overlap signal after a prior merge.
-                nearest_peer = max(
-                    peers, key=lambda p: jaccard_sim(t.src_tokens, p.src_tokens)
-                ) if peers else None
+                nearest_peer = (
+                    max(peers, key=lambda p: jaccard_sim(t.src_tokens, p.src_tokens))
+                    if peers
+                    else None
+                )
                 if nearest_peer and nearest_peer.is_parametrized:
                     decision = "KEEP_FOR_SIGNAL"
                     reason = (
@@ -2488,7 +2824,9 @@ def main() -> int:
                 "report_overlap": report_overlap,
                 "validation_decision": decision,
                 "validation_reason": reason,
-                "deselect_failure_excerpt": "" if deselect_pass else run["output"][:1200],
+                "deselect_failure_excerpt": ""
+                if deselect_pass
+                else run["output"][:1200],
                 "strict_gate_status": "pending",
                 "strict_gate_note": "",
             }
@@ -2500,14 +2838,16 @@ def main() -> int:
                     rows.append(fut.result())
                 except Exception as exc:
                     nodeid = fut_to_nodeid[fut]
-                    rows.append({
-                        "test_nodeid": nodeid,
-                        "validation_decision": "KEEP_FOR_SIGNAL",
-                        "validation_reason": f"evaluation error: {exc}",
-                        "deselect_suite_pass": False,
-                        "strict_gate_status": "not_run",
-                        "strict_gate_note": "evaluation raised an exception",
-                    })
+                    rows.append(
+                        {
+                            "test_nodeid": nodeid,
+                            "validation_decision": "KEEP_FOR_SIGNAL",
+                            "validation_reason": f"evaluation error: {exc}",
+                            "deselect_suite_pass": False,
+                            "strict_gate_status": "not_run",
+                            "strict_gate_note": "evaluation raised an exception",
+                        }
+                    )
         enforce_cluster_anchor(rows)
 
         if args.strict_delete_gate:
@@ -2536,14 +2876,26 @@ def main() -> int:
                 note = str(node_note.get(nodeid, ""))
                 r["strict_gate_status"] = status
                 r["strict_gate_note"] = note
-                if r.get("validation_decision") == "DELETE_SAFE_HIGH" and status != "passed":
+                if (
+                    r.get("validation_decision") == "DELETE_SAFE_HIGH"
+                    and status != "passed"
+                ):
                     r["validation_decision"] = "KEEP_FOR_SIGNAL"
                     if status == "not_processed":
-                        r["validation_reason"] = "strict gate not completed for this candidate"
+                        r["validation_reason"] = (
+                            "strict gate not completed for this candidate"
+                        )
                     else:
-                        r["validation_reason"] = f"strict gate blocked delete: {note or status}"
-                elif r.get("validation_decision") == "DELETE_SAFE_HIGH" and status == "passed":
-                    r["validation_reason"] = f"{r.get('validation_reason','')}; strict gate passed"
+                        r["validation_reason"] = (
+                            f"strict gate blocked delete: {note or status}"
+                        )
+                elif (
+                    r.get("validation_decision") == "DELETE_SAFE_HIGH"
+                    and status == "passed"
+                ):
+                    r["validation_reason"] = (
+                        f"{r.get('validation_reason', '')}; strict gate passed"
+                    )
         else:
             for r in rows:
                 r["strict_gate_status"] = "disabled"
@@ -2598,7 +2950,9 @@ def main() -> int:
 
     confidence_tier_counts = write_confidence_gate_artifact(out_dir, rows)
 
-    rows.sort(key=lambda r: (r.get("validation_decision", ""), r.get("test_nodeid", "")))
+    rows.sort(
+        key=lambda r: (r.get("validation_decision", ""), r.get("test_nodeid", ""))
+    )
 
     csv_headers = [
         "test_nodeid",
@@ -2672,13 +3026,15 @@ def main() -> int:
     for r in rows:
         md.append(
             "| "
-            f"{r.get('test_nodeid','')} | {r.get('entrypoint','')} | {r.get('intent','')} | "
-            f"{r.get('validation_decision','')} | {r.get('confidence_tier','')} | {r.get('strict_gate_status','')} | "
-            f"{r.get('branch_exact_match','')} | {r.get('branch_jaccard','')} | {r.get('deselect_suite_pass','')} | "
-            f"{r.get('validation_reason','')} |"
+            f"{r.get('test_nodeid', '')} | {r.get('entrypoint', '')} | {r.get('intent', '')} | "
+            f"{r.get('validation_decision', '')} | {r.get('confidence_tier', '')} | {r.get('strict_gate_status', '')} | "
+            f"{r.get('branch_exact_match', '')} | {r.get('branch_jaccard', '')} | {r.get('deselect_suite_pass', '')} | "
+            f"{r.get('validation_reason', '')} |"
         )
 
-    (out_dir / "candidate_validation.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    (out_dir / "candidate_validation.md").write_text(
+        "\n".join(md) + "\n", encoding="utf-8"
+    )
 
     summary = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
@@ -2697,7 +3053,9 @@ def main() -> int:
         "strict_gate_summary": strict_gate_result.get("summary", {}),
         "branch_equiv_summary": branch_summary,
     }
-    (out_dir / "candidate_validation_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (out_dir / "candidate_validation_summary.json").write_text(
+        json.dumps(summary, indent=2), encoding="utf-8"
+    )
 
     print(json.dumps(summary, indent=2))
     return 0

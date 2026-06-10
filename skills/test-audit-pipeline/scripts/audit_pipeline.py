@@ -30,12 +30,17 @@ from typing import Any
 # ---------------------------------------------------------------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILLS_DIR = SCRIPT_DIR.parent.parent  # ~/.agents/skills/
-DEFAULT_TQA_SCRIPT = SKILLS_DIR / "test-quality-assurance" / "scripts" / "audit_test_quality.py"
-DEFAULT_TRIAGE_SCRIPT = SKILLS_DIR / "test-redundancy-triage" / "scripts" / "triage_redundancy.py"
+DEFAULT_TQA_SCRIPT = (
+    SKILLS_DIR / "test-quality-assurance" / "scripts" / "audit_test_quality.py"
+)
+DEFAULT_TRIAGE_SCRIPT = (
+    SKILLS_DIR / "test-redundancy-triage" / "scripts" / "triage_redundancy.py"
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _log(msg: str) -> None:
     """Print a progress message to stderr."""
@@ -84,6 +89,7 @@ def _read_json(path: Path) -> dict[str, Any] | None:
 # Stage 1: Coverage collection
 # ---------------------------------------------------------------------------
 
+
 def stage_coverage(
     *,
     python: str,
@@ -98,9 +104,13 @@ def stage_coverage(
     cov_source = source_prefix if source_prefix else str(root)
 
     cmd = [
-        python, "-m", "pytest",
-        "-m", test_marker,
-        "-n", "0",
+        python,
+        "-m",
+        "pytest",
+        "-m",
+        test_marker,
+        "-n",
+        "0",
         f"--cov={cov_source}",
         "--cov-branch",
         f"--cov-report=json:{cov_json}",
@@ -120,6 +130,7 @@ def stage_coverage(
 # Stage 2a: TQA audit
 # ---------------------------------------------------------------------------
 
+
 def stage_tqa(
     *,
     python: str,
@@ -137,10 +148,14 @@ def stage_tqa(
     md_out = out_dir / "tqa_report.md"
 
     cmd = [
-        python, str(tqa_script),
-        "--root", str(root),
-        "--json-out", str(json_out),
-        "--md-out", str(md_out),
+        python,
+        str(tqa_script),
+        "--root",
+        str(root),
+        "--json-out",
+        str(json_out),
+        "--md-out",
+        str(md_out),
     ]
     for pat in internal_import_patterns:
         cmd += ["--internal-import-pattern", pat]
@@ -165,6 +180,7 @@ def stage_tqa(
 # Stage 2b: Redundancy triage
 # ---------------------------------------------------------------------------
 
+
 def stage_triage(
     *,
     python: str,
@@ -183,11 +199,16 @@ def stage_triage(
     triage_dir.mkdir(parents=True, exist_ok=True)
 
     cmd = [
-        python, str(triage_script),
-        "--root", str(root),
-        "--python", python,
-        "--out-dir", str(triage_dir),
-        "--max-workers", str(max_workers),
+        python,
+        str(triage_script),
+        "--root",
+        str(root),
+        "--python",
+        python,
+        "--out-dir",
+        str(triage_dir),
+        "--max-workers",
+        str(max_workers),
     ]
     for s in suites:
         cmd += ["--suite", s]
@@ -211,6 +232,7 @@ def stage_triage(
 # ---------------------------------------------------------------------------
 # Stage 3: Unified report
 # ---------------------------------------------------------------------------
+
 
 def _extract_coverage_summary(cov_json: Path) -> dict[str, Any]:
     """Extract summary stats from coverage.json."""
@@ -237,6 +259,7 @@ def _extract_triage_summary(triage_dir: Path) -> dict[str, Any]:
     csv_path = triage_dir / "candidate_validation.csv"
     if csv_path.exists():
         import csv
+
         decisions: dict[str, int] = {}
         candidates: list[dict[str, str]] = []
         with open(csv_path) as f:
@@ -244,10 +267,12 @@ def _extract_triage_summary(triage_dir: Path) -> dict[str, Any]:
             for row in reader:
                 dec = row.get("validation_decision", row.get("decision", "UNKNOWN"))
                 decisions[dec] = decisions.get(dec, 0) + 1
-                candidates.append({
-                    "test": row.get("candidate", row.get("test_id", "")),
-                    "decision": dec,
-                })
+                candidates.append(
+                    {
+                        "test": row.get("candidate", row.get("test_id", "")),
+                        "decision": dec,
+                    }
+                )
         summary["decisions"] = decisions
         summary["candidates"] = candidates
     return summary
@@ -299,7 +324,9 @@ def build_summary(
         summary["tqa"] = {
             "rubric_scores": tqa_data.get("rubric_scores", tqa_data.get("scores", {})),
             "overall_score": tqa_data.get("overall_score", tqa_data.get("grade")),
-            "findings_count": len(tqa_data.get("findings", tqa_data.get("action_items", []))),
+            "findings_count": len(
+                tqa_data.get("findings", tqa_data.get("action_items", []))
+            ),
         }
     if triage_summary.get("decisions"):
         summary["triage"] = {
@@ -348,9 +375,15 @@ def stage_report(
         lines.append("No stages were run in parallel (single-stage mode).")
     lines.append("")
     lines.append("For agent orchestrators with subagent capabilities:")
-    lines.append("- Stage 2a (TQA) can be delegated to a `test-quality-assurance` subagent")
-    lines.append("- Stage 2b (Triage) can be delegated to a `test-redundancy-triage` subagent")
-    lines.append("- Both subagents can run concurrently after coverage collection completes")
+    lines.append(
+        "- Stage 2a (TQA) can be delegated to a `test-quality-assurance` subagent"
+    )
+    lines.append(
+        "- Stage 2b (Triage) can be delegated to a `test-redundancy-triage` subagent"
+    )
+    lines.append(
+        "- Both subagents can run concurrently after coverage collection completes"
+    )
     lines.append("")
 
     # TQA section
@@ -383,13 +416,19 @@ def stage_report(
     elif not coverage_ok:
         lines.append("*Coverage collection failed.*")
     elif cov_summary:
-        lines.append(f"- **Line coverage**: {cov_summary.get('percent_covered_display', 'N/A')}")
+        lines.append(
+            f"- **Line coverage**: {cov_summary.get('percent_covered_display', 'N/A')}"
+        )
         lines.append(f"- **Statements**: {cov_summary.get('num_statements', 'N/A')}")
         lines.append(f"- **Covered lines**: {cov_summary.get('covered_lines', 'N/A')}")
         lines.append(f"- **Missing lines**: {cov_summary.get('missing_lines', 'N/A')}")
         lines.append(f"- **Branches**: {cov_summary.get('num_branches', 'N/A')}")
-        lines.append(f"- **Covered branches**: {cov_summary.get('covered_branches', 'N/A')}")
-        lines.append(f"- **Missing branches**: {cov_summary.get('missing_branches', 'N/A')}")
+        lines.append(
+            f"- **Covered branches**: {cov_summary.get('covered_branches', 'N/A')}"
+        )
+        lines.append(
+            f"- **Missing branches**: {cov_summary.get('missing_branches', 'N/A')}"
+        )
     else:
         lines.append("*No coverage data available.*")
     lines.append("")
@@ -410,7 +449,8 @@ def stage_report(
         lines.append("")
         # List delete/merge candidates
         actionable = [
-            c for c in triage_summary.get("candidates", [])
+            c
+            for c in triage_summary.get("candidates", [])
             if "DELETE" in c.get("decision", "") or "MERGE" in c.get("decision", "")
         ]
         if actionable:
@@ -431,13 +471,13 @@ def stage_report(
         n_delete = sum(
             v for k, v in triage_summary["decisions"].items() if "DELETE" in k
         )
-        n_merge = sum(
-            v for k, v in triage_summary["decisions"].items() if "MERGE" in k
-        )
+        n_merge = sum(v for k, v in triage_summary["decisions"].items() if "MERGE" in k)
         if n_delete:
             action_items.append(f"Review and remove {n_delete} delete-safe test(s)")
         if n_merge:
-            action_items.append(f"Review and consolidate {n_merge} merge-candidate test(s)")
+            action_items.append(
+                f"Review and consolidate {n_merge} merge-candidate test(s)"
+            )
     # From TQA
     if tqa_data:
         findings = tqa_data.get("findings", tqa_data.get("action_items", []))
@@ -500,6 +540,7 @@ def stage_report(
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     p = argparse.ArgumentParser(
@@ -508,20 +549,70 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     p.add_argument("--root", required=True, type=Path, help="Repository root path")
     p.add_argument("--python", default=sys.executable, help="Python interpreter to use")
-    p.add_argument("--suite", action="append", default=[], help="Test suite file/dir (repeatable)")
-    p.add_argument("--comparator-suite", action="append", default=[], help="Comparator suite (repeatable)")
-    p.add_argument("--source-prefix", default=None, help="Source prefix for coverage (e.g. src/pkg/)")
-    p.add_argument("--internal-import-pattern", action="append", default=[], help="Regex for internal imports (TQA)")
-    p.add_argument("--public-hint", action="append", default=[], help="Public API hint string (TQA)")
-    p.add_argument("--out-dir", required=True, type=Path, help="Output directory for all reports")
-    p.add_argument("--env", action="append", default=[], help="Environment variable KEY=VALUE (repeatable)")
-    p.add_argument("--tqa-baseline", default=None, help="Path to previous TQA JSON for comparison")
-    p.add_argument("--skip-triage", action="store_true", help="Skip redundancy triage stage")
-    p.add_argument("--skip-coverage", action="store_true", help="Skip coverage collection stage")
-    p.add_argument("--test-marker", default="not benchmark and not slow", help="Pytest marker expression for coverage")
-    p.add_argument("--max-workers", type=int, default=4, help="Max workers for triage parallelism")
-    p.add_argument("--tqa-script", type=Path, default=None, help="Override path to audit_test_quality.py")
-    p.add_argument("--triage-script", type=Path, default=None, help="Override path to triage_redundancy.py")
+    p.add_argument(
+        "--suite", action="append", default=[], help="Test suite file/dir (repeatable)"
+    )
+    p.add_argument(
+        "--comparator-suite",
+        action="append",
+        default=[],
+        help="Comparator suite (repeatable)",
+    )
+    p.add_argument(
+        "--source-prefix",
+        default=None,
+        help="Source prefix for coverage (e.g. src/pkg/)",
+    )
+    p.add_argument(
+        "--internal-import-pattern",
+        action="append",
+        default=[],
+        help="Regex for internal imports (TQA)",
+    )
+    p.add_argument(
+        "--public-hint",
+        action="append",
+        default=[],
+        help="Public API hint string (TQA)",
+    )
+    p.add_argument(
+        "--out-dir", required=True, type=Path, help="Output directory for all reports"
+    )
+    p.add_argument(
+        "--env",
+        action="append",
+        default=[],
+        help="Environment variable KEY=VALUE (repeatable)",
+    )
+    p.add_argument(
+        "--tqa-baseline", default=None, help="Path to previous TQA JSON for comparison"
+    )
+    p.add_argument(
+        "--skip-triage", action="store_true", help="Skip redundancy triage stage"
+    )
+    p.add_argument(
+        "--skip-coverage", action="store_true", help="Skip coverage collection stage"
+    )
+    p.add_argument(
+        "--test-marker",
+        default="not benchmark and not slow",
+        help="Pytest marker expression for coverage",
+    )
+    p.add_argument(
+        "--max-workers", type=int, default=4, help="Max workers for triage parallelism"
+    )
+    p.add_argument(
+        "--tqa-script",
+        type=Path,
+        default=None,
+        help="Override path to audit_test_quality.py",
+    )
+    p.add_argument(
+        "--triage-script",
+        type=Path,
+        default=None,
+        help="Override path to triage_redundancy.py",
+    )
     return p.parse_args(argv)
 
 

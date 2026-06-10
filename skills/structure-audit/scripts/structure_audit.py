@@ -29,7 +29,13 @@ def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
     files = sorted(p for p in root.rglob("*.py") if p.is_file())
     if not source_prefixes:
         return files
-    return [p for p in files if any(p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes)]
+    return [
+        p
+        for p in files
+        if any(
+            p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes
+        )
+    ]
 
 
 def _module_name(path: Path, root: Path) -> str:
@@ -155,7 +161,9 @@ def _strongly_connected_components(nodes, edges):
 def _layer_of(module: str, layers: list[str]) -> int | None:
     best_idx, best_len = None, -1
     for idx, prefix in enumerate(layers):
-        if (module == prefix or module.startswith(prefix + ".")) and len(prefix) > best_len:
+        if (module == prefix or module.startswith(prefix + ".")) and len(
+            prefix
+        ) > best_len:
             best_idx, best_len = idx, len(prefix)
     return best_idx
 
@@ -171,19 +179,31 @@ def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
 
     # Cycles
     for comp in _strongly_connected_components(nodes, edges):
-        is_cycle = len(comp) > 1 or (len(comp) == 1 and comp[0] in edges.get(comp[0], []))
+        is_cycle = len(comp) > 1 or (
+            len(comp) == 1 and comp[0] in edges.get(comp[0], [])
+        )
         if not is_cycle:
             continue
         members = sorted(comp)
         first = members[0]
-        findings.append(hc.Finding(
-            leaf=LEAF, signal="RESTRUCTURE", severity="high", path=module_file[first],
-            line_start=1, line_end=1, symbol="cycle:" + "|".join(members),
-            metric_name="import_cycle_size", metric_value=float(len(members)), metric_threshold=1.0,
-            evidence_tool="ast", evidence_raw="import cycle: " + " -> ".join(members),
-            confidence="high",
-            suggested_action="Break the import cycle among: " + ", ".join(members),
-        ))
+        findings.append(
+            hc.Finding(
+                leaf=LEAF,
+                signal="RESTRUCTURE",
+                severity="high",
+                path=module_file[first],
+                line_start=1,
+                line_end=1,
+                symbol="cycle:" + "|".join(members),
+                metric_name="import_cycle_size",
+                metric_value=float(len(members)),
+                metric_threshold=1.0,
+                evidence_tool="ast",
+                evidence_raw="import cycle: " + " -> ".join(members),
+                confidence="high",
+                suggested_action="Break the import cycle among: " + ", ".join(members),
+            )
+        )
 
     # Fan-in / fan-out
     in_degree = {m: 0 for m in nodes}
@@ -193,21 +213,43 @@ def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
     for m in nodes:
         out_deg = len(edges.get(m, []))
         if out_deg > thresholds["max_fan_out"]:
-            findings.append(hc.Finding(
-                leaf=LEAF, signal="RESTRUCTURE", severity="medium", path=module_file[m],
-                line_start=1, line_end=1, symbol=m, metric_name="fan_out",
-                metric_value=float(out_deg), metric_threshold=float(thresholds["max_fan_out"]),
-                evidence_tool="ast", evidence_raw=f"{m} imports {out_deg} internal modules",
-                confidence="high", suggested_action=f"Reduce coupling: {m} imports {out_deg} modules",
-            ))
+            findings.append(
+                hc.Finding(
+                    leaf=LEAF,
+                    signal="RESTRUCTURE",
+                    severity="medium",
+                    path=module_file[m],
+                    line_start=1,
+                    line_end=1,
+                    symbol=m,
+                    metric_name="fan_out",
+                    metric_value=float(out_deg),
+                    metric_threshold=float(thresholds["max_fan_out"]),
+                    evidence_tool="ast",
+                    evidence_raw=f"{m} imports {out_deg} internal modules",
+                    confidence="high",
+                    suggested_action=f"Reduce coupling: {m} imports {out_deg} modules",
+                )
+            )
         if in_degree.get(m, 0) > thresholds["max_fan_in"]:
-            findings.append(hc.Finding(
-                leaf=LEAF, signal="RESTRUCTURE", severity="medium", path=module_file[m],
-                line_start=1, line_end=1, symbol=m, metric_name="fan_in",
-                metric_value=float(in_degree[m]), metric_threshold=float(thresholds["max_fan_in"]),
-                evidence_tool="ast", evidence_raw=f"{m} is imported by {in_degree[m]} modules",
-                confidence="high", suggested_action=f"Split god-module: {m} is imported by {in_degree[m]} modules",
-            ))
+            findings.append(
+                hc.Finding(
+                    leaf=LEAF,
+                    signal="RESTRUCTURE",
+                    severity="medium",
+                    path=module_file[m],
+                    line_start=1,
+                    line_end=1,
+                    symbol=m,
+                    metric_name="fan_in",
+                    metric_value=float(in_degree[m]),
+                    metric_threshold=float(thresholds["max_fan_in"]),
+                    evidence_tool="ast",
+                    evidence_raw=f"{m} is imported by {in_degree[m]} modules",
+                    confidence="high",
+                    suggested_action=f"Split god-module: {m} is imported by {in_degree[m]} modules",
+                )
+            )
 
     # Layering
     layers = thresholds.get("layers") or []
@@ -221,14 +263,24 @@ def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
                 if dst_layer is None:
                     continue
                 if src_layer > dst_layer:  # lower layer importing higher layer
-                    findings.append(hc.Finding(
-                        leaf=LEAF, signal="RESTRUCTURE", severity="high", path=module_file[src],
-                        line_start=1, line_end=1, symbol=f"{src}->{dst}", metric_name="layer_violation",
-                        metric_value=float(src_layer - dst_layer), metric_threshold=0.0,
-                        evidence_tool="ast", evidence_raw=f"{src} (layer {src_layer}) imports {dst} (layer {dst_layer})",
-                        confidence="high",
-                        suggested_action=f"Layering violation: {src} must not import {dst}",
-                    ))
+                    findings.append(
+                        hc.Finding(
+                            leaf=LEAF,
+                            signal="RESTRUCTURE",
+                            severity="high",
+                            path=module_file[src],
+                            line_start=1,
+                            line_end=1,
+                            symbol=f"{src}->{dst}",
+                            metric_name="layer_violation",
+                            metric_value=float(src_layer - dst_layer),
+                            metric_threshold=0.0,
+                            evidence_tool="ast",
+                            evidence_raw=f"{src} (layer {src_layer}) imports {dst} (layer {dst_layer})",
+                            confidence="high",
+                            suggested_action=f"Layering violation: {src} must not import {dst}",
+                        )
+                    )
 
     return hc.sort_findings(findings)
 
@@ -240,7 +292,9 @@ def render_report(findings: list[hc.Finding]) -> str:
         return "\n".join(lines) + "\n"
     lines.append(f"## RESTRUCTURE ({len(findings)})")
     for f in findings:
-        lines.append(f"- `{f.path}` {f.symbol} — {f.metric_name}={f.metric_value:g} [{f.severity}]")
+        lines.append(
+            f"- `{f.path}` {f.symbol} — {f.metric_name}={f.metric_value:g} [{f.severity}]"
+        )
     lines.append("")
     return "\n".join(lines) + "\n"
 
@@ -256,13 +310,23 @@ def load_thresholds(config_path: str | None) -> dict:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Deterministic import-structure audit (advisory).")
+    parser = argparse.ArgumentParser(
+        description="Deterministic import-structure audit (advisory)."
+    )
     parser.add_argument("--root")
-    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes",
-                        help="Path prefix(es) relative to --root to include. Repeatable.")
+    parser.add_argument(
+        "--source-prefix",
+        action="append",
+        default=[],
+        dest="source_prefixes",
+        help="Path prefix(es) relative to --root to include. Repeatable.",
+    )
     parser.add_argument("--exclude", action="append", default=[])
     parser.add_argument("--out-dir")
-    parser.add_argument("--config", help="JSON file overriding thresholds (max_fan_out, max_fan_in, layers).")
+    parser.add_argument(
+        "--config",
+        help="JSON file overriding thresholds (max_fan_out, max_fan_in, layers).",
+    )
     parser.add_argument("--format", choices=["json", "md"], default="json")
     return parser
 
@@ -270,7 +334,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.root or not args.out_dir:
-        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
+        print(
+            json.dumps(
+                {"status": "error", "message": "--root and --out-dir are required"}
+            )
+        )
         return hc.EXIT_ERROR
     try:
         thresholds = load_thresholds(args.config)
@@ -279,7 +347,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
     data = hc.write_findings(findings, args.out_dir, LEAF)
-    Path(args.out_dir, "structure_report.md").write_text(render_report(findings), encoding="utf-8")
+    Path(args.out_dir, "structure_report.md").write_text(
+        render_report(findings), encoding="utf-8"
+    )
     print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 

@@ -45,7 +45,13 @@ def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
     files = sorted(p for p in root.rglob("*.py") if p.is_file())
     if not source_prefixes:
         return files
-    return [p for p in files if any(p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes)]
+    return [
+        p
+        for p in files
+        if any(
+            p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes
+        )
+    ]
 
 
 def _severity_for_conf(conf: int) -> str:
@@ -64,13 +70,22 @@ def _confidence_for_conf(conf: int) -> str:
     return "low"
 
 
-def _vulture_findings(root: Path, files: list[Path], thresholds: dict, allowlist: str | None) -> list[hc.Finding]:
+def _vulture_findings(
+    root: Path, files: list[Path], thresholds: dict, allowlist: str | None
+) -> list[hc.Finding]:
     rel_files = [p.relative_to(root).as_posix() for p in files]
     cmd = ["vulture", "--min-confidence", str(thresholds["min_confidence"]), *rel_files]
     if allowlist:
         cmd.append(allowlist)
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
+        proc = subprocess.run(
+            cmd,
+            cwd=str(root),
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=TOOL_TIMEOUT,
+        )
     except FileNotFoundError as exc:
         raise ToolError("vulture is not installed") from exc
     except subprocess.TimeoutExpired as exc:
@@ -85,25 +100,48 @@ def _vulture_findings(root: Path, files: list[Path], thresholds: dict, allowlist
             continue  # imports/variables are owned by ruff
         conf = int(m.group("conf"))
         ln = int(m.group("line"))
-        findings.append(hc.Finding(
-            leaf=LEAF, signal="DELETE", severity=_severity_for_conf(conf),
-            path=_rel(m.group("path"), root), line_start=ln, line_end=ln,
-            symbol=m.group("name"),
-            metric_name="dead_code_confidence", metric_value=float(conf),
-            metric_threshold=float(thresholds["min_confidence"]),
-            evidence_tool="vulture", evidence_raw=line.strip(),
-            confidence=_confidence_for_conf(conf),
-            suggested_action=f"Remove unused {kind} '{m.group('name')}' if truly dead",
-        ))
+        findings.append(
+            hc.Finding(
+                leaf=LEAF,
+                signal="DELETE",
+                severity=_severity_for_conf(conf),
+                path=_rel(m.group("path"), root),
+                line_start=ln,
+                line_end=ln,
+                symbol=m.group("name"),
+                metric_name="dead_code_confidence",
+                metric_value=float(conf),
+                metric_threshold=float(thresholds["min_confidence"]),
+                evidence_tool="vulture",
+                evidence_raw=line.strip(),
+                confidence=_confidence_for_conf(conf),
+                suggested_action=f"Remove unused {kind} '{m.group('name')}' if truly dead",
+            )
+        )
     return findings
 
 
 def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
     rel_files = [p.relative_to(root).as_posix() for p in files]
-    cmd = ["ruff", "check", "--select", ",".join(OWNED_RUFF_CODES),
-           "--output-format", "json", "--no-cache", *rel_files]
+    cmd = [
+        "ruff",
+        "check",
+        "--select",
+        ",".join(OWNED_RUFF_CODES),
+        "--output-format",
+        "json",
+        "--no-cache",
+        *rel_files,
+    ]
     try:
-        proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
+        proc = subprocess.run(
+            cmd,
+            cwd=str(root),
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=TOOL_TIMEOUT,
+        )
     except FileNotFoundError as exc:
         raise ToolError("ruff is not installed") from exc
     except subprocess.TimeoutExpired as exc:
@@ -111,7 +149,9 @@ def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
     try:
         items = json.loads(proc.stdout or "[]")
     except json.JSONDecodeError as exc:
-        raise ToolError(f"ruff produced unparseable output: {proc.stderr.strip()}") from exc
+        raise ToolError(
+            f"ruff produced unparseable output: {proc.stderr.strip()}"
+        ) from exc
     findings: list[hc.Finding] = []
     for item in items:
         code = item.get("code") or ""
@@ -122,14 +162,24 @@ def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
         col = int(loc.get("column", 1))
         end_row = int((item.get("end_location") or {}).get("row", row))
         path = _rel(item.get("filename", ""), root)
-        findings.append(hc.Finding(
-            leaf=LEAF, signal="DELETE", severity="medium", path=path,
-            line_start=row, line_end=end_row, symbol=f"{code}@{row}:{col}",
-            metric_name=code, metric_value=0.0, metric_threshold=0.0,
-            evidence_tool="ruff", evidence_raw=item.get("message", ""),
-            confidence="high",
-            suggested_action=item.get("message", f"Remove {code} occurrence"),
-        ))
+        findings.append(
+            hc.Finding(
+                leaf=LEAF,
+                signal="DELETE",
+                severity="medium",
+                path=path,
+                line_start=row,
+                line_end=end_row,
+                symbol=f"{code}@{row}:{col}",
+                metric_name=code,
+                metric_value=0.0,
+                metric_threshold=0.0,
+                evidence_tool="ruff",
+                evidence_raw=item.get("message", ""),
+                confidence="high",
+                suggested_action=item.get("message", f"Remove {code} occurrence"),
+            )
+        )
     return findings
 
 
@@ -150,7 +200,9 @@ def render_report(findings: list[hc.Finding]) -> str:
         return "\n".join(lines) + "\n"
     lines.append(f"## DELETE ({len(findings)})")
     for f in findings:
-        lines.append(f"- `{f.path}:{f.line_start}` {f.symbol} — {f.evidence_tool} [{f.severity}]")
+        lines.append(
+            f"- `{f.path}:{f.line_start}` {f.symbol} — {f.evidence_tool} [{f.severity}]"
+        )
     lines.append("")
     return "\n".join(lines) + "\n"
 
@@ -163,34 +215,55 @@ def load_thresholds(config_path: str | None) -> dict:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Deterministic dead-code audit (advisory).")
+    parser = argparse.ArgumentParser(
+        description="Deterministic dead-code audit (advisory)."
+    )
     parser.add_argument("--root")
-    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes",
-                        help="Path prefix(es) relative to --root to include. Repeatable.")
+    parser.add_argument(
+        "--source-prefix",
+        action="append",
+        default=[],
+        dest="source_prefixes",
+        help="Path prefix(es) relative to --root to include. Repeatable.",
+    )
     parser.add_argument("--exclude", action="append", default=[])
     parser.add_argument("--out-dir")
-    parser.add_argument("--config", help="JSON file overriding thresholds (min_confidence).")
-    parser.add_argument("--allowlist", help="Vulture whitelist file to suppress false positives.")
+    parser.add_argument(
+        "--config", help="JSON file overriding thresholds (min_confidence)."
+    )
+    parser.add_argument(
+        "--allowlist", help="Vulture whitelist file to suppress false positives."
+    )
     parser.add_argument("--format", choices=["json", "md"], default="json")
-    parser.add_argument("--simulate-missing-tool", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--simulate-missing-tool", action="store_true", help=argparse.SUPPRESS
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.root or not args.out_dir:
-        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
+        print(
+            json.dumps(
+                {"status": "error", "message": "--root and --out-dir are required"}
+            )
+        )
         return hc.EXIT_ERROR
     try:
         if args.simulate_missing_tool:
             raise ToolError("simulated missing tool")
         thresholds = load_thresholds(args.config)
-        findings = analyze_tree(args.root, args.source_prefixes, thresholds, allowlist=args.allowlist)
+        findings = analyze_tree(
+            args.root, args.source_prefixes, thresholds, allowlist=args.allowlist
+        )
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
     data = hc.write_findings(findings, args.out_dir, LEAF)
-    Path(args.out_dir, "dead-code_report.md").write_text(render_report(findings), encoding="utf-8")
+    Path(args.out_dir, "dead-code_report.md").write_text(
+        render_report(findings), encoding="utf-8"
+    )
     print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 

@@ -14,18 +14,30 @@ SKILLS = ROOT / "skills"
 
 def main() -> int:
     if not SOURCE.exists():
-        print(json.dumps({"status": "fail", "defects": ["shared/health_common.py missing"]}, indent=2))
+        print(
+            json.dumps(
+                {"status": "fail", "defects": ["shared/health_common.py missing"]},
+                indent=2,
+            )
+        )
         return 1
     source_bytes = SOURCE.read_bytes()
     defects: list[str] = []
-    copies = sorted(SKILLS.glob("*/scripts/health_common.py")) if SKILLS.exists() else []
+    copies = (
+        sorted(SKILLS.glob("*/scripts/health_common.py")) if SKILLS.exists() else []
+    )
     for copy in copies:
         if copy.read_bytes() != source_bytes:
             defects.append(f"vendored copy drifted: {copy.relative_to(ROOT)}")
     if defects:
         print(json.dumps({"status": "fail", "defects": defects}, indent=2))
         return 1
-    print(json.dumps({"status": "pass", "checked": [str(c.relative_to(ROOT)) for c in copies]}, indent=2))
+    print(
+        json.dumps(
+            {"status": "pass", "checked": [str(c.relative_to(ROOT)) for c in copies]},
+            indent=2,
+        )
+    )
     return 0
 
 

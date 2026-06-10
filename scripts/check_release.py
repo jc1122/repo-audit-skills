@@ -69,9 +69,13 @@ def check_package(defects: list[str]) -> str:
         defects.append(f"package.json version is not semver: {version!r}")
     if package.get("name") != "repo-audit-skills":
         defects.append("package.json name must be repo-audit-skills")
-    for path in ["bin/install-repo-audit-skills.js", "scripts/check_release.py",
-                 "scripts/check_skill_fixtures.py", "scripts/check_vendored_common.py",
-                 "shared/health_common.py"]:
+    for path in [
+        "bin/install-repo-audit-skills.js",
+        "scripts/check_release.py",
+        "scripts/check_skill_fixtures.py",
+        "scripts/check_vendored_common.py",
+        "shared/health_common.py",
+    ]:
         if not (ROOT / path).exists():
             defects.append(f"required release file missing: {path}")
     return version
@@ -90,9 +94,13 @@ def check_skills(version: str, defects: list[str]) -> None:
             defects.append(str(exc))
             continue
         if meta.get("name") != expected_name:
-            defects.append(f"{skill_dir}/SKILL.md name is {meta.get('name')!r}, expected {expected_name!r}")
+            defects.append(
+                f"{skill_dir}/SKILL.md name is {meta.get('name')!r}, expected {expected_name!r}"
+            )
         if meta.get("version") != version:
-            defects.append(f"{skill_dir}/SKILL.md version is {meta.get('version')!r}, expected {version!r}")
+            defects.append(
+                f"{skill_dir}/SKILL.md version is {meta.get('version')!r}, expected {version!r}"
+            )
         for rel_path in REQUIRED_SCRIPTS[skill_dir]:
             if not (skill_root / rel_path).exists():
                 defects.append(f"missing script for {skill_dir}: {rel_path}")
@@ -102,12 +110,21 @@ def check_installer(defects: list[str]) -> None:
     checks = [
         ["node", "bin/install-repo-audit-skills.js", "--version"],
         ["node", "bin/install-repo-audit-skills.js", "--list"],
-        ["node", "bin/install-repo-audit-skills.js", "--dry-run", "--dest", "/tmp/repo-audit-skills-release-check", "--force"],
+        [
+            "node",
+            "bin/install-repo-audit-skills.js",
+            "--dry-run",
+            "--dest",
+            "/tmp/repo-audit-skills-release-check",
+            "--force",
+        ],
     ]
     for cmd in checks:
         result = run(cmd)
         if result.returncode != 0:
-            defects.append(f"{' '.join(cmd)} failed: {result.stderr.strip() or result.stdout.strip()}")
+            defects.append(
+                f"{' '.join(cmd)} failed: {result.stderr.strip() or result.stdout.strip()}"
+            )
 
 
 def check_git_clean(defects: list[str]) -> None:
@@ -121,7 +138,9 @@ def check_git_clean(defects: list[str]) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--require-clean", action="store_true", help="Require a clean git worktree.")
+    parser.add_argument(
+        "--require-clean", action="store_true", help="Require a clean git worktree."
+    )
     return parser.parse_args()
 
 
@@ -136,7 +155,12 @@ def main() -> int:
     if defects:
         print(json.dumps({"status": "fail", "defects": defects}, indent=2))
         return 1
-    print(json.dumps({"status": "pass", "version": version, "skills": sorted(REQUIRED_SKILLS)}, indent=2))
+    print(
+        json.dumps(
+            {"status": "pass", "version": version, "skills": sorted(REQUIRED_SKILLS)},
+            indent=2,
+        )
+    )
     return 0
 
 

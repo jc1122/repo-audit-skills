@@ -12,10 +12,21 @@ import dataclasses
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
+from collections.abc import Iterable
 
 SIGNALS = frozenset(
-    {"SIMPLIFY", "DECOMPOSE", "EXTRACT", "MERGE", "DELETE", "RESTRUCTURE", "LINT", "FORMAT", "TYPE"}
+    {
+        "SIMPLIFY",
+        "DECOMPOSE",
+        "EXTRACT",
+        "MERGE",
+        "DELETE",
+        "RESTRUCTURE",
+        "LINT",
+        "FORMAT",
+        "TYPE",
+    }
 )
 SEVERITIES = ("info", "low", "medium", "high")
 CONFIDENCES = ("low", "medium", "high")
@@ -53,8 +64,16 @@ class Finding:
             "signal": self.signal,
             "severity": self.severity,
             "path": self.path,
-            "location": {"line_start": self.line_start, "line_end": self.line_end, "symbol": self.symbol},
-            "metric": {"name": self.metric_name, "value": self.metric_value, "threshold": self.metric_threshold},
+            "location": {
+                "line_start": self.line_start,
+                "line_end": self.line_end,
+                "symbol": self.symbol,
+            },
+            "metric": {
+                "name": self.metric_name,
+                "value": self.metric_value,
+                "threshold": self.metric_threshold,
+            },
             "evidence": {"tool": self.evidence_tool, "raw": self.evidence_raw},
             "confidence": self.confidence,
             "suggested_action": self.suggested_action,
@@ -62,10 +81,15 @@ class Finding:
 
 
 def sort_findings(findings: Iterable[Finding]) -> list[Finding]:
-    return sorted(findings, key=lambda f: (f.path, f.line_start, f.signal, f.metric_name, f.symbol))
+    return sorted(
+        findings,
+        key=lambda f: (f.path, f.line_start, f.signal, f.metric_name, f.symbol),
+    )
 
 
-def write_findings(findings: Iterable[Finding], out_dir: str | Path, leaf: str) -> list[dict[str, Any]]:
+def write_findings(
+    findings: Iterable[Finding], out_dir: str | Path, leaf: str
+) -> list[dict[str, Any]]:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     data = [f.to_dict() for f in sort_findings(findings)]

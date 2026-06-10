@@ -11,15 +11,23 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SKILLS_ROOT = HERE.parents[1]  # <skills_root>/code-health-audit-pipeline/scripts -> skills root
+SKILLS_ROOT = HERE.parents[
+    1
+]  # <skills_root>/code-health-audit-pipeline/scripts -> skills root
 DEFAULT_REGISTRY = HERE / "leaf_registry.json"
 
 SEVERITY_WEIGHT = {"info": 0, "low": 1, "medium": 2, "high": 4}
 CONFIDENCE_WEIGHT = {"low": 1, "medium": 2, "high": 3}
 EFFORT = {
-    "DELETE": 1, "LINT": 1, "FORMAT": 1,
-    "TYPE": 2, "SIMPLIFY": 2, "MERGE": 2,
-    "EXTRACT": 3, "DECOMPOSE": 3, "RESTRUCTURE": 4,
+    "DELETE": 1,
+    "LINT": 1,
+    "FORMAT": 1,
+    "TYPE": 2,
+    "SIMPLIFY": 2,
+    "MERGE": 2,
+    "EXTRACT": 3,
+    "DECOMPOSE": 3,
+    "RESTRUCTURE": 4,
 }
 
 DEFAULT_GATE = {
@@ -33,7 +41,11 @@ TOOL_TIMEOUT = 120
 
 
 def _dedupe_key(f: dict) -> tuple:
-    return (f.get("path"), f.get("location", {}).get("line_start"), f.get("metric", {}).get("name"))
+    return (
+        f.get("path"),
+        f.get("location", {}).get("line_start"),
+        f.get("metric", {}).get("name"),
+    )
 
 
 def merge_and_dedupe(findings: list[dict]) -> list[dict]:
@@ -45,7 +57,12 @@ def merge_and_dedupe(findings: list[dict]) -> list[dict]:
 
 def _sort_key(f: dict) -> tuple:
     loc = f.get("location", {})
-    return (f.get("path", ""), loc.get("line_start", 0), f.get("signal", ""), f.get("metric", {}).get("name", ""))
+    return (
+        f.get("path", ""),
+        loc.get("line_start", 0),
+        f.get("signal", ""),
+        f.get("metric", {}).get("name", ""),
+    )
 
 
 def score(f: dict) -> float:
@@ -59,9 +76,13 @@ def rank(findings: list[dict]) -> list[dict]:
     return sorted(findings, key=lambda f: (-score(f), _sort_key(f)))
 
 
-def decide(findings: list[dict], leaf_exit: dict[str, int], gate: dict) -> tuple[str, int]:
+def decide(
+    findings: list[dict], leaf_exit: dict[str, int], gate: dict
+) -> tuple[str, int]:
     errored = [n for n, code in leaf_exit.items() if code == 2]
-    has_cycle = any(f.get("metric", {}).get("name") == "import_cycle_size" for f in findings)
+    has_cycle = any(
+        f.get("metric", {}).get("name") == "import_cycle_size" for f in findings
+    )
     type_errors = sum(1 for f in findings if f.get("signal") == "TYPE")
     high = sum(1 for f in findings if f.get("severity") == "high")
     gated = (
@@ -95,7 +116,13 @@ def _resolve_script(leaf: dict, overrides: dict[str, str]) -> Path:
     return p if p.is_absolute() else SKILLS_ROOT / script
 
 
-def _run_one(leaf: dict, root: str, source_prefixes: list[str], out_dir: Path, overrides: dict[str, str]):
+def _run_one(
+    leaf: dict,
+    root: str,
+    source_prefixes: list[str],
+    out_dir: Path,
+    overrides: dict[str, str],
+):
     script = _resolve_script(leaf, overrides)
     leaf_out = out_dir / leaf["name"]
     cmd = [sys.executable, str(script), "--root", root, "--out-dir", str(leaf_out)]
@@ -104,7 +131,9 @@ def _run_one(leaf: dict, root: str, source_prefixes: list[str], out_dir: Path, o
     if not script.exists():
         return leaf["name"], 2, []
     try:
-        proc = subprocess.run(cmd, text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT)
+        proc = subprocess.run(
+            cmd, text=True, capture_output=True, check=False, timeout=TOOL_TIMEOUT
+        )
     except subprocess.TimeoutExpired:
         return leaf["name"], 2, []
     findings_path = leaf_out / leaf["findings_file"]
@@ -117,23 +146,33 @@ def _run_one(leaf: dict, root: str, source_prefixes: list[str], out_dir: Path, o
     return leaf["name"], proc.returncode, findings
 
 
-def run_leaves(leaves: list[dict], root: str, source_prefixes: list[str], out_dir: Path,
-               overrides: dict[str, str]):
+def run_leaves(
+    leaves: list[dict],
+    root: str,
+    source_prefixes: list[str],
+    out_dir: Path,
+    overrides: dict[str, str],
+):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     leaf_exit: dict[str, int] = {}
     all_findings: list[dict] = []
     with ThreadPoolExecutor(max_workers=max(1, len(leaves))) as pool:
-        results = list(pool.map(
-            lambda leaf: _run_one(leaf, root, source_prefixes, out_dir, overrides), leaves
-        ))
+        results = list(
+            pool.map(
+                lambda leaf: _run_one(leaf, root, source_prefixes, out_dir, overrides),
+                leaves,
+            )
+        )
     for name, code, findings in results:
         leaf_exit[name] = code
         all_findings.extend(findings)
     return all_findings, leaf_exit
 
 
-def build_summary(ranked: list[dict], leaf_exit: dict[str, int], decision: str, code: int) -> dict:
+def build_summary(
+    ranked: list[dict], leaf_exit: dict[str, int], decision: str, code: int
+) -> dict:
     by_signal: dict[str, int] = {}
     by_severity: dict[str, int] = {}
     for f in ranked:
@@ -143,12 +182,20 @@ def build_summary(ranked: list[dict], leaf_exit: dict[str, int], decision: str, 
     leaves = {}
     for name, exit_code in sorted(leaf_exit.items()):
         count = sum(1 for f in ranked if f.get("leaf") == name)
-        leaves[name] = {"exit": exit_code, "status": status.get(exit_code, "unknown"), "count": count}
+        leaves[name] = {
+            "exit": exit_code,
+            "status": status.get(exit_code, "unknown"),
+            "count": count,
+        }
     return {
         "supervisor": decision,
         "exit_code": code,
         "leaves": leaves,
-        "totals": {"count": len(ranked), "by_signal": by_signal, "by_severity": by_severity},
+        "totals": {
+            "count": len(ranked),
+            "by_signal": by_signal,
+            "by_severity": by_severity,
+        },
         "findings": ranked,
     }
 
@@ -165,8 +212,10 @@ def render_report(ranked: list[dict], decision: str) -> str:
         lines.append(f"## {signal} ({len(by_signal[signal])})")
         for f in by_signal[signal]:
             loc = f["location"]
-            lines.append(f"- `{f['path']}:{loc['line_start']}` {loc['symbol']} "
-                         f"[{f['severity']}/{f['leaf']}] — {f['suggested_action']}")
+            lines.append(
+                f"- `{f['path']}:{loc['line_start']}` {loc['symbol']} "
+                f"[{f['severity']}/{f['leaf']}] — {f['suggested_action']}"
+            )
         lines.append("")
     return "\n".join(lines) + "\n"
 
@@ -192,14 +241,32 @@ def _parse_overrides(values: list[str]) -> dict[str, str]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run code-health leaves, merge/rank, decide.")
+    parser = argparse.ArgumentParser(
+        description="Run code-health leaves, merge/rank, decide."
+    )
     parser.add_argument("--root")
-    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes",
-                        help="Path prefix(es) relative to --root. Repeatable.")
+    parser.add_argument(
+        "--source-prefix",
+        action="append",
+        default=[],
+        dest="source_prefixes",
+        help="Path prefix(es) relative to --root. Repeatable.",
+    )
     parser.add_argument("--out-dir")
-    parser.add_argument("--languages", default="python", help="Comma-separated languages to select leaves.")
-    parser.add_argument("--registry", default=str(DEFAULT_REGISTRY), help="Leaf registry JSON.")
-    parser.add_argument("--leaf-script", action="append", default=[], help="Override: name=PATH. Repeatable.")
+    parser.add_argument(
+        "--languages",
+        default="python",
+        help="Comma-separated languages to select leaves.",
+    )
+    parser.add_argument(
+        "--registry", default=str(DEFAULT_REGISTRY), help="Leaf registry JSON."
+    )
+    parser.add_argument(
+        "--leaf-script",
+        action="append",
+        default=[],
+        help="Override: name=PATH. Repeatable.",
+    )
     parser.add_argument("--config", help="JSON gate overrides.")
     return parser
 
@@ -207,20 +274,31 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.root or not args.out_dir:
-        print(json.dumps({"status": "error", "message": "--root and --out-dir are required"}))
+        print(
+            json.dumps(
+                {"status": "error", "message": "--root and --out-dir are required"}
+            )
+        )
         return 2
     gate = load_gate(args.config)
     overrides = _parse_overrides(args.leaf_script)
-    leaves = select_leaves(load_registry(Path(args.registry)), args.languages.split(","))
+    leaves = select_leaves(
+        load_registry(Path(args.registry)), args.languages.split(",")
+    )
     out_dir = Path(args.out_dir)
-    findings, leaf_exit = run_leaves(leaves, args.root, args.source_prefixes, out_dir, overrides)
+    findings, leaf_exit = run_leaves(
+        leaves, args.root, args.source_prefixes, out_dir, overrides
+    )
     ranked = rank(merge_and_dedupe(findings))
     decision, code = decide(ranked, leaf_exit, gate)
     summary = build_summary(ranked, leaf_exit, decision, code)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "code_health_summary.json").write_text(
-        json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    (out_dir / "code_health_report.md").write_text(render_report(ranked, decision), encoding="utf-8")
+        json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    (out_dir / "code_health_report.md").write_text(
+        render_report(ranked, decision), encoding="utf-8"
+    )
     print(json.dumps({"status": "ok", "supervisor": decision, "findings": len(ranked)}))
     return code
 
