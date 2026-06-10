@@ -339,13 +339,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:712-721"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:725-735"
+    "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741"
   },
   {
     "leaf": "complexity",

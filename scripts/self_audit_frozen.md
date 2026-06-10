@@ -1,4 +1,9 @@
-# Frozen self-audit findings (Actionability Rule)
+# Frozen self-audit findings
+
+(Historical note: the "Actionability Rule" blanket freeze for `skills/test-*/`
+referenced in the Phase 1 / SP3 round-log entries below was RETIRED in SP4
+Phase 2 — see section A. Every current baseline finding is justified individually;
+no blanket/rule freeze is active anywhere.)
 
 Each entry: path :: leaf/metric :: reason.
 
@@ -13,10 +18,11 @@ Each entry: path :: leaf/metric :: reason.
 - **SP3-T4**: added the `coverage-gap-audit` leaf (`coverage_gap_audit.py`, ruff-clean + formatted). Self-audit 162 -> 165 (+3 net): +1 module-MI (section D) and +7 cross-leaf CLI/parse clones involving the new leaf (section C), offset by -5 pre-existing clone-pairs that jscpd re-attributed to the leaf's clone groups. All churn is 100% attributable to introducing the leaf into duplication scope; frozen by the same standalone-vendored-leaf rationale (this front-loads the freeze the plan placed at T5, to keep every commit green).
 - **SP4 Phase 2, R1**: (fix) cleared 55 lint findings (E501/SIM102/SIM108) in audit_test_quality.py + triage_redundancy.py; baseline 170 -> 115; line-range duplicate_tokens churn absorbed by the ratchet.
 - **SP4 Phase 2, R2**: (fix) 10 B023 (`flake8-bugbear` late-binding) in `triage_redundancy.py` fixed with default-arg binding (`_stack=stack`, `_path=path`, `_src=src`) on `visit_ClassDef`, `visit_FunctionDef`, `visit_AsyncFunctionDef`. Baseline 115 -> 105; line-range duplicate_tokens churn absorbed by the ratchet. No golden changed (late-binding was latent on all fixtures).
+- **SP4 Phase 2, R3**: (fix + freeze) deduplicated parallel/sequential kwargs in `audit_pipeline.py:main()` via inline dicts (removed 2 duplicate_tokens findings at 712-721/725-735). Attempted extraction fixes for the 4 `triage_redundancy.py` in-file clones (377-411 visit visitor, 849-871 coverage-json export, 1290-1297/1327-1347 ThreadPoolExecutor block) — every extraction variant (module-level helper, closure, closure-with-defaults) created regressions: `parameter_count` on the helpers, B023 on closures, or `dead_code_confidence` on argparse-group helpers. Attempted `audit_test_quality.py` parse_args nloc extraction — created 3 new duplicate_tokens + 1 dead_code (net +3 regression). **Conclusion**: in-file clone extraction from these single-file standalone tools is net-negative under the current lizard threshold (≥5 params → parameter_count) and jscpd minimum-token settings. The 4 remaining triage duplicate_tokens are individually frozen below. Baseline 105 -> 104 (2 fixed, 1 churn dup added). 2 remaining duplicate_tokens in the snapshot belong to churned line ranges. 0 blanket freezes remain; all 60 residual test-* findings individually justified.
 
 ## Frozen findings (Phase 1 R4 — convergence)
 
-Every remaining baseline finding is justified below: each ACTIONABLE finding has a concrete reason; the test-audit findings are non-actionable per the Actionability Rule. After this round the actionable set is empty (every actionable finding is either fixed in R1/R3 or justified-frozen here).
+Every remaining baseline finding is justified below: each ACTIONABLE finding has a concrete reason. (Historical: at Phase 1 R4 the test-audit findings were blanket-frozen "non-actionable per the Actionability Rule"; that blanket was RETIRED in SP4 Phase 2 once the test-audit skills gained golden suites — those findings are now individually fixed or justified in the SP4 Phase 2 sections below.)
 
 
 ### A. (RETIRED in SP4 Phase 2) Actionability-Rule blanket freeze for `skills/test-*/`
@@ -84,9 +90,11 @@ freeze remains). See the "SP4 Phase 2" round log.
 
 ## Coverage-gap baseline (initial freeze, SP3-T7)
 
-Rule: entries under `skills/test-*/scripts/` are frozen by the Actionability Rule
-(spec SP3 decision 9) until Sub-project 4 writes their tests. All other entries are
-the Phase 2 worklist and must be fixed (tests added) or individually justified below.
+Rule (HISTORICAL, SP3): entries under `skills/test-*/scripts/` were frozen by the
+Actionability Rule (spec SP3 decision 9) until Sub-project 4 wrote their tests.
+**RESOLVED in SP4 T4:** the three test-audit suites landed and cleared the 50%
+bar, so those entries were removed from the coverage-gap baseline (5 -> 2); the
+two remaining entries are the individually-justified self-audit gate scripts.
 
 **Phase 2 R1 (fixed):** `check_vendored_common.py`, `check_skill_fixtures.py`,
 `check_release.py`, and `check_coverage_gap.py` cleared 50% via in-process behavior
@@ -115,3 +123,71 @@ suites expanded 8 → 11. The two justified freezes (`self_audit.py`,
 ### G. T5 parameter_count freezes (2)
 - `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: complexity/parameter_count :: _run_one :: T5 artifact-gated leaf support; added optional `coverage_json` param — minimal API delta; a config-dict refactor would obscure data flow without reducing complexity
 - `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: complexity/parameter_count :: run_leaves :: T5 artifact-gated leaf support; added optional `coverage_json` param — minimal API delta; a config-dict refactor would obscure data flow without reducing complexity
+
+## SP4 Phase 2 R3 — individual freezes (60 remaining test-* findings)
+
+### audit_pipeline.py (13)
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/cyclomatic_complexity :: build_summary :: cohesive orchestration logic; extraction relocates branches without net reduction and churns clone detection
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/cyclomatic_complexity :: main :: cohesive orchestration pipeline (stage dispatch); extraction relocates branches without net reduction
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/cyclomatic_complexity :: stage_report :: cohesive report-generation logic; extraction relocates branches without net reduction
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/function_nloc :: main :: linear tool-output-parsing / orchestration pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/function_nloc :: parse_args :: linear argparse definition; extracting arg-groups creates dead_code/duplication regressions (empirically verified)
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/function_nloc :: stage_report :: linear report assembly; splitting yields single-use helpers that churn clones
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool; splitting breaks the vendored install model
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/parameter_count :: build_summary :: tool function threads N independent runtime inputs (paths/summaries/stage results); config-object refactor would obscure data flow
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/parameter_count :: stage_coverage :: tool function threads independent runtime inputs (python/root/source_prefix/out_dir/test_marker/env); irreducible arity
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/parameter_count :: stage_report :: tool function threads independent runtime inputs (out_dir/root/stages_run/status flags/paths); irreducible arity
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/parameter_count :: stage_tqa :: tool function threads independent runtime inputs (python/script/root/cov_json/hints/baseline/env); irreducible arity
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/parameter_count :: stage_triage :: tool function threads independent runtime inputs (python/script/root/suites/source_prefix/max_workers/env); irreducible arity
+- `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: duplication/duplicate_tokens :: skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741 :: line-range churn from kwargs dedup; not a pre-existing clone (ratchet absorbed)
+
+### audit_test_quality.py (12)
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: compute_delta :: cohesive delta-computation logic; extraction relocates branches without net reduction
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: infer_public_hints :: cohesive AST-walking logic; extraction relocates conditional branches without net reduction
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: main :: cohesive orchestration pipeline (file discovery → analysis → report); extraction relocates stages without net reduction
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: render_markdown :: cohesive markdown rendering; extraction relocates render sections without net reduction
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: score_rubric :: cohesive rubric-scoring logic; extraction relocates score branches without net reduction
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: summarize :: cohesive summary aggregation; extraction relocates branches without net reduction
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/function_nloc :: compute_delta :: linear delta-computation pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/function_nloc :: main :: linear orchestration pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/function_nloc :: parse_args :: linear argparse definition; extracting arg-groups creates dead_code/duplication regressions (empirically verified in R3)
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/function_nloc :: render_markdown :: linear markdown assembly; splitting yields single-use helpers that churn clones
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/function_nloc :: score_rubric :: linear rubric-scoring pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool; splitting breaks the vendored install model
+
+### triage_redundancy.py (35)
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: bool_low_signal :: cohesive signal-classification logic; extraction relocates condition chains without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: infer_assertion_types :: cohesive AST-walking classification; extraction relocates conditional branches without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: infer_intent :: cohesive intent-inference logic; extraction relocates branches without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: main :: cohesive orchestration pipeline (parse → discover → rank → evaluate → validate); extraction relocates stages without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: main.evaluate :: cohesive candidate-evaluation logic; extraction relocates branches without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: run_strict_delete_gate :: cohesive gate-validation logic; extraction relocates condition chains without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: write_branch_equiv_artifacts :: cohesive artifact-generation logic; extraction relocates write branches without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: write_confidence_gate_artifact :: cohesive gate-output logic; extraction relocates branches without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/cyclomatic_complexity :: write_coverage_artifacts :: cohesive coverage-artifact logic; extraction relocates write branches without net reduction
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: collect_node_coverage_runs :: linear coverage-collection pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: collect_suite_coverage_union :: linear coverage-union pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: ensure_coverage_tool :: linear tool-availability check; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: main :: linear orchestration pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: main.evaluate :: linear evaluation pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: run_mutation_probe_kills :: linear mutation-testing pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: run_single_test_coverage :: linear single-test coverage pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: run_strict_delete_gate :: linear gate-validation pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: write_branch_equiv_artifacts :: linear artifact-writing pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: write_confidence_gate_artifact :: linear gate-output pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: write_coverage_artifacts :: linear coverage-artifact pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/function_nloc :: write_mutation_artifacts :: linear mutation-artifact pipeline; splitting yields single-use helpers that churn clones
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool; splitting breaks the vendored install model
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: collect_node_coverage_runs :: tool function threads N independent runtime inputs (root/out_dir/nodeids/python_exe/env/timeout/max_workers/source_prefix); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: collect_suite_coverage_union :: tool function threads independent runtime inputs (root/suite_files/coverage_python/env/timeout/tmp_dir/source_prefix); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: run_mutation_probe_kills :: tool function threads independent runtime inputs (root/out_dir/tests/python_exe/env/timeout/probes/source_prefix); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: run_single_test_coverage :: tool function threads independent runtime inputs (root/nodeid/coverage_python/env/timeout/tmp_dir/source_prefix); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: run_strict_delete_gate :: tool function threads independent runtime inputs (root/out_dir/python_exe/env/suite_files/post_suite_files/...); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: run_suite :: tool function threads independent runtime inputs (root/python_exe/env/suite_files/use_xdist/timeout/source_prefix); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: run_suite_multi :: tool function threads independent runtime inputs (root/suite_files/python_exe/env/timeout/max_workers/source_prefix); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: write_branch_equiv_artifacts :: tool function threads independent runtime inputs (root/out_dir/tests/coverage_by_nodeid/ranked_map/...); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: complexity/parameter_count :: write_coverage_artifacts :: tool function threads independent runtime inputs (root/out_dir/tests/python_exe/env/ranked_path/ranked_map/...); irreducible arity
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: duplication/duplicate_tokens :: skills/test-redundancy-triage/scripts/triage_redundancy.py:1290-1297 :: in-file token-level dup (function parameter list); extraction creates parameter_count regressions (empirically verified in R3)
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: duplication/duplicate_tokens :: skills/test-redundancy-triage/scripts/triage_redundancy.py:1327-1347 :: in-file token-level dup (ThreadPoolExecutor block); extraction creates parameter_count regressions (empirically verified in R3)
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: duplication/duplicate_tokens :: skills/test-redundancy-triage/scripts/triage_redundancy.py:377-411 :: in-file token-level dup (visit_FunctionDef/visit_AsyncFunctionDef bodies); extraction creates parameter_count/B023 regressions (empirically verified in R3)
+- `skills/test-redundancy-triage/scripts/triage_redundancy.py` :: duplication/duplicate_tokens :: skills/test-redundancy-triage/scripts/triage_redundancy.py:849-871 :: in-file token-level dup (coverage-json export block); extraction creates parameter_count regressions (empirically verified in R3)
