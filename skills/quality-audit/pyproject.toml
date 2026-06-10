@@ -4,10 +4,10 @@ version = "0.1.0"
 description = "Deterministic lint/format/type audit leaf (ruff + mypy)."
 requires-python = ">=3.10"
 dependencies = [
-    "ruff>=0.6",
-    "mypy>=1.10",
+    "ruff==0.15.5",
+    "mypy==2.1.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
-ty = ["ty>=0.0.1"]
+dev = ["pytest==8.0"]
+ty = ["ty==0.0.1"]

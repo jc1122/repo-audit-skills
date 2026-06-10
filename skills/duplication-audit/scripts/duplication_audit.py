@@ -44,17 +44,15 @@ def _rel(name: str, root: Path) -> str:
 
 def _run_jscpd(root: Path, files: list[Path], thresholds: dict, out_dir: Path) -> dict:
     rel_files = [p.relative_to(root).as_posix() for p in files]
-    cmd = [
-        "npx", "--yes", "jscpd", "--silent",
-        "--reporters", "json", "--output", str(out_dir),
-        "--min-tokens", str(thresholds["min_tokens"]),
-        "--min-lines", str(thresholds["min_lines"]),
-        *rel_files,
-    ]
+    repo_root = Path(__file__).resolve().parents[3]
+    jscpd_bin = repo_root / "node_modules" / ".bin" / "jscpd"
+    cmd = [str(jscpd_bin), "--silent", "--reporters", "json", "--output", str(out_dir),
+           "--min-tokens", str(thresholds["min_tokens"]), "--min-lines", str(thresholds["min_lines"]),
+           *rel_files]
     try:
         proc = subprocess.run(cmd, cwd=str(root), text=True, capture_output=True, check=False)
     except FileNotFoundError as exc:
-        raise ToolError("npx/node is not installed (needed to run jscpd)") from exc
+        raise ToolError("local jscpd binary not found at node_modules/.bin/jscpd (run npm install)") from exc
     report_path = out_dir / "jscpd-report.json"
     if not report_path.exists():
         raise ToolError(f"jscpd produced no report: {proc.stderr.strip() or proc.stdout.strip()}")
