@@ -331,26 +331,28 @@ def parse_test_metadata(root: Path, suite_files: list[str]) -> list[TestMeta]:
         stack: list[str] = []
 
         class V(ast.NodeVisitor):
-            def visit_ClassDef(self, node: ast.ClassDef) -> Any:
-                stack.append(node.name)
+            def visit_ClassDef(self, node: ast.ClassDef, *, _stack=stack) -> Any:
+                _stack.append(node.name)
                 self.generic_visit(node)
-                stack.pop()
+                _stack.pop()
 
-            def visit_FunctionDef(self, node: ast.FunctionDef) -> Any:
+            def visit_FunctionDef(
+                self, node: ast.FunctionDef, *, _stack=stack, _path=path, _src=src
+            ) -> Any:
                 if not node.name.startswith("test_"):
                     return
-                cls = stack[-1] if stack else ""
+                cls = _stack[-1] if _stack else ""
                 try:
-                    relpath = str(path.relative_to(root))
+                    relpath = str(_path.relative_to(root))
                 except ValueError:
-                    relpath = str(path)
+                    relpath = str(_path)
                 nodeid = (
                     f"{relpath}::{cls}::{node.name}"
                     if cls
                     else f"{relpath}::{node.name}"
                 )
                 calls = extract_calls(node)
-                fn_src = ast.get_source_segment(src, node) or ""
+                fn_src = ast.get_source_segment(_src, node) or ""
                 assertions = infer_assertion_types(node, calls, fn_src)
                 entry = infer_entrypoint(
                     calls, fn_src, file_fallback=relpath, class_fallback=cls
@@ -371,21 +373,23 @@ def parse_test_metadata(root: Path, suite_files: list[str]) -> list[TestMeta]:
                     )
                 )
 
-            def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> Any:
+            def visit_AsyncFunctionDef(
+                self, node: ast.AsyncFunctionDef, *, _stack=stack, _path=path, _src=src
+            ) -> Any:
                 if not node.name.startswith("test_"):
                     return
-                cls = stack[-1] if stack else ""
+                cls = _stack[-1] if _stack else ""
                 try:
-                    relpath = str(path.relative_to(root))
+                    relpath = str(_path.relative_to(root))
                 except ValueError:
-                    relpath = str(path)
+                    relpath = str(_path)
                 nodeid = (
                     f"{relpath}::{cls}::{node.name}"
                     if cls
                     else f"{relpath}::{node.name}"
                 )
                 calls = extract_calls(node)
-                fn_src = ast.get_source_segment(src, node) or ""
+                fn_src = ast.get_source_segment(_src, node) or ""
                 assertions = infer_assertion_types(node, calls, fn_src)
                 entry = infer_entrypoint(
                     calls, fn_src, file_fallback=relpath, class_fallback=cls
