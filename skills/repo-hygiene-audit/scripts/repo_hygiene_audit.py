@@ -64,8 +64,12 @@ def analyze_tree(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Repo hygiene audit (advisory).")
+    parser = argparse.ArgumentParser(
+        description="Repo hygiene audit (advisory).",
+        epilog="Thresholds are configurable via --config.",
+    )
     parser.add_argument("--root")
+    parser.add_argument("--out-dir")
     parser.add_argument(
         "--source-prefix",
         action="append",
@@ -73,8 +77,11 @@ def build_parser() -> argparse.ArgumentParser:
         dest="source_prefixes",
         help="Path prefix(es) relative to --root to include. Repeatable.",
     )
-    parser.add_argument("--out-dir")
-    parser.add_argument("--config", help="JSON file overriding thresholds.")
+    parser.add_argument(
+        "--config",
+        metavar="PATH",
+        help="JSON file overriding thresholds.",
+    )
     parser.add_argument("--format", choices=["json", "md"], default="json")
     return parser
 

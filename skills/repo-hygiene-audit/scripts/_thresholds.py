@@ -12,9 +12,11 @@ DEFAULT_THRESHOLDS = {"max_tracked_file_bytes": 1048576}
 
 def load_thresholds(config_path: str | None) -> dict:
     thresholds = dict(DEFAULT_THRESHOLDS)
-    if config_path:
-        try:
-            thresholds.update(json.loads(Path(config_path).read_text(encoding="utf-8")))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise ToolError(f"invalid --config: {exc}") from exc
+    if not config_path:
+        return thresholds
+    try:
+        overrides = json.loads(Path(config_path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ToolError(f"invalid --config: {exc}") from exc
+    thresholds.update(overrides)
     return thresholds
