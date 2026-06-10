@@ -17,8 +17,13 @@ Each entry: path :: leaf/metric :: reason.
 Every remaining baseline finding is justified below: each ACTIONABLE finding has a concrete reason; the test-audit findings are non-actionable per the Actionability Rule. After this round the actionable set is empty (every actionable finding is either fixed in R1/R3 or justified-frozen here).
 
 
-### A. Non-actionable: untested test-audit scripts (126)
-**Rule (Actionability Rule, spec decision 7):** the migrated `test-audit-pipeline`, `test-quality-assurance`, and `test-redundancy-triage` scripts ship no behavior/golden tests in this package, so any refactor is unguarded. They are audited and tracked but never refactored. All findings whose path is under `skills/test-*/` are frozen by this rule.
+### A. (RETIRED in SP4 Phase 2) Actionability-Rule blanket freeze for `skills/test-*/`
+The blanket "Actionability Rule" that froze all 126 `skills/test-*/` findings was
+**retired** once SP4 T3 landed behavior/golden suites for the three test-audit
+skills (gated under `check:coverage`). Those findings are now ACTIONABLE and are
+burned down under golden protection in the SP4 Phase 2 round log below — fixed
+outright where possible, otherwise individually justified per finding (no blanket
+freeze remains). See the "SP4 Phase 2" round log.
 
 ### B. Vendored health_common duplication (1)
 **Reason:** `shared/health_common.py` is vendored byte-identical into all five leaves (the `check:vendored` gate enforces this). The clone *is* the vendoring contract; it cannot be removed without breaking standalone-skill installability.
