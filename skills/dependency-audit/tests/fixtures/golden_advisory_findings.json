@@ -1,0 +1,163 @@
+[
+  {
+    "id": "8cc433a31d302a9c",
+    "leaf": "dependency",
+    "signal": "DELETE",
+    "severity": "low",
+    "path": "pyproject.toml",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "left-pad-py"
+    },
+    "metric": {
+      "name": "declared_unused",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "ast",
+      "raw": "Dynamic imports/plugins/extension modules are invisible to AST analysis."
+    },
+    "confidence": "medium",
+    "suggested_action": "Remove unused declared dependency `left-pad-py` from pyproject.toml or add code that imports it."
+  },
+  {
+    "id": "02427f2abcb62230",
+    "leaf": "dependency",
+    "signal": "RESTRUCTURE",
+    "severity": "high",
+    "path": "pyproject.toml",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "requests"
+    },
+    "metric": {
+      "name": "dependency_vulnerabilities",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "advisory-report",
+      "raw": "PYSEC-2018-28 (fix: 2.20.0)"
+    },
+    "confidence": "high",
+    "suggested_action": "Upgrade `requests` to fix 1 known vulnerability: PYSEC-2018-28 (fix: 2.20.0)."
+  },
+  {
+    "id": "a11cb00faec07322",
+    "leaf": "dependency",
+    "signal": "RESTRUCTURE",
+    "severity": "info",
+    "path": "pyproject.toml",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "requests"
+    },
+    "metric": {
+      "name": "dependency_outdated",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "advisory-report",
+      "raw": "installed=2.19.0 latest=2.32.3"
+    },
+    "confidence": "medium",
+    "suggested_action": "Consider updating `requests` from 2.19.0 to 2.32.3."
+  },
+  {
+    "id": "b937b91f308391fc",
+    "leaf": "dependency",
+    "signal": "DELETE",
+    "severity": "low",
+    "path": "pyproject.toml",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "rich"
+    },
+    "metric": {
+      "name": "declared_unused",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "ast",
+      "raw": "Dynamic imports/plugins/extension modules are invisible to AST analysis."
+    },
+    "confidence": "medium",
+    "suggested_action": "Remove unused declared dependency `rich` from pyproject.toml or add code that imports it."
+  },
+  {
+    "id": "7c39dae9667e74a2",
+    "leaf": "dependency",
+    "signal": "RESTRUCTURE",
+    "severity": "low",
+    "path": "pyproject.toml",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "pytest"
+    },
+    "metric": {
+      "name": "runtime_dep_test_only",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "ast",
+      "raw": "Declared in [project.dependencies] but only imported in test files."
+    },
+    "confidence": "medium",
+    "suggested_action": "Move `pytest` from [project.dependencies] to a test/dev extra or [project.optional-dependencies]."
+  },
+  {
+    "id": "eeeddac6341c1c9c",
+    "leaf": "dependency",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "src/app.py",
+    "location": {
+      "line_start": 2,
+      "line_end": 2,
+      "symbol": "yaml"
+    },
+    "metric": {
+      "name": "import_undeclared",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "ast",
+      "raw": "Imported but not declared in pyproject.toml or requirements*.txt."
+    },
+    "confidence": "high",
+    "suggested_action": "Declare `yaml` (dist: pyyaml) as a dependency in pyproject.toml."
+  },
+  {
+    "id": "a16a567d0993e63e",
+    "leaf": "dependency",
+    "signal": "RESTRUCTURE",
+    "severity": "medium",
+    "path": "src/util.py",
+    "location": {
+      "line_start": 1,
+      "line_end": 1,
+      "symbol": "pendulum"
+    },
+    "metric": {
+      "name": "import_undeclared",
+      "value": 1.0,
+      "threshold": 0.0
+    },
+    "evidence": {
+      "tool": "ast",
+      "raw": "Imported but not declared in pyproject.toml or requirements*.txt."
+    },
+    "confidence": "medium",
+    "suggested_action": "Declare `pendulum` (dist: pendulum) as a dependency in pyproject.toml."
+  }
+]
