@@ -1006,5 +1006,17 @@
     "metric": "SIM108",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "SIM108@2180:9"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "_run_one"
+  },
+  {
+    "leaf": "complexity",
+    "metric": "parameter_count",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "run_leaves"
   }
 ]
