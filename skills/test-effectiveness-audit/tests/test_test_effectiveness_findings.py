@@ -276,3 +276,242 @@ def test_perfect_kill_rate_no_finding(tmp_path: Path):
     thresholds = {"min_kill_rate": 0.8}
     findings = mod.findings_from_mutmut(work, thresholds)
     assert len(findings) == 0
+
+
+# ---------------------------------------------------------------------------
+# Threshold propagation regression test (SP7 A6 repair)
+# ---------------------------------------------------------------------------
+
+
+def test_metric_threshold_preserves_configured_value(tmp_path: Path):
+    """The emitted finding's metric_threshold MUST equal the configured
+    min_kill_rate, not a hardcoded constant.
+
+    Regression: prior to the SP7 A6 repair, _make_finding hardcoded
+    metric_threshold=0.8 regardless of the --threshold / --config value.
+    This test locks in the fix so a future refactor cannot regress.
+    """
+    mod = _get_mod()
+    work = tmp_path / "work"
+    _setup_captured_work(work)
+
+    # Use a non-default threshold (0.55 instead of 0.8).
+    # With kill_rate=0.2, this should still produce a finding.
+    configured_threshold = 0.55
+    thresholds = {"min_kill_rate": configured_threshold}
+    findings = mod.findings_from_mutmut(work, thresholds)
+
+    assert len(findings) == 1, (
+        f"Expected 1 finding with threshold={configured_threshold}, "
+        f"got {len(findings)}"
+    )
+    f = findings[0]
+
+    # The key assertion: metric_threshold reflects the configured value,
+    # NOT the old hardcoded 0.8.
+    assert f.metric_threshold == configured_threshold, (
+        f"metric_threshold should be {configured_threshold} "
+        f"(the configured min_kill_rate), but got {f.metric_threshold}. "
+        f"This is a regression — _make_finding must use the caller's "
+        f"threshold, not a hardcoded constant."
+    )
+
+    # Also verify the dict representation matches
+    d = f.to_dict()
+    assert d["metric"]["threshold"] == configured_threshold, (
+        f"dict metric.threshold should be {configured_threshold}, "
+        f"got {d['metric']['threshold']}"
+    )
+
+
+def test_metric_threshold_preserves_different_custom_value(tmp_path: Path):
+    """Same as above but with a different threshold to double-check
+    the value is truly dynamic (not accidentally matching 0.55)."""
+    mod = _get_mod()
+    work = tmp_path / "work"
+    _setup_captured_work(work)
+
+    # kill_rate=0.2, use threshold=0.35 — should still produce a finding
+    configured_threshold = 0.35
+    thresholds = {"min_kill_rate": configured_threshold}
+    findings = mod.findings_from_mutmut(work, thresholds)
+
+    assert len(findings) == 1
+    f = findings[0]
+
+    assert f.metric_threshold == configured_threshold, (
+        f"metric_threshold should be {configured_threshold}, "
+        f"got {f.metric_threshold}"
+    )
+    assert f.to_dict()["metric"]["threshold"] == configured_threshold
+
+
+# ---------------------------------------------------------------------------
+# load_thresholds and render_report coverage tests
+# ---------------------------------------------------------------------------
+
+
+def test_load_thresholds_none_returns_defaults():
+    """load_thresholds(None) returns a copy of DEFAULT_THRESHOLDS."""
+    mod = _get_mod()
+    result = mod.load_thresholds(None)
+    assert result == mod.DEFAULT_THRESHOLDS
+    assert result is not mod.DEFAULT_THRESHOLDS  # must be a copy
+
+
+def test_load_thresholds_merges_json_config(tmp_path: Path):
+    """load_thresholds with a valid JSON config merges values."""
+    mod = _get_mod()
+    config_file = tmp_path / "config.json"
+    config_file.write_text(json.dumps({"min_kill_rate": 0.5, "custom": 42}))
+    result = mod.load_thresholds(str(config_file))
+    assert result["min_kill_rate"] == 0.5  # overridden
+    assert result["mutmut_timeout_seconds"] == 600  # preserved from defaults
+    assert result["custom"] == 42  # new key added
+
+
+def test_load_thresholds_missing_file_raises_toolerror():
+    """load_thresholds raises ToolError for a non-existent config file."""
+    mod = _get_mod()
+    with pytest.raises(Exception) as exc_info:
+        mod.load_thresholds("/nonexistent/path/config.json")
+    # ToolError is a RuntimeError subclass
+    assert "invalid --config" in str(exc_info.value).lower() or isinstance(
+        exc_info.value, RuntimeError
+    )
+
+
+def test_load_thresholds_invalid_json_raises_toolerror(tmp_path: Path):
+    """load_thresholds raises ToolError for invalid JSON."""
+    mod = _get_mod()
+    config_file = tmp_path / "bad.json"
+    config_file.write_text("not valid json {{{")
+    with pytest.raises(Exception) as exc_info:
+        mod.load_thresholds(str(config_file))
+    assert "invalid --config" in str(exc_info.value).lower() or isinstance(
+        exc_info.value, RuntimeError
+    )
+
+
+def test_render_report_empty_findings():
+    """render_report with empty list returns simple 'No findings' report."""
+    mod = _get_mod()
+    report = mod.render_report([])
+    assert "No findings" in report
+    assert report.startswith("# test-effectiveness-audit report")
+
+
+def test_render_report_with_high_severity_findings():
+    """render_report with high-severity findings includes the HIGH section."""
+    mod = _get_mod()
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        work = Path(td) / "work"
+        _mutants_dir = work / "mutants" / "pkg"
+        _mutants_dir.mkdir(parents=True)
+        (_mutants_dir / "mod.py.meta").write_text(
+            json.dumps(
+                {
+                    "exit_code_by_key": {
+                        "pkg.mod.x_k1__mutmut_1": 1,
+                        "pkg.mod.x_s1__mutmut_1": 0,
+                        "pkg.mod.x_s2__mutmut_1": 0,
+                        "pkg.mod.x_s3__mutmut_1": 0,
+                        "pkg.mod.x_s4__mutmut_1": 0,
+                    }
+                }
+            )
+        )
+        (work / "results.txt").write_text(
+            "pkg.mod.x_s1__mutmut_1: survived\n"
+            "pkg.mod.x_s2__mutmut_1: survived\n"
+            "pkg.mod.x_s3__mutmut_1: survived\n"
+            "pkg.mod.x_s4__mutmut_1: survived\n"
+        )
+        thresholds = {"min_kill_rate": 0.8}
+        findings = mod.findings_from_mutmut(work, thresholds)
+        assert len(findings) == 1
+        report = mod.render_report(findings)
+        assert "HIGH severity" in report
+        assert "Mutation testing" in report
+
+
+def test_render_report_with_medium_severity():
+    """render_report with medium-severity findings includes MEDIUM section."""
+    mod = _get_mod()
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        work = Path(td) / "work"
+        _md = work / "mutants" / "pkg"
+        _md.mkdir(parents=True)
+        # 2 mutants: 1 killed, 1 survived → kill_rate = 0.5
+        (_md / "mod.py.meta").write_text(
+            json.dumps(
+                {
+                    "exit_code_by_key": {
+                        "pkg.mod.x_k__mutmut_1": 1,
+                        "pkg.mod.x_s__mutmut_1": 0,
+                    }
+                }
+            )
+        )
+        (work / "results.txt").write_text("pkg.mod.x_s__mutmut_1: survived\n")
+        thresholds = {"min_kill_rate": 0.8}
+        findings = mod.findings_from_mutmut(work, thresholds)
+        assert len(findings) == 1
+        f = findings[0]
+        assert f.severity == "medium"  # 0.5 is not < 0.5
+        report = mod.render_report(findings)
+        assert "MEDIUM severity" in report
+        assert "HIGH severity" not in report
+
+
+def test_metric_threshold_at_kill_rate_boundary_no_finding(tmp_path: Path):
+    """When kill_rate equals the configured threshold, no finding is emitted.
+
+    This confirms the threshold comparison logic works correctly with
+    non-default values — the finding suppression is faithful to the
+    configured threshold, not a hardcoded constant.
+    """
+    mod = _get_mod()
+    work = tmp_path / "work"
+    mutants_dir = work / "mutants" / "pkg"
+    mutants_dir.mkdir(parents=True)
+
+    # 5 mutants: 4 killed, 1 survived → kill_rate = 4/5 = 0.8
+    (mutants_dir / "mod.py.meta").write_text(
+        json.dumps({
+            "exit_code_by_key": {
+                "pkg.mod.x_k1__mutmut_1": 1,
+                "pkg.mod.x_k2__mutmut_1": 1,
+                "pkg.mod.x_k3__mutmut_1": 1,
+                "pkg.mod.x_k4__mutmut_1": 1,
+                "pkg.mod.x_s1__mutmut_1": 0,
+            }
+        })
+    )
+    (work / "results.txt").write_text("pkg.mod.x_s1__mutmut_1: survived\n")
+
+    # threshold=0.8, kill_rate=0.8 → kill_rate >= threshold → NO finding
+    thresholds = {"min_kill_rate": 0.8}
+    findings = mod.findings_from_mutmut(work, thresholds)
+    assert len(findings) == 0, (
+        f"kill_rate=0.8 with threshold=0.8 should produce 0 findings, "
+        f"got {len(findings)}"
+    )
+
+    # threshold=0.79, kill_rate=0.8 → kill_rate >= threshold → NO finding
+    thresholds2 = {"min_kill_rate": 0.79}
+    findings2 = mod.findings_from_mutmut(work, thresholds2)
+    assert len(findings2) == 0, (
+        f"kill_rate=0.8 with threshold=0.79 should produce 0 findings, "
+        f"got {len(findings2)}"
+    )
+
+    # threshold=0.81, kill_rate=0.8 → kill_rate < threshold → finding emitted
+    thresholds3 = {"min_kill_rate": 0.81}
+    findings3 = mod.findings_from_mutmut(work, thresholds3)
+    assert len(findings3) == 1
+    assert findings3[0].metric_threshold == 0.81, (
+        f"threshold should be 0.81, got {findings3[0].metric_threshold}"
+    )
