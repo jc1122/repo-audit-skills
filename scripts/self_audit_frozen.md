@@ -80,3 +80,15 @@ Every remaining baseline finding is justified below: each ACTIONABLE finding has
 Rule: entries under `skills/test-*/scripts/` are frozen by the Actionability Rule
 (spec SP3 decision 9) until Sub-project 4 writes their tests. All other entries are
 the Phase 2 worklist and must be fixed (tests added) or individually justified below.
+
+**Phase 2 R1 (fixed):** `check_vendored_common.py`, `check_skill_fixtures.py`,
+`check_release.py`, and `check_coverage_gap.py` cleared 50% via in-process behavior
+tests (subprocess CLI tests are NOT traced by pytest-cov in this config; the tests
+import each module and exercise its functions directly). Baseline ratcheted 9 -> 5.
+
+**Phase 2 R2 (justified freezes):**
+- `scripts/self_audit.py` :: coverage-gap/file_coverage_percent :: `main()` runs the full code-health pipeline over the entire repo (~30s subprocess via `run()`); a unit test would re-run the whole audit inside the test suite. The argparse/CLI contract is unit-tested (`tests/test_self_audit_cli.py`) and the `run()` body is exercised end-to-end by the `check:selfaudit` gate on every CI run.
+- `scripts/check_self_audit.py` :: coverage-gap/file_coverage_percent :: `main()` shells out to `self_audit.py` (regenerating the snapshot, ~30s) then diffs snapshot vs baseline; a unit test would re-run the full audit. It is exercised end-to-end by the `check:selfaudit` gate on every CI run.
+
+**Converged:** the actionable coverage-gap set is empty — the 5 baseline entries are
+the 2 justified freezes above plus the 3 `skills/test-*/scripts` rule-frozen entries.
