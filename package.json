@@ -1,6 +1,6 @@
 {
   "name": "repo-audit-skills",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Deterministic, advisory repo-audit skills: a code-health family (complexity, duplication, dead-code, structure, quality) with the code-health-audit-pipeline umbrella, plus a test-audit family (test-quality-assurance, test-redundancy-triage) with the test-audit-pipeline umbrella.",
   "license": "MIT",
   "bin": {
@@ -31,6 +31,8 @@
     "!**/.pytest_cache/**",
     "!**/.mypy_cache/**",
     "!**/.ruff_cache/**",
+    "!**/.coverage",
+    "!**/.coverage.*",
     "!**/self_audit_snapshot.json",
     "!**/coverage_gap_snapshot.json"
   ],
