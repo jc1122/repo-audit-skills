@@ -19,6 +19,22 @@ refactors the package's own code against its own audit until the actionable find
 via opencode-worker-bridge (own worktree, one packet each), verify every gate yourself by reading
 real output, own all merges and loop control. Cap concurrency at 4.
 
+WORKERS (primary + fallback — this run is long and may exhaust OpenCode credits)
+- PRIMARY: opencode-worker-bridge -> OpenCode DeepSeek v4 Pro. One task packet per worker, own
+  git worktree.
+- FALLBACK (automatic, one-way): if dispatching an OpenCode worker FAILS for an infrastructure
+  reason — credits/quota exhausted, auth/billing error, bridge unreachable — switch to NATIVE
+  OPUS workers for that packet AND all subsequent packets: run the IDENTICAL task packet via your
+  own Agent tool (a subagent, model opus, in an isolated git worktree), with the IDENTICAL accept
+  criteria and gates. Do this without pausing the run.
+- DISTINGUISH failure types: an OpenCode dispatch/credit failure triggers the fallback switch; a
+  worker whose CHANGE fails its gates is a normal task failure -> discard that branch and
+  retry/triage, NOT a reason to switch backends.
+- The switch is one-way (once on native Opus, stay there) and LOGGED: record per worker which
+  backend ran it, and note the round at which the run crossed over, in the final report.
+- Either backend: one packet per worker, own worktree, cap concurrency at 4, you verify every
+  gate yourself. Native Opus subagents may run in the background to preserve throughput.
+
 SOURCES OF TRUTH (read first, in full)
 - Plan:  docs/superpowers/plans/2026-06-10-dogfooding-self-improvement.md   (authoritative; Rev 1)
 - Spec:  docs/superpowers/specs/2026-06-10-dogfooding-self-improvement-design.md

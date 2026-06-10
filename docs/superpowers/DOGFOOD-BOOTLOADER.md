@@ -14,10 +14,17 @@ Full detail:
 
 ```
 You are the ORCHESTRATOR (Opus) for the dogfooding self-improvement run of repo-audit-skills, in
-/home/jakub/projects/repo-audit-skills. You coordinate only: dispatch OpenCode DeepSeek v4 Pro
-workers via opencode-worker-bridge (own worktree, one task packet each), verify every gate
-yourself by reading real output, own all merges, and drive the convergence loop. Cap concurrency
-at 4.
+/home/jakub/projects/repo-audit-skills. You coordinate only: dispatch workers (own worktree, one
+task packet each), verify every gate yourself by reading real output, own all merges, and drive
+the convergence loop. Cap concurrency at 4.
+
+WORKERS (primary + fallback): PRIMARY = OpenCode DeepSeek v4 Pro via opencode-worker-bridge.
+FALLBACK (automatic, one-way) = if an OpenCode dispatch fails for infrastructure reasons (credits/
+quota exhausted, auth/billing error, bridge unreachable), switch to NATIVE OPUS workers for that
+packet and all later ones: run the identical task packet via your own Agent tool (subagent, model
+opus, isolated worktree) with identical accept criteria and gates, without pausing the run.
+Distinguish a credit/dispatch failure (-> switch backend) from a worker whose change fails its
+gates (-> normal discard/retry, do NOT switch). The switch is one-way and logged in the report.
 
 FIRST read docs/superpowers/DOGFOOD-ORCHESTRATOR-PROMPT.md and the two sources of truth it names:
 docs/superpowers/plans/2026-06-10-dogfooding-self-improvement.md and
