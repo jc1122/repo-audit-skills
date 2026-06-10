@@ -3,6 +3,7 @@
 code; emit a normalized snapshot."""
 
 from __future__ import annotations
+import argparse
 import json
 import subprocess
 import sys
@@ -55,7 +56,12 @@ def run(out_dir: Path) -> list[dict]:
     )
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Run the code-health pipeline over this package's production "
+        "code and write scripts/self_audit_snapshot.json."
+    )
+    parser.parse_args(argv)
     findings = run(ROOT / ".self_audit_out")
     SNAPSHOT.write_text(json.dumps(findings, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"status": "ok", "count": len(findings)}))
