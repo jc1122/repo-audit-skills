@@ -1,0 +1,74 @@
+{
+  "schema_version": 2,
+  "repo_root": "/home/jakub/projects/repo-audit-skills",
+  "started_utc": "2026-06-11T13:19:08Z",
+  "finished_utc": "2026-06-11T13:19:08Z",
+  "orchestrator_skill_version": "0.3.1",
+  "lanes": {
+    "release": {
+      "version": "0.5.0",
+      "skills": 16
+    },
+    "gates": {
+      "npm_run_check": "pass",
+      "coverage_gate": {
+        "status": "pass",
+        "count": 0,
+        "baseline": 0,
+        "suites": 17
+      }
+    },
+    "wave": {
+      "skills_root": "/home/jakub/projects/repo-audit-skills/skills",
+      "run2_raw": 2423,
+      "run2_ids": 1015,
+      "run3_raw": 2423,
+      "run3_ids": 1015,
+      "new_in_run3": 0,
+      "stale_from_run2": 0
+    }
+  },
+  "findings_totals": {
+    "wave_run2_raw": 2423,
+    "wave_run2_ids": 1015,
+    "wave_run3_raw": 2423,
+    "wave_run3_ids": 1015
+  },
+  "backlog": {
+    "accepted": 0,
+    "deferred": 1015,
+    "coverage_gated": 0,
+    "wont_fix": 0
+  },
+  "batches": [
+    {
+      "name": "K5-T2 release prep",
+      "commit": "8fa2d14",
+      "evidence": "package.json and 16 SKILL.md files at 0.5.0; installer --list reports 16 skills at 0.5.0"
+    },
+    {
+      "name": "K5-T3 repo-A convergence",
+      "evidence": "npm run check passed; two direct wave runs had identical normalized identities"
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm run check",
+      "status": "pass",
+      "evidence": "final coverage JSON: status pass, count 0, baseline 0, suites 17"
+    },
+    {
+      "command": "node bin/install-repo-audit-skills.js --list",
+      "status": "pass",
+      "evidence": "version 0.5.0, 16 skills"
+    },
+    {
+      "command": "repo-A direct wave run2/run3 identity comparison",
+      "status": "pass",
+      "evidence": "run2_ids 1015, run3_ids 1015, new_in_run3 0, stale_from_run2 0"
+    }
+  ],
+  "warnings": [
+    "Monolithic python3 -m pytest -q is not the repo-A gate: it failed from cross-suite helper module name collisions. The official coverage gate ran 17 suites in isolation and passed."
+  ]
+}
