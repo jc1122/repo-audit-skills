@@ -77,6 +77,24 @@ class SingleCoverageRunContext:
     source_prefix: str = ""
 
 
+@dataclass(frozen=True)
+class CoverageArtifactOptions:
+    python_exe: str
+    env: dict[str, str]
+    timeout: int
+    max_workers: int
+    source_prefix: str = ""
+
+
+@dataclass(frozen=True)
+class CoverageArtifactRequest:
+    tests: list[TestMeta]
+    ranked_map: dict[str, dict[str, str]]
+    ranked_path: Path | None
+    comparator_suite_files: list[str]
+    options: CoverageArtifactOptions
+
+
 DESELECT_SUITE_PASS_KEY = "deselect_suite_" + "pass"
 
 
@@ -875,17 +893,13 @@ def collect_single_test_coverage_results(
 def write_coverage_artifacts(
     root: Path,
     out_dir: Path,
-    tests: list[TestMeta],
-    ranked_map: dict[str, dict[str, str]],
-    ranked_path: Path | None,
-    comparator_suite_files: list[str],
-    *,
-    python_exe: str,
-    env: dict[str, str],
-    timeout: int,
-    max_workers: int,
-    source_prefix: str = "",
+    request: CoverageArtifactRequest,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    tests = request.tests
+    ranked_map = request.ranked_map
+    ranked_path = request.ranked_path
+    comparator_suite_files = request.comparator_suite_files
+    options = request.options
     cov_keys = {
         "runtime_ms",
         "executed_line_count",
@@ -965,9 +979,9 @@ def write_coverage_artifacts(
     coverage_python, coverage_env, coverage_mode, coverage_note = ensure_coverage_tool(
         root,
         out_dir,
-        python_exe,
-        env,
-        timeout,
+        options.python_exe,
+        options.env,
+        options.timeout,
     )
     if not coverage_python:
         rows = []
@@ -1017,16 +1031,21 @@ def write_coverage_artifacts(
             comparator_suite_files,
             coverage_python=coverage_python,
             env=coverage_env,
-            timeout=timeout,
+            timeout=options.timeout,
             tmp_dir=tmp_dir,
-            source_prefix=source_prefix,
+            source_prefix=options.source_prefix,
         )
         comparator_union: set[str] = set()
         if comparator["status"] == "ok":
             comparator_union = comparator["line_tokens"] | comparator["branch_tokens"]
 
         context = SingleCoverageRunContext(
-            coverage_python, coverage_env, timeout, tmp_dir, max_workers, source_prefix
+            coverage_python,
+            coverage_env,
+            options.timeout,
+            tmp_dir,
+            options.max_workers,
+            options.source_prefix,
         )
         results = collect_single_test_coverage_results(root, nodeids, context)
 
@@ -1264,12 +1283,7 @@ def collect_node_coverage_runs(
     root: Path,
     out_dir: Path,
     nodeids: list[str],
-    *,
-    python_exe: str,
-    env: dict[str, str],
-    timeout: int,
-    max_workers: int,
-    source_prefix: str = "",
+    options: CoverageArtifactOptions,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     if not nodeids:
         return {}, {
@@ -1283,9 +1297,9 @@ def collect_node_coverage_runs(
     coverage_python, coverage_env, coverage_mode, coverage_note = ensure_coverage_tool(
         root,
         out_dir,
-        python_exe,
-        env,
-        timeout,
+        options.python_exe,
+        options.env,
+        options.timeout,
     )
     if not coverage_python:
         return {}, {
@@ -1300,7 +1314,12 @@ def collect_node_coverage_runs(
     with tempfile.TemporaryDirectory(prefix="triage_branch_cov_") as td:
         tmp_dir = Path(td)
         context = SingleCoverageRunContext(
-            coverage_python, coverage_env, timeout, tmp_dir, max_workers, source_prefix
+            coverage_python,
+            coverage_env,
+            options.timeout,
+            tmp_dir,
+            options.max_workers,
+            options.source_prefix,
         )
         results = collect_single_test_coverage_results(root, nodeids, context)
 
@@ -1413,15 +1432,18 @@ def write_branch_equiv_artifacts(
             needed_nodeids.append(anchor)
     needed_nodeids = unique_preserve(needed_nodeids)
 
-    extra_cov, extra_cov_summary = collect_node_coverage_runs(
-        root,
-        out_dir,
-        needed_nodeids,
+    coverage_options = CoverageArtifactOptions(
         python_exe=python_exe,
         env=env,
         timeout=timeout,
         max_workers=max_workers,
         source_prefix=source_prefix,
+    )
+    extra_cov, extra_cov_summary = collect_node_coverage_runs(
+        root,
+        out_dir,
+        needed_nodeids,
+        coverage_options,
     )
     for nodeid, cov in extra_cov.items():
         branch_cache[nodeid] = cov
@@ -2630,18 +2652,24 @@ def main() -> int:
 
     # Always materialize core evidence artifacts for downstream workflows.
     write_inventory_artifact(out_dir, tests)
-    coverage_map, coverage_summary = write_coverage_artifacts(
-        root,
-        out_dir,
-        tests,
-        ranked_map,
-        ranked_path,
-        comparator_suite_files,
+    coverage_options = CoverageArtifactOptions(
         python_exe=python_exe,
         env=env,
         timeout=args.timeout_seconds,
         max_workers=args.max_workers,
         source_prefix=args.source_prefix,
+    )
+    coverage_request = CoverageArtifactRequest(
+        tests=tests,
+        ranked_map=ranked_map,
+        ranked_path=ranked_path,
+        comparator_suite_files=comparator_suite_files,
+        options=coverage_options,
+    )
+    coverage_map, coverage_summary = write_coverage_artifacts(
+        root,
+        out_dir,
+        coverage_request,
     )
     write_mutation_artifacts(out_dir, tests, ranked_map, ranked_path)
 

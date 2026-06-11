@@ -465,12 +465,6 @@
     "leaf": "complexity",
     "metric": "parameter_count",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "collect_node_coverage_runs"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "collect_suite_coverage_union"
   },
   {
@@ -508,17 +502,5 @@
     "metric": "parameter_count",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "write_branch_equiv_artifacts"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "write_coverage_artifacts"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py#84fedbc87cdd"
   }
 ]

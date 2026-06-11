@@ -420,11 +420,20 @@ def test_write_coverage_artifacts_ranked_mode(tmp_path: Path):
     )
     ranked_map = triage.parse_ranked_by_nodeid(ranked_path)
 
-    cov_map, cov_summary = triage.write_coverage_artifacts(
-        tmp_path, out_dir, tests, ranked_map, ranked_path, [],
-        python_exe=sys.executable, env=os.environ.copy(),
-        timeout=60, max_workers=1,
+    options = triage.CoverageArtifactOptions(
+        python_exe=sys.executable,
+        env=os.environ.copy(),
+        timeout=60,
+        max_workers=1,
     )
+    request = triage.CoverageArtifactRequest(
+        tests=tests,
+        ranked_map=ranked_map,
+        ranked_path=ranked_path,
+        comparator_suite_files=[],
+        options=options,
+    )
+    cov_map, cov_summary = triage.write_coverage_artifacts(tmp_path, out_dir, request)
     assert (out_dir / "coverage_matrix.csv").exists()
     assert (out_dir / "coverage_summary.json").exists()
     assert cov_summary["mode"] == "ranked_report"
