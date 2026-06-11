@@ -12,6 +12,7 @@ import importlib.util as _importlib_util
 import json
 import re as _re
 import shlex as _shlex
+import subprocess  # nosec B404 - fixed git argv, shell=False, no shell input
 import sys
 import tomllib
 from collections.abc import Iterator
@@ -35,6 +36,7 @@ _INLINE_CODE_RE = _re.compile(r"`([^`]*)`")
 _PLACEHOLDER = _re.compile(r"[<>{}*$]")
 _OUTPUT_PATH_ROOTS = (".self_audit_out/", "/".join(("", "tmp", "")))
 _LAST_ANALYSIS_META = {
+    "path_resolution": "filesystem",
     "skipped_placeholder_tokens": 0,
     "skipped_output_path_tokens": 0,
 }
@@ -289,11 +291,90 @@ def _check_markdown_fences(
 # -- Group 2: dead doc paths ------------------------------------------------
 
 
+def _tracked_paths(root: Path) -> set[str] | None:
+    """Return git-tracked root-relative paths, or None when git cannot resolve."""
+    # In git repositories, tracked files are the deployable reality: fresh clones
+    # will not contain untracked local reports or generated scratch files.  This
+    # check intentionally prefers `git ls-files` over filesystem existence so
+    # docs that only pass on one workstation fail before release.  Non-git roots
+    # fall back to filesystem checks through _path_resolution_for().  The
+    # subprocess call is fixed-argv, shell-free, and local to this query; callers
+    # that need legacy filesystem behavior must opt in with --filesystem-paths.
+    # Directory tokens are resolved later by prefix matching this tracked set,
+    # which keeps `pkg/` valid when at least one tracked child exists.
+    # Missing or unsupported git state returns None rather than an error so
+    # ad-hoc trees and exported source archives still audit deterministically.
+    try:
+        proc = subprocess.run(  # nosec - fixed git argv, shell=False
+            ["git", "-C", str(root), "ls-files", "-z"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return None
+    if proc.returncode != 0:
+        return None
+    return {path for path in proc.stdout.split("\0") if path}
+
+
+def _path_resolution_for(
+    root_path: Path, filesystem_paths: bool
+) -> tuple[set[str] | None, str]:
+    """Return tracked paths plus the resolution mode label."""
+    if filesystem_paths:
+        return None, "filesystem"
+    tracked = _tracked_paths(root_path)
+    if tracked is None:
+        return None, "filesystem"
+    return tracked, "tracked"
+
+
+def _resolves(span: str, root_path: Path, tracked: set[str] | None) -> bool:
+    """Return True when *span* resolves via tracked paths or the filesystem."""
+    if tracked is None:
+        return (root_path / span).exists()
+    clean = span.rstrip("/")
+    return clean in tracked or any(path.startswith(f"{clean}/") for path in tracked)
+
+
+def _is_doc_path_candidate(span: str) -> bool:
+    """Return True when an inline code span looks like a source path."""
+    suffix = Path(span).suffix
+    return (
+        bool(_DEAD_PATH_RE.match(span))
+        and "://" not in span
+        and "/" in span
+        and (suffix in _DEAD_PATH_SUFFIXES or span.endswith("/"))
+    )
+
+
+def _doc_path_missing_finding(md_relpath: str, line: int, span: str) -> hc.Finding:
+    """Build a doc_path_missing finding."""
+    return hc.Finding(
+        leaf=LEAF,
+        signal="LINT",
+        severity="low",
+        path=md_relpath,
+        line_start=line,
+        line_end=line,
+        symbol=span,
+        metric_name="doc_path_missing",
+        metric_value=1.0,
+        metric_threshold=0.0,
+        evidence_tool="markdown",
+        evidence_raw=span,
+        confidence="medium",
+        suggested_action=f"Create {span} or update {md_relpath} reference",
+    )
+
+
 def _check_dead_paths(
     md_relpath: str,
     text: str,
     root_path: Path,
     findings: list[hc.Finding],
+    tracked: set[str] | None,
 ) -> tuple[int, int]:
     """Emit findings for inline code spans referencing non-existent files."""
     skipped_placeholder_tokens = 0
@@ -304,39 +385,13 @@ def _check_dead_paths(
             if _PLACEHOLDER.search(span):
                 skipped_placeholder_tokens += 1
                 continue
-            if not _DEAD_PATH_RE.match(span):
-                continue
-            if "://" in span:
-                continue
-            if "/" not in span:
-                continue
-            suffix = Path(span).suffix
-            if suffix not in _DEAD_PATH_SUFFIXES:
+            if not _is_doc_path_candidate(span):
                 continue
             if span.startswith(_OUTPUT_PATH_ROOTS):
                 skipped_output_path_tokens += 1
                 continue
-            if not (root_path / span).exists():
-                findings.append(
-                    hc.Finding(
-                        leaf=LEAF,
-                        signal="LINT",
-                        severity="low",
-                        path=md_relpath,
-                        line_start=i,
-                        line_end=i,
-                        symbol=span,
-                        metric_name="doc_path_missing",
-                        metric_value=1.0,
-                        metric_threshold=0.0,
-                        evidence_tool="markdown",
-                        evidence_raw=span,
-                        confidence="medium",
-                        suggested_action=(
-                            f"Create {span} or update {md_relpath} reference"
-                        ),
-                    )
-                )
+            if not _resolves(span, root_path, tracked):
+                findings.append(_doc_path_missing_finding(md_relpath, i, span))
     return skipped_placeholder_tokens, skipped_output_path_tokens
 
 
@@ -528,6 +583,7 @@ def analyze_tree(
     source_prefixes: list[str],
     thresholds: dict,
     exclude_prefixes: list[str] | None = None,
+    filesystem_paths: bool = False,
 ) -> list[hc.Finding]:
     """Run all four audit groups and return sorted findings."""
     root_path = Path(root).resolve()
@@ -540,6 +596,7 @@ def analyze_tree(
     skipped_output_path_tokens = 0
     md_files = _in_scope_files(root_path, "*.md", source_prefixes, excludes)
     py_files = _in_scope_files(root_path, "*.py", source_prefixes, excludes)
+    tracked, path_resolution = _path_resolution_for(root_path, filesystem_paths)
 
     # Group 1: unknown flags in fenced commands
     cache = _FlagCache(root_path)
@@ -553,7 +610,7 @@ def analyze_tree(
         text = _read_text(md_file)
         if text is not None:
             skipped_placeholders, skipped_outputs = _check_dead_paths(
-                _rel(root_path, md_file), text, root_path, findings
+                _rel(root_path, md_file), text, root_path, findings, tracked
             )
             skipped_placeholder_tokens += skipped_placeholders
             skipped_output_path_tokens += skipped_outputs
@@ -570,6 +627,7 @@ def analyze_tree(
 
     _LAST_ANALYSIS_META["skipped_placeholder_tokens"] = skipped_placeholder_tokens
     _LAST_ANALYSIS_META["skipped_output_path_tokens"] = skipped_output_path_tokens
+    _LAST_ANALYSIS_META["path_resolution"] = path_resolution
     return findings
 
 
@@ -600,11 +658,13 @@ def render_report(
     findings: list[hc.Finding],
     skipped_placeholder_tokens: int = 0,
     skipped_output_path_tokens: int = 0,
+    path_resolution: str = "filesystem",
 ) -> str:
     """Render the advisory markdown report grouped by signal."""
     header = [
         "# docs-consistency-audit report",
         "",
+        f"path_resolution: {path_resolution}",
         f"Skipped placeholder tokens: {skipped_placeholder_tokens}",
         f"Skipped output-path tokens: {skipped_output_path_tokens}",
         "",
@@ -639,6 +699,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--out-dir")
     parser.add_argument("--config", help="JSON file overriding thresholds.")
     parser.add_argument("--format", choices=["json", "md"], default="json")
+    parser.add_argument(
+        "--filesystem-paths",
+        action="store_true",
+        help="Resolve documented paths against the filesystem instead of git ls-files.",
+    )
     return parser
 
 
@@ -663,6 +728,7 @@ def _run_audit(args: argparse.Namespace) -> int:
             args.source_prefixes,
             load_thresholds(args.config),
             args.exclude_prefixes,
+            args.filesystem_paths,
         )
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
@@ -671,8 +737,14 @@ def _run_audit(args: argparse.Namespace) -> int:
     report_path = Path(args.out_dir, f"{LEAF}_report.md")
     skipped_placeholder_tokens = _LAST_ANALYSIS_META["skipped_placeholder_tokens"]
     skipped_output_path_tokens = _LAST_ANALYSIS_META["skipped_output_path_tokens"]
+    path_resolution = _LAST_ANALYSIS_META["path_resolution"]
     report_path.write_text(
-        render_report(findings, skipped_placeholder_tokens, skipped_output_path_tokens),
+        render_report(
+            findings,
+            skipped_placeholder_tokens,
+            skipped_output_path_tokens,
+            path_resolution,
+        ),
         encoding="utf-8",
     )
     print(
@@ -681,6 +753,7 @@ def _run_audit(args: argparse.Namespace) -> int:
                 "status": "ok",
                 "findings": len(data),
                 "leaf": LEAF,
+                "path_resolution": path_resolution,
                 "skipped_placeholder_tokens": skipped_placeholder_tokens,
                 "skipped_output_path_tokens": skipped_output_path_tokens,
             }

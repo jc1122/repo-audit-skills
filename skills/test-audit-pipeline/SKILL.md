@@ -113,8 +113,8 @@ out-dir/
 
 ## Known Limitations
 
-- Sibling skill discovery is relative (`../test-quality-assurance/`,
-  `../test-redundancy-triage/`); use `--tqa-script` and `--triage-script` for
-  non-standard layouts.
+- Sibling skill discovery is relative to the `test-quality-assurance` and
+  `test-redundancy-triage` install directories; use `--tqa-script` and
+  `--triage-script` for non-standard layouts.
 - Coverage collection runs all matched tests; use `--test-marker` for filtering.
 - The unified report is additive; individual reports are still written.

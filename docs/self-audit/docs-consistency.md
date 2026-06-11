@@ -6,7 +6,7 @@ scope: static `README.md`, `AGENTS.md`, `docs/self-audit`, `shared`, `scripts`, 
 plus each `skills/<d>/SKILL.md` and its `scripts`/`docs` dirs. Excluded by omission:
 `docs/superpowers/**` and `docs/audits/**` (immutable point-in-time records),
 `skills/*/tests/**` (deliberately dirty fixtures owned by check:fixtures), `tests/`,
-`node_modules/`. Docstring coverage stays off (default).
+the `node_modules` dependency tree. Docstring coverage stays off (default).
 
 A finding = a `doc_path_missing` (dead path reference), `doc_flag_unknown` (stale CLI
 flag), or stale version pin in living docs.

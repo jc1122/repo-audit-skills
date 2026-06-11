@@ -68,7 +68,7 @@ entry and `--tests-dir` to `work/<same relpath>`, write `<work>/setup.cfg` with
 target the root; the sandbox is isolated and disposable.
 
 ## Budget Estimate
-`mutmut print-time-estimates` requires an existing `mutants/` directory, so the
+`mutmut print-time-estimates` requires an existing `mutants` directory, so the
 leaf estimates mutant count from the AST before running:
 
 Estimate:

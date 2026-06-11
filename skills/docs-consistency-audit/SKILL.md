@@ -39,6 +39,7 @@ Docstring coverage is off by default. Enable it with `--config
 | ``--out-dir`` | yes | no | Directory for output files |
 | ``--config`` | no | no | JSON file overriding ``DEFAULT_THRESHOLDS`` |
 | ``--format`` | no | no | Output format: ``json`` (default) or ``md`` |
+| ``--filesystem-paths`` | no | no | Resolve doc path tokens against the filesystem instead of git-tracked paths |
 
 Scope is inclusion first, exclusion second: repeat ``--source-prefix`` to limit
 the root-relative file set, then repeat ``--exclude-prefix`` to remove matching
@@ -54,8 +55,9 @@ root-relative prefixes from that included set.
 
 - ``docs-consistency_findings.json`` -- sorted findings (shared schema, signal ``LINT``).
 - ``docs-consistency_report.md`` -- human-readable summary, including skipped token counts.
-- stdout status JSON -- includes ``status``, ``findings``, ``leaf``, and
-  ``skipped_placeholder_tokens`` / ``skipped_output_path_tokens`` on success.
+- stdout status JSON -- includes ``status``, ``findings``, ``leaf``,
+  ``path_resolution``, and ``skipped_placeholder_tokens`` /
+  ``skipped_output_path_tokens`` on success.
 
 ## Thresholds
 
@@ -79,10 +81,13 @@ findings.
 ### Dead doc paths
 
 Confidence: ``medium``. Inline code spans matching ``^[A-Za-z0-9_.\-/]+$`` that
-contain ``/``, exclude ``://``, and have a source-file suffix are checked on
-disk. Missing normal paths emit ``doc_path_missing``. Tokens containing
-``<>{}$*`` are skipped and counted in ``skipped_placeholder_tokens``. Tokens
-under generated-output roots ``.self_audit_out/`` and ``/tmp/`` are skipped and
+contain ``/``, exclude ``://``, and have a source-file suffix are checked
+against git-tracked paths when ``--root`` is in a git repository. Directory
+tokens ending in ``/`` resolve when any tracked file exists below the directory.
+Non-git roots and ``--filesystem-paths`` use filesystem existence instead.
+Missing normal paths emit ``doc_path_missing``. Tokens containing ``<>{}$*`` are
+skipped and counted in ``skipped_placeholder_tokens``. Tokens under
+generated-output roots ``.self_audit_out/`` and ``/tmp/`` are skipped and
 counted in ``skipped_output_path_tokens``. Other hidden or source-like missing
 paths are not suppressed.
 
@@ -108,6 +113,9 @@ Thresholds.
   environment-dependent and cannot be made root-relative.
 - Exclude output-path/runtime references and immutable historical records with
   ``--exclude-prefix`` or freeze and justify them in docs.
+- In git repositories, docs should reference tracked reality. Refer to
+  generated artifacts by basename, placeholders, or an excluded generated-output
+  section rather than depending on local untracked files.
 - Placeholder suppression is only ``<>{}$*``; generated-output suppression is
   only ``.self_audit_out/`` and ``/tmp/``. Other missing paths still emit
   ``doc_path_missing``.
