@@ -531,3 +531,35 @@ Verification:
   `baseline=0`.
 - `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
   `baseline=0`, `suites=17`.
+
+### B2 repo-A structural batch 2
+
+Accepted implementation:
+
+- Targeted the same-file duplicate in
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py` shared by
+  `run_single_test_coverage` and `collect_suite_coverage_union`.
+- Added `CoverageCommandContext` and `run_pytest_coverage` so the coverage
+  `pytest` command and follow-up `coverage json` export live in one helper.
+- Removed three stale baseline identities from
+  `scripts/self_audit_baseline.json` in the same change:
+  `collect_suite_coverage_union` `function_nloc`,
+  `run_single_test_coverage` `function_nloc`, and duplicate identity
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py#db2c35610dec`.
+- This is a mechanical duplicate extraction, so it used golden-suite gate
+  evidence rather than a behavior-bearing mutation gate.
+
+Verification:
+
+- `python3 -m py_compile skills/test-redundancy-triage/scripts/triage_redundancy.py`
+  exited 0.
+- `python3 scripts/check_self_audit.py` -> `status=pass`, `count=88`,
+  `baseline=88`.
+- `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no`
+  -> `208 passed in 112.40s`.
+- `python3 scripts/check_security_audit.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_docs_consistency.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
+  `baseline=0`, `suites=17`.

@@ -60,6 +60,13 @@ class MutationProbe:
     new: str
 
 
+@dataclass(frozen=True)
+class CoverageCommandContext:
+    coverage_python: str
+    env: dict[str, str]
+    timeout: int
+
+
 DESELECT_SUITE_PASS_KEY = "deselect_suite_" + "pass"
 
 
@@ -714,23 +721,16 @@ def ensure_coverage_tool(
     )
 
 
-def run_single_test_coverage(
+def run_pytest_coverage(
     root: Path,
-    nodeid: str,
-    *,
-    coverage_python: str,
-    env: dict[str, str],
-    timeout: int,
-    tmp_dir: Path,
-    source_prefix: str = "",
+    cov_data: Path,
+    cov_json: Path,
+    pytest_args: list[str],
+    context: CoverageCommandContext,
 ) -> dict[str, Any]:
-    safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", nodeid)
-    cov_data = tmp_dir / f"{safe}.coverage"
-    cov_json = tmp_dir / f"{safe}.json"
-
     run = run_cmd(
         [
-            coverage_python,
+            context.coverage_python,
             "-P",
             "-m",
             "coverage",
@@ -744,17 +744,17 @@ def run_single_test_coverage(
             "-o",
             "pythonpath=",
             "-q",
-            nodeid,
-        ],
+        ]
+        + pytest_args,
         cwd=root,
-        env=env,
-        timeout=timeout,
+        env=context.env,
+        timeout=context.timeout,
     )
 
     if cov_data.exists():
         _ = run_cmd(
             [
-                coverage_python,
+                context.coverage_python,
                 "-m",
                 "coverage",
                 "json",
@@ -763,9 +763,27 @@ def run_single_test_coverage(
                 str(cov_json),
             ],
             cwd=root,
-            env=env,
-            timeout=timeout,
+            env=context.env,
+            timeout=context.timeout,
         )
+    return run
+
+
+def run_single_test_coverage(
+    root: Path,
+    nodeid: str,
+    *,
+    coverage_python: str,
+    env: dict[str, str],
+    timeout: int,
+    tmp_dir: Path,
+    source_prefix: str = "",
+) -> dict[str, Any]:
+    safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", nodeid)
+    cov_data = tmp_dir / f"{safe}.coverage"
+    cov_json = tmp_dir / f"{safe}.json"
+    context = CoverageCommandContext(coverage_python, env, timeout)
+    run = run_pytest_coverage(root, cov_data, cov_json, [nodeid], context)
 
     line_tokens, branch_tokens = parse_coverage_json(cov_json, root, source_prefix)
     status = infer_test_status(run["returncode"], run["output"])
@@ -803,44 +821,8 @@ def collect_suite_coverage_union(
 
     cov_data = tmp_dir / "comparator.coverage"
     cov_json = tmp_dir / "comparator.json"
-    run = run_cmd(
-        [
-            coverage_python,
-            "-P",
-            "-m",
-            "coverage",
-            "run",
-            "--branch",
-            f"--data-file={cov_data}",
-            "-m",
-            "pytest",
-            "-o",
-            "addopts=",
-            "-o",
-            "pythonpath=",
-            "-q",
-        ]
-        + suite_files,
-        cwd=root,
-        env=env,
-        timeout=timeout,
-    )
-
-    if cov_data.exists():
-        _ = run_cmd(
-            [
-                coverage_python,
-                "-m",
-                "coverage",
-                "json",
-                f"--data-file={cov_data}",
-                "-o",
-                str(cov_json),
-            ],
-            cwd=root,
-            env=env,
-            timeout=timeout,
-        )
+    context = CoverageCommandContext(coverage_python, env, timeout)
+    run = run_pytest_coverage(root, cov_data, cov_json, suite_files, context)
 
     line_tokens, branch_tokens = parse_coverage_json(cov_json, root, source_prefix)
     return {
