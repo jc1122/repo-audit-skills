@@ -1,7 +1,7 @@
 {
   "name": "repo-audit-skills",
-  "version": "0.3.0",
-  "description": "Deterministic, advisory repo-audit skills: a code-health family (complexity, duplication, dead-code, structure, quality) with the code-health-audit-pipeline umbrella, plus a test-audit family (test-quality-assurance, test-redundancy-triage) with the test-audit-pipeline umbrella.",
+  "version": "0.4.0",
+  "description": "Deterministic, advisory repo-audit skills: a code-health family (complexity, duplication, dead-code, structure, quality) with the code-health-audit-pipeline umbrella, a test-audit family (test-quality-assurance, test-redundancy-triage) with the test-audit-pipeline umbrella, plus standalone hotspot, dependency, repo-hygiene, docs-consistency, security, and test-effectiveness leaves.",
   "license": "MIT",
   "bin": {
     "repo-audit-skills": "./bin/install-repo-audit-skills.js",

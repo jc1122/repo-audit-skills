@@ -25,6 +25,12 @@ REQUIRED_SKILLS = {
     "test-quality-assurance": "test-quality-assurance",
     "test-redundancy-triage": "test-redundancy-triage",
     "coverage-gap-audit": "coverage-gap-audit",
+    "hotspot-audit": "hotspot-audit",
+    "dependency-audit": "dependency-audit",
+    "repo-hygiene-audit": "repo-hygiene-audit",
+    "docs-consistency-audit": "docs-consistency-audit",
+    "security-audit": "security-audit",
+    "test-effectiveness-audit": "test-effectiveness-audit",
 }
 REQUIRED_SCRIPTS = {
     "complexity-audit": ["scripts/complexity_audit.py"],
@@ -37,6 +43,12 @@ REQUIRED_SCRIPTS = {
     "test-quality-assurance": ["scripts/audit_test_quality.py"],
     "test-redundancy-triage": ["scripts/triage_redundancy.py"],
     "coverage-gap-audit": ["scripts/coverage_gap_audit.py"],
+    "hotspot-audit": ["scripts/hotspot_audit.py"],
+    "dependency-audit": ["scripts/dependency_audit.py"],
+    "repo-hygiene-audit": ["scripts/repo_hygiene_audit.py"],
+    "docs-consistency-audit": ["scripts/docs_consistency_audit.py"],
+    "security-audit": ["scripts/security_audit.py"],
+    "test-effectiveness-audit": ["scripts/test_effectiveness_audit.py"],
 }
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 

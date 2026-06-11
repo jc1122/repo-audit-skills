@@ -18,6 +18,12 @@ const skills = [
   "test-quality-assurance",
   "test-redundancy-triage",
   "coverage-gap-audit",
+  "hotspot-audit",
+  "dependency-audit",
+  "repo-hygiene-audit",
+  "docs-consistency-audit",
+  "security-audit",
+  "test-effectiveness-audit",
 ];
 
 function usage() {

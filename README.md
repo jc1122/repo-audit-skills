@@ -23,6 +23,15 @@ Test-audit family:
 - `test-quality-assurance` — scores a suite against an 8-dimension TDD rubric.
 - `test-redundancy-triage` — classifies tests DELETE / MERGE / KEEP with confidence tiers.
 
+SP7 leaves (v0.4.0):
+
+- `hotspot-audit` — git-history mining (churn × complexity, temporal coupling, knowledge concentration) → DECOMPOSE / RESTRUCTURE. Standalone (history window unpinnable by the umbrella).
+- `dependency-audit` — declared vs imported deps (tomllib + ast; optional vuln advisory) → DELETE / RESTRUCTURE.
+- `repo-hygiene-audit` — tracked-tree artifacts + release hygiene (`languages: ["*"]`) → DELETE / RESTRUCTURE.
+- `docs-consistency-audit` — docs vs reality (command introspection; docstring group opt-in) → RESTRUCTURE.
+- `security-audit` — bandit → SECURITY. Standalone (deliberate-run tool).
+- `test-effectiveness-audit` — mutmut mutation testing → TEST. Registered with `requires: {mutation_scope}` (pipeline plumbing is future work).
+
 The code-health leaves emit findings to one shared schema; the test-audit skills keep
 their own report formats. Skills are developed and released here, installed once to a
 skills root, then run against any target repo via `--root`.

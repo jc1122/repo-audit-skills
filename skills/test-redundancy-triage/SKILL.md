@@ -1,6 +1,6 @@
 ---
 name: test-redundancy-triage
-version: 0.3.0
+version: 0.4.0
 description: >
   Identify and safely remove redundant tests using empirical deselection,
   branch-equivalence analysis, assertion dominance, and coverage/mutation

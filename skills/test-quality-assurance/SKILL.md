@@ -1,6 +1,6 @@
 ---
 name: test-quality-assurance
-version: 0.3.0
+version: 0.4.0
 description: >
   Score your test suite against an 8-dimension TDD rubric (contract coverage,
   behavior focus, assertion quality, pyramid balance, coverage/mutation gates,
