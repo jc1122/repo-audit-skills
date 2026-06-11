@@ -36,6 +36,10 @@ Each entry: path :: leaf/metric :: reason.
 - **SP8 G4-R4** (converge): no unfinished ratchet from R2/R3 — convergence declared after R3.
   All four new SP8 gate baselines and the self-audit baseline hold at equality; every freeze is
   individually justified. Baseline 107 unchanged.
+- **SP9 K2-T1** (identity migration): duplication identities moved to scheme v2:
+  content-hash symbols that are line-shift-immune. Baseline stayed count-neutral
+  at 107; exactly 28 duplication entries were migrated and no non-duplication
+  identities changed.
 
 ## Frozen findings (Phase 1 R4 — convergence)
 
