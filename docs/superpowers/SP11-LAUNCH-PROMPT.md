@@ -1,99 +1,118 @@
-# SP11 Launch Prompt — paste into a fresh Codex gpt-5.5 session
+# SP11 Launch Prompt — recursive unattended dogfood loop — paste as the orchestrator's goal
 
 Paste the block below into a fresh **Codex gpt-5.5** session started inside
-`/home/jakub/projects/repo-audit-skills`. It drives the PREP stage only:
-goal-config verification → goal-preflight → emit the exact `/goal` bootloader
-text. The prep session must NOT launch `/goal` itself (goal-preflight is
-prompt-prep only); the human pastes the rendered bootloader into the next
-session, and from that point the run is fully unattended.
+`/home/jakub/projects/repo-audit-skills`, with approvals disabled. One session
+owns the whole run, unattended, until DONE or BLOCKED. No goal-orchestration
+skillset is involved: the diagnosis engine is the INSTALLED
+repo-audit-refactor-optimize pipeline and the installed repo-audit leaves,
+applied recursively to their own source — improve the skill using the skill,
+ship + reinstall, then loop on the improved install.
 
-Authority chain the bundle must preserve:
-
-- Plan (single authority): `docs/superpowers/plans/2026-06-11-sp11-unattended-dogfood-loop.md`
-- Brief (preflight source): `docs/superpowers/SP11-GOAL-BRIEF.md`
-- Both on repo-A `main` with CI green (plan review-fixed at `b7cb74f`).
-
----
-
-```
-You are the SP11 PREP session for the unattended dogfood loop of the
-repo-audit skill family, in /home/jakub/projects/repo-audit-skills. Your ONLY
-deliverable is a lint-clean, readiness-green /goal bundle and the exact
-goal-bootloader.md text. You prepare; you do NOT launch /goal, do not start
-branch orchestrators, do not edit any repo source. Fail closed at every step:
-on any failure, print the failing command + output + the fix-and-recheck
-command, then STOP.
-
-PRE-FLIGHT (any failure -> STOP and report):
-- repo-A /home/jakub/projects/repo-audit-skills clean, main at b7cb74f or
-  later with CI green; repo-B /home/jakub/projects/repo-audit-refactor-optimize
-  clean at 7c23276 or later; repo-P /home/jakub/projects/perf-benchmark-skill
-  clean at ac89675 or later.
-- The plan and brief exist at the paths above; read BOTH in full. The plan's
-  contracts C-1..C-9, branch groups B0-B5, DoD, and DONE/BLOCKED terminals are
-  FROZEN — the bundle must carry them verbatim, never paraphrased weaker.
-- Installed skills resolve: goal-config, goal-preflight, opencode-worker-bridge
-  under ${CODEX_HOME:-$HOME/.codex}/skills or ~/.agents/skills.
-
-STEP 1 — goal-config (fail-closed smoke):
-Use the goal-config skill. Create or reuse a profile at
-/home/jakub/projects/goal-bundles/sp11-unattended-dogfood/goal.config.json:
-- main + branch orchestrators: Codex gpt-5.5, approvals DISABLED (unattended;
-  authorized by the human 2026-06-11 — recorded in the plan's Authorization
-  section).
-- worker routes: opencode (via opencode-worker-bridge) FIRST; the native
-  worker ladder as fallback, per plan C-7.
-- effort profile: thorough; validation mode: smoke.
-Run check_goal_config.py --for-preflight with the smoke test. If NO worker
-route is green, STOP (do not silently fall back at config time — the C-7
-fallback is a runtime decision recorded per packet). Record which routes the
-smoke accepted; if opencode is not among them, say so explicitly in your
-final output so the human can decide before launch.
-
-STEP 2 — goal-preflight (bundle creation):
-Use the goal-preflight skill with the brief as source material:
-- brief source: /home/jakub/projects/repo-audit-skills/docs/superpowers/SP11-GOAL-BRIEF.md
-  (digest the plan it points to; keep branch boundaries, DoD, contracts, and
-  the DONE/BLOCKED terminal semantics verbatim).
-- out-dir: /home/jakub/projects/goal-bundles/sp11-unattended-dogfood/
-  (OUTSIDE the three repos — they self-audit docs for path tokens; never
-  write bundle files into any of the three repos).
-- Branch groups exactly as the brief's rolling schedule: Group 1 serial
-  B0.1 -> B0.2 -> B1 with B0.3/B0.4 concurrent to B1; Group 2 parallel B2/B3/B4
-  single-writer per repo; Group 3 serial B5.
-- Run the guided pipeline (prepare_goal_bundle.py with the goal config), then
-  lint and the readiness check. If readiness is blocked, return the blocked
-  readiness fix/recheck command and STOP — do not hand-edit generated
-  manifests to force green.
-
-STEP 3 — handoff (your final output, in this order):
-1. The readiness --json payload (compact).
-2. Which worker routes the smoke accepted (opencode green: yes/no).
-3. The EXACT rendered goal-bootloader.md text in one fenced block, ready to
-   paste into a fresh /goal session.
-4. One line stating what the next session will do: run goal-main-orchestrator
-   on this bundle, unattended, until every DoD row is met (DONE) or a C-8
-   condition ends it (BLOCKED with complete ledger evidence) — both valid
-   terminals, nothing pushed past a red gate, no human gate anywhere in the
-   loop.
-
-CONSTRAINTS: never edit the plan, the brief, or any repo source; never launch
-/goal, orchestrators, or workers (the B0.2 bridge smoke belongs to the runtime
-session, not to you); bundle artifacts only under the out-dir; if any skill,
-script, or route is missing, STOP and report rather than improvising a
-substitute.
-```
+Authority: `docs/superpowers/plans/2026-06-11-sp11-unattended-dogfood-loop.md`
+(contracts C-0..C-9, work packages B0–B5, DoD, DONE/BLOCKED terminals — all
+FROZEN).
 
 ---
 
-## Launch at a glance
+```
+You are the ORCHESTRATOR (Codex gpt-5.5, UNATTENDED) for SP11, the recursive
+self-improvement dogfood loop of the repo-audit skill family, in
+/home/jakub/projects/repo-audit-skills. The plan
+docs/superpowers/plans/2026-06-11-sp11-unattended-dogfood-loop.md is the
+single authority — read it IN FULL before acting; its contracts C-0..C-9,
+work packages B0-B5, DoD, and terminals are frozen. This prompt is a launch
+key, not a substitute for the plan.
+
+AUTHORIZATION (human, 2026-06-11, recorded in the plan): no human approval at
+any step. Push, tag, release, and reinstall proceed automatically once the
+C-6 machine ship gate passes. The B5.1 stale-skill purge is authorized under
+its deterministic HISTORICAL-minus-CURRENT rule. The C-8 STOP conditions are
+the only halt points.
+
+THE RECURSION (C-0, the point of the run): every iteration starts from the
+INSTALLED skillset (~/.claude/skills -> ~/.agents/skills) — bootstrap probe,
+then the installed repo-audit-refactor-optimize diagnosis wave on each repo.
+Its findings drive the iteration's backlog; ad-hoc inspection does not.
+Improvements land in the source repos, ship through C-6 (push -> CI watch ->
+bump+tag+release when source changed -> REINSTALL -> readback -> hotspot
+re-anchor), and the NEXT iteration diagnoses with the skill this iteration
+improved. Record the installed versions every iteration ran on in the ledger.
+
+REPOS (entry state; verify, proceed only if gates green):
+- repo-A /home/jakub/projects/repo-audit-skills — main b7cb74f or later, CI
+  green; npm run check 9 gates green; selfaudit baseline 92, security 49,
+  docs/dependency/hygiene/coverage [].
+- repo-B /home/jakub/projects/repo-audit-refactor-optimize — 7c23276 or
+  later, CI green; 101 tests; wave baseline 9.
+- repo-P /home/jakub/projects/perf-benchmark-skill — ac89675 or later, CI
+  green; 154 tests; wave baseline 55.
+- Installed: 16 leaves @ 0.5.1, repo-audit-refactor-optimize 0.4.1,
+  perf-benchmark 0.3.0, perf-optimization 0.2.0; bootstrap probe exit 0.
+
+WORKERS: PRIMARY = opencode-worker-bridge (file-backed packets per C-7: one
+goal, <=2 files, failing test included, exact command + expected output,
+<=8k tokens; the JSON artifacts under the run dir are the only evidence).
+FALLBACK (automatic, logged, per packet) = native subagent workers on bridge
+INFRASTRUCTURE failure only (unreachable/auth/quota); a gate-failing CHANGE
+is a normal discard/retry, NOT a route switch. A worker's green is NEVER
+evidence — re-run every gate yourself and read real output.
+
+ITERATION 1 — foundation + precision (repo-A):
+C-0 diagnosis with the current install -> B0.1 full-pytest aggregator gate
+(10th npm gate; snapshot gitignored) -> B0.2 bridge smoke (one trivial
+worker; file-backed evidence or STOP) -> B1.1 security trusted-subprocess
+policy (counted suppressions, both-direction tests) -> B1.2 security
+baseline 49 -> 0 (47 policy rows + 2 B105 source fixes) -> B1.3 hotspot
+coupling_allow_pairs + single_maintainer policy (churn rows have NO
+suppression path) -> B1.4 ship 0.5.2 + reinstall (includes B0.4 workflow
+bump; CI must show zero deprecation annotations). B0.3 mutation census runs
+as a background worker; iteration 2 starts only after the 0.5.2 readback.
+
+ITERATIONS 2..N — steady-state recursive burn-down:
+Each iteration: C-0 diagnosis of all three repos with the install the
+previous iteration shipped -> serial visits: repo-A per the B2 recipe
+(know what dissolves what: duplication via extraction, params via config
+objects, nloc/CC only via function-level simplification, module-MI via file
+splits; scoped mutation gate >=80% for behavior-changing batches, golden
+suite + byte-identical CLI output for mechanical moves; <=2 batches/repo,
+throwaway worktrees; new modules need coverage in the same batch;
+duplication re-baseline in the SAME commit) -> repo-B per B3 (first visit:
+anchor + declared pairs + MI/param refactors + workflow bump, ship 0.4.2)
+-> repo-P per B4 (first visit: workflow bump push, then trusted-subprocess
+adoption + B105/B324 source fixes, then complexity recipe, ship 0.3.1) ->
+ratchet shrink-only -> convergence x2 -> fresh-clone sim -> C-6 ship +
+reinstall per changed repo -> ledger append. Repos already at [] get a
+convergence verification visit only.
+
+FINAL ITERATION — close-out: B5.1 purge (eligibility table logged BEFORE any
+removal; anything outside HISTORICAL is never touched) -> B5.2 final
+reinstall + readback -> B5.3 final report; repo-A ships 0.6.0.
+
+TERMINALS: DONE = every DoD row met (all baselines [], 10 repo-A gates, CI
+green with zero deprecation annotations on all three repos, suppressions
+counted+documented+regression-tested, installed sets match manifests,
+ledger complete). BLOCKED = a C-8 condition fired (two zero-shrink
+iterations, unfixable growth, second CI red on one repo, or a gate
+impossible without violating C-0..C-7) with ledger + final report complete
+for everything shipped. BLOCKED after exhausting honest moves is a valid
+outcome — report it with evidence; never game thresholds, never suppress
+real findings, never silently retry.
+
+BINDING LESSONS (pre-flight 6): fresh-clone sim before ANY push; never trust
+a piped exit code — grep the gate JSON; merge commits need git log -S -m;
+duplication baseline rows are line-pinned; keep vendored health_common
+byte-identical everywhere (check_vendored_common.py guards it).
+```
+
+---
+
+## Run at a glance
 
 ```
-Session 1 (this prompt):  goal-config smoke -> goal-preflight -> bundle + bootloader text
-Human:                    paste bootloader into a fresh /goal session
-Session 2 (/goal):        goal-main-orchestrator consumes the bundle, unattended
-                          Group 1: B0.1 gate -> B0.2 bridge smoke -> B1 precision (ship 0.5.2)
-                          Group 2: B2 (A: 92->0) || B3 (B: 9->0) || B4 (P: 55->0)
-                          Group 3: B5 purge + final report, repo-A 0.6.0
-Terminals:                DONE (all DoD rows) or BLOCKED (C-8, evidence complete)
+Iter 1:   C-0 probe+wave (0.5.1) -> B0.1 10th gate -> B0.2 bridge smoke
+          -> B1 precision (security 49->0, hotspot policy) -> ship 0.5.2 + REINSTALL
+Iter 2..N: C-0 probe+wave (prev install) -> A: B2 burn-down | B: B3 | P: B4 (serial)
+          -> ratchet -> convergence x2 -> fresh-clone -> ship + REINSTALL per changed repo
+Final:    B5 purge (deterministic) -> reinstall + readback -> final report -> repo-A 0.6.0
+Terminal: DONE (all baselines []) or BLOCKED (C-8, evidence complete) — both valid
 ```
