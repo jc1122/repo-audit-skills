@@ -30,6 +30,28 @@ from _emission import ToolError, findings_from_mutmut  # noqa: E402
 __all__ = ["ToolError", "analyze_tree"]
 
 
+def _run_mutmut(work: Path, timeout: int) -> None:
+    """Run mutmut and normalize tool failures into a CLI-safe ToolError."""
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "mutmut", "run"],
+            cwd=str(work),
+            timeout=timeout,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.TimeoutExpired:
+        raise ToolError(
+            f"mutmut run timed out after {timeout}s; increase "
+            "mutmut_timeout_seconds or narrow --paths",
+        ) from None
+    except subprocess.CalledProcessError as exc:
+        output = "\n".join(part for part in (exc.stdout, exc.stderr) if part)
+        tail = "\n".join(output.strip().splitlines()[-20:]) or "<no output>"
+        raise ToolError(f"mutmut run failed (exit {exc.returncode}): {tail}") from None
+
+
 def analyze_tree(config: dict) -> tuple[list[hc.Finding], int]:
     """Run the full test-effectiveness pipeline.
 
@@ -70,20 +92,7 @@ def analyze_tree(config: dict) -> tuple[list[hc.Finding], int]:
 
     # --- Phase 4: run mutmut ---
     timeout = int(config["thresholds"]["mutmut_timeout_seconds"])
-    try:
-        subprocess.run(
-            [sys.executable, "-m", "mutmut", "run"],
-            cwd=str(work),
-            timeout=timeout,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except subprocess.TimeoutExpired:
-        raise ToolError(
-            f"mutmut run timed out after {timeout}s; increase "
-            "mutmut_timeout_seconds or narrow --paths",
-        ) from None
+    _run_mutmut(work, timeout)
 
     # Export CI/CD stats (best-effort, not critical)
     subprocess.run(

@@ -147,6 +147,8 @@ added (future work). Meanwhile, it runs standalone.
 - **Limited survivor detail.** Only the first 3 surviving mutants per module are
   inspected with `mutmut show` to bound subprocess overhead. A `…(+N more)`
   suffix in evidence_raw indicates there are additional uninspected survivors.
+- **Test suite shape.** Subprocess integration suites can be incompatible with
+  the mutmut sandbox; prefer per-file unit suites as `--tests-dir`.
 - **No root mutation.** The sandbox protocol ensures the target repo is never
   touched.
 
