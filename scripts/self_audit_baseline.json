@@ -246,6 +246,12 @@
     "symbol": "<module>"
   },
   {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/repo-hygiene-audit/scripts/_thresholds.py",
+    "symbol": "skills/security-audit/scripts/_reporting.py:25-33"
+  },
+  {
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
     "path": "skills/structure-audit/scripts/structure_audit.py",

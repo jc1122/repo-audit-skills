@@ -1,0 +1,25 @@
+[
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "PYSEC-2018-28 (fix: 2.20.0)",
+      "tool": "advisory-report"
+    },
+    "id": "52babfc8227ea454",
+    "leaf": "security",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "requests"
+    },
+    "metric": {
+      "name": "dependency_vulnerabilities",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "<advisory>",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Upgrade requests to a patched release (1 vulnerabilities reported)"
+  }
+]

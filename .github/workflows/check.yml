@@ -27,7 +27,8 @@ jobs:
             radon==6.0.1 \
             vulture==2.16 \
             ruff==0.15.16 \
-            mypy==2.1.0
+            mypy==2.1.0 \
+            bandit==1.9.4
 
       - name: Install Node dependencies
         run: npm install
