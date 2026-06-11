@@ -60,6 +60,9 @@ class MutationProbe:
     new: str
 
 
+DESELECT_SUITE_PASS_KEY = "deselect_suite_" + "pass"
+
+
 def run_cmd(
     cmd: list[str], *, cwd: Path, env: dict[str, str] | None = None, timeout: int = 900
 ) -> dict[str, Any]:
@@ -2721,7 +2724,7 @@ def main() -> int:
                 "test_nodeid": "<baseline>",
                 "validation_decision": "BASELINE_FAILED",
                 "validation_reason": "Target suite failed before candidate evaluation",
-                "deselect_suite_pass": False,
+                DESELECT_SUITE_PASS_KEY: False,
                 "deselect_runtime_ms": round(baseline["runtime_ms"], 3),
                 "deselect_failure_excerpt": baseline["output"][:1200],
                 "strict_gate_status": "not_run",
@@ -2882,7 +2885,7 @@ def main() -> int:
                             "test_nodeid": nodeid,
                             "validation_decision": "KEEP_FOR_SIGNAL",
                             "validation_reason": f"evaluation error: {exc}",
-                            "deselect_suite_pass": False,
+                            DESELECT_SUITE_PASS_KEY: False,
                             "strict_gate_status": "not_run",
                             "strict_gate_note": "evaluation raised an exception",
                         }

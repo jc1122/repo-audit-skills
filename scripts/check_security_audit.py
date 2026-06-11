@@ -12,12 +12,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from gate_common import GateSpec, gate_main, production_prefixes  # noqa: E402  # sec
 
 ROOT = Path(__file__).resolve().parents[1]  # -- gate: security-audit
+CONFIG = ROOT / "scripts" / "security_audit_config.json"
 
 
 def _spec() -> GateSpec:
     out = ROOT / ".self_audit_out" / "security"
     leaf = ROOT / "skills" / "security-audit" / "scripts" / "security_audit.py"
-    cmd = [sys.executable, str(leaf), "--root", str(ROOT), "--out-dir", str(out)]
+    cmd = [
+        sys.executable,
+        str(leaf),
+        "--root",
+        str(ROOT),
+        "--out-dir",
+        str(out),
+        "--config",
+        str(CONFIG),
+    ]
     # production-scoped: every skill scripts dir + shared + scripts/
     for prefix in production_prefixes(ROOT):
         cmd += ["--source-prefix", prefix]
