@@ -61,6 +61,15 @@ Each entry: path :: leaf/metric :: reason.
   is a content-hash replacement for the existing `dead_code_audit.py` <->
   `quality_audit.py` duplicate pair; the stale docs-consistency/test-effectiveness clone
   remains dissolved. No count growth and no genuine new finding.
+- **SP10 T3** (precision ratchet): entrypoint module-MI relaxation dissolved the
+  single-file CLI module-MI freezes for `check_coverage_gap.py`, `check_release.py`,
+  `check_vendored_common.py`, `self_audit.py`, `code_health_pipeline.py`,
+  `complexity_audit.py`, `coverage_gap_audit.py`, `dead_code_audit.py`,
+  `docs_consistency_audit.py`, `duplication_audit.py`, `quality_audit.py`,
+  `structure_audit.py`, and `audit_pipeline.py`; `complexity_audit.py` also
+  cleared its `_radon_mi_findings` cyclomatic finding after the MI parsing helper
+  split. Duplication stayed count-neutral (content-hash identity swaps only).
+  Baseline 106 -> 92.
 
 ## Frozen findings (Phase 1 R4 — convergence)
 
