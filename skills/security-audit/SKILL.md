@@ -42,14 +42,35 @@ bandit is invoked as `python -m bandit -r <targets> -f json -q`, where
   existing prefixes become bandit targets.
 - `--out-dir` (required) — output directory.
 - `--config` — JSON file overriding thresholds (plumbing; this leaf is
-  rule-based and ships an empty threshold dict).
+  rule-based and ships a disabled-by-default `trusted_subprocess` policy.
 - `--format {json,md}` — default json.
 - `--advisory-report PATH` — optional pip-audit-shaped JSON (see Advisory mode).
 
 ## Output
 
 - `security_findings.json` — sorted findings (shared schema).
+- `security_summary.json` — finding count plus counted suppression records.
 - `security_report.md` — grouped summary.
+
+## Trusted subprocess policy
+
+Default behavior suppresses nothing. Repos that intentionally shell out to
+trusted internal tools can opt in with:
+
+```json
+{
+  "trusted_subprocess": {
+    "enabled": true,
+    "rules": ["B404", "B603", "B607"],
+    "path_globs": ["scripts/**", "skills/*/scripts/**", "shared/**"]
+  }
+}
+```
+
+Only matching Bandit rule ids on matching root-relative paths are suppressed.
+Every suppressed row is counted in `security_summary.json` under
+`suppressed_findings` with class `trusted_subprocess`, and markdown renders the
+count. Other rules on the same file still emit normally.
 
 ## Mapping
 
@@ -104,3 +125,8 @@ when present else `<advisory>`, symbol package name, metric
 Findings are sorted by shared `sort_findings` and use root-relative POSIX paths,
 so output is byte-deterministic for fixed `bandit==1.9.4`. bandit reports
 patterns, not proven exploits; every finding needs human review.
+
+Limits:
+- `trusted_subprocess` is for pinned, internal, shell-free subprocess wrappers
+  only. It is disabled by default and never hides rows silently: suppressions
+  are counted in JSON and markdown output.

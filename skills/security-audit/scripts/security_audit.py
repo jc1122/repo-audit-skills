@@ -19,6 +19,7 @@ import health_common as hc  # noqa: E402
 import _advisory  # noqa: E402
 import _bandit  # noqa: E402
 import _reporting  # noqa: E402
+import _suppressions  # noqa: E402
 
 LEAF = "security"
 ToolError = _bandit.ToolError  # re-export for tests/back-compat
@@ -31,10 +32,24 @@ def analyze_tree(
     advisory_report: str | None = None,
 ) -> list[hc.Finding]:
     """Bandit findings for *root*, plus advisory findings when requested."""
+    findings, _suppressed = analyze_tree_with_suppressions(
+        root, source_prefixes, thresholds, advisory_report
+    )
+    return findings
+
+
+def analyze_tree_with_suppressions(
+    root: str,
+    source_prefixes: list[str],
+    thresholds: dict,
+    advisory_report: str | None = None,
+) -> tuple[list[hc.Finding], list[dict]]:
+    """Bandit/advisory findings plus counted policy suppressions."""
     findings = _bandit.scan(root, source_prefixes)
     if advisory_report:
         findings = findings + _advisory.scan(advisory_report, root)
-    return hc.sort_findings(findings)
+    findings, suppressed = _suppressions.apply_suppressions(findings, thresholds)
+    return hc.sort_findings(findings), suppressed
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -71,16 +86,23 @@ def main(argv: list[str] | None = None) -> int:
         return hc.EXIT_ERROR
     try:
         thresholds = _reporting.load_thresholds(args.config)
-        findings = analyze_tree(
+        findings, suppressed = analyze_tree_with_suppressions(
             args.root, args.source_prefixes, thresholds, args.advisory_report
         )
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
     written = hc.write_findings(findings, args.out_dir, LEAF)
+    summary = _suppressions.write_summary(args.out_dir, len(written), suppressed)
     report_path = Path(args.out_dir) / f"{LEAF}_report.md"
-    report_path.write_text(_reporting.render_report(findings), encoding="utf-8")
-    print(json.dumps({"status": "ok", "findings": len(written), "leaf": LEAF}))
+    report_path.write_text(
+        _reporting.render_report(findings, summary["suppressed_findings"]),
+        encoding="utf-8",
+    )
+    payload = {"status": "ok", "findings": len(written), "leaf": LEAF}
+    if summary["suppressed_findings"]:
+        payload["suppressed_findings"] = len(summary["suppressed_findings"])
+    print(json.dumps(payload))
     return hc.EXIT_FINDINGS if written else hc.EXIT_CLEAN
 
 
