@@ -12,7 +12,7 @@ A finding = a `doc_path_missing` (dead path reference), `doc_flag_unknown` (stal
 flag), or stale version pin in living docs.
 
 **Ratchet discipline and identity coarseness** are the same as the security gate.
-Snapshot scripts/docs_consistency_snapshot.json (gitignored), baseline
+Snapshot `docs_consistency_snapshot.json` under `scripts/` (gitignored), baseline
 `scripts/docs_consistency_baseline.json`.
 
 **Freeze policy.** Deliberately-illustrative references (documenting a file the user's

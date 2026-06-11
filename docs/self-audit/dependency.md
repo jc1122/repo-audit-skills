@@ -4,8 +4,8 @@
 `skills/dependency-audit/scripts/dependency_audit.py` over the production scope (same as
 security). This repo has no `pyproject.toml` or `requirements*.txt`, so the leaf reports
 `manifest: false` and 0 findings — an empty snapshot that passes by design. The gate is
-a tripwire for the day a manifest appears. Snapshot scripts/dependency_snapshot.json
-(gitignored), baseline `scripts/dependency_baseline.json` (`[]`).
+a tripwire for the day a manifest appears. Snapshot `dependency_snapshot.json` under
+`scripts/` (gitignored), baseline `scripts/dependency_baseline.json` (`[]`).
 
 **Ratchet discipline and identity coarseness** are the same as the security gate.
 

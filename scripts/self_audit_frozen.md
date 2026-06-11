@@ -55,7 +55,8 @@ Each entry: path :: leaf/metric :: reason.
   `dead_code_audit.py:31-58` symbols were replaced by `:275-296` and `:33-60` in the same
   commit. Baseline stays 106.
 - **SP9 K5-T1** (merge resolution): after merging K2 first and K1 second, regenerated
-  `scripts/self_audit_snapshot.json` from the merge tree and replaced the baseline with
+  the self-audit snapshot (gitignored `self_audit_snapshot.json` under `scripts/`)
+  from the merge tree and replaced the baseline with
   that snapshot. Snapshot count is 106. Compared with post-K2 main, the only new identity
   is a content-hash replacement for the existing `dead_code_audit.py` <->
   `quality_audit.py` duplicate pair; the stale docs-consistency/test-effectiveness clone

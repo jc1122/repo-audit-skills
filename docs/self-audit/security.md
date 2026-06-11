@@ -4,8 +4,8 @@
 `skills/security-audit/scripts/security_audit.py` (pinned bandit==1.9.4, bandit-only —
 no network, no `--advisory-report`) over the production scope (`shared`, `scripts`,
 every `skills/<d>/scripts`). It normalises findings to 4-key identities
-`{leaf, path, symbol, metric}`, writes scripts/security_snapshot.json (gitignored),
-and ratchets against `scripts/security_baseline.json`.
+`{leaf, path, symbol, metric}`, writes the gitignored `security_snapshot.json` under
+`scripts/`, and ratchets against `scripts/security_baseline.json`.
 
 A finding = a bandit SECURITY signal in production code.
 

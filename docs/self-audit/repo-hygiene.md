@@ -4,8 +4,8 @@
 `skills/repo-hygiene-audit/scripts/repo_hygiene_audit.py` over the full repo with NO
 `--source-prefix`. The leaf applies source-prefix filtering post-hoc over all findings,
 so prefixing would silently drop root-level release-hygiene findings; the gate must keep
-the release-hygiene group on. Snapshot scripts/repo_hygiene_snapshot.json (gitignored),
-baseline `scripts/repo_hygiene_baseline.json`.
+the release-hygiene group on. Snapshot `repo_hygiene_snapshot.json` under `scripts/`
+(gitignored), baseline `scripts/repo_hygiene_baseline.json`.
 
 Current state: 0 findings (`"git": true`); baseline is `[]` (empty) — and stays a
 tripwire.
