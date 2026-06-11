@@ -10,6 +10,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402, F401
 
 LEAF = "hotspot"
+DECLARED_COUPLING = "declared_coupling"
+SINGLE_MAINTAINER = "single_maintainer"
 
 DEFAULT_THRESHOLDS = {
     "min_churn_commits": 5,
@@ -19,11 +21,18 @@ DEFAULT_THRESHOLDS = {
     "max_commit_files": 50,
     "min_author_share": 0.9,
     "min_author_commits": 10,
+    "coupling_allow_pairs": [],
+    "single_maintainer": False,
 }
 
 
 class ToolError(RuntimeError):
     pass
+
+
+def default_suppression_counts() -> dict[str, int]:
+    """Return counted suppression defaults for config-driven policies."""
+    return {DECLARED_COUPLING: 0, SINGLE_MAINTAINER: 0}
 
 
 _EvidenceCtx = namedtuple(

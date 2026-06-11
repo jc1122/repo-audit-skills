@@ -54,7 +54,8 @@ Add `--rev v1.0.0 --max-commits 200` to pin the history window.
 - `hotspot_findings.json` -- sorted findings in the shared code-health schema.
 - `hotspot_report.md` -- human-readable summary grouped by signal.
 - stdout status JSON includes resolved `rev`, `max_commits`,
-  `suppressed_solo_author`, and `suppressed_own_test_pairs`.
+  `suppressed_solo_author`, `suppressed_own_test_pairs`, and
+  `suppression_counts` for config-driven policy suppressions.
 
 ## Deterministic Pinned-Window Contract
 
@@ -64,7 +65,7 @@ finding's `evidence_raw` and in stdout (`"rev": "<sha>", "max_commits": <N>`).
 Runs with the same root, initial `--rev`, and `--max-commits` are
 byte-deterministic.
 
-## Default Thresholds
+## Default Thresholds And Policy
 
 ```json
 {
@@ -74,11 +75,22 @@ byte-deterministic.
   "min_coupling_changes": 5,
   "max_commit_files": 50,
   "min_author_share": 0.9,
-  "min_author_commits": 10
+  "min_author_commits": 10,
+  "coupling_allow_pairs": [],
+  "single_maintainer": false
 }
 ```
 
 Override only selected keys with `--config path/to/thresholds.json`.
+
+`coupling_allow_pairs` is a list of glob pairs such as
+`[["SKILL.md", "references/**"]]`. A temporal-coupling finding is suppressed
+only when the two files match opposite sides of one declared pair, and the
+suppression is counted as `declared_coupling`.
+
+`single_maintainer: true` suppresses otherwise-reportable
+author-concentration findings and counts them as `single_maintainer`.
+`churn_complexity_product` findings are never suppressible by either policy.
 
 ## Finding Groups
 
@@ -96,15 +108,19 @@ For commits with `1 < len(files) <= max_commit_files`, report file pairs where
 `co-changes >= min_coupling_changes` and
 `co / min(churn_a, churn_b) >= min_coupling_ratio`. Source files paired with
 their own tests are suppressed after thresholding and counted as
-`suppressed_own_test_pairs`. Metric: `temporal_coupling_ratio`; severity
-`medium`; confidence `medium`.
+`suppressed_own_test_pairs`. Declared coupling pairs from
+`coupling_allow_pairs` are also suppressed after thresholding and counted as
+`declared_coupling`. Metric: `temporal_coupling_ratio`; severity `medium`;
+confidence `medium`.
 
 ### Knowledge Concentration -- `RESTRUCTURE`
 
 For files with `churn >= min_author_commits`, report when the top author's
 commit share exceeds `min_author_share`. Single-author repositories skip this
-group and report `suppressed_solo_author=true`. Metric: `author_concentration`;
-severity `low`; confidence `low`.
+group and report `suppressed_solo_author=true`. Repositories that explicitly
+set `single_maintainer: true` suppress otherwise-reportable rows and count them
+as `single_maintainer`. Metric: `author_concentration`; severity `low`;
+confidence `low`.
 
 ## Honest Limits
 
@@ -113,7 +129,12 @@ severity `low`; confidence `low`.
 - No rename detection: `--no-renames` treats renames as delete + add.
 - Huge commits touching more than `max_commit_files` (default 50) are skipped
   for temporal coupling.
-- Precision suppressions are counted: solo-author repositories and source-to-own
-  test pairs remain visible in stdout and the Markdown report.
+- Precision suppressions are counted: solo-author repositories, source-to-own
+  test pairs, declared coupling pairs, and explicit single-maintainer
+  author-concentration suppressions remain visible in stdout and the Markdown
+  report.
+- Churn-complexity rows are deliberately not suppressible by
+  `coupling_allow_pairs` or `single_maintainer`; reduce the hotspot or record
+  the advisory residue in the caller's ledger.
 - Author names use `%an`; typos, email changes, or casing differences can dilute
   or concentrate authorship counts.

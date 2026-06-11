@@ -121,6 +121,10 @@ Verification:
   `baseline=49`.
 - `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
   `baseline=0`, `suites=17`.
+- `npm run check` exited 0 with the 10-gate chain; self-audit reported
+  `count=92`, `baseline=92`, security/docs/dependency/coverage reported
+  zero findings against zero baselines, and the final gate output was
+  `full-pytest: 17/17 suites green`.
 - `python3 scripts/check_full_pytest.py` -> `full-pytest: 17/17 suites green`.
 - `npm run check` exited 0 with the new 10-gate chain; final gate output:
   `full-pytest: 17/17 suites green`.
@@ -292,3 +296,60 @@ Verification:
   `count=0`, `baseline=0`, coverage reported `count=0`, `baseline=0`,
   `suites=17`, and the final gate output was
   `full-pytest: 17/17 suites green`.
+
+### B1.3 hotspot-audit declared-coupling policy
+
+RED verification:
+
+- Added `skills/hotspot-audit/tests/test_family_policy.py`.
+- Initial run against the pre-policy implementation:
+  `python3 -m pytest skills/hotspot-audit/tests/test_family_policy.py -q --color=no`
+  -> 3 failed, 2 passed. Expected failures:
+  declared `SKILL.md` to `references/**` coupling was not suppressed,
+  `single_maintainer` did not suppress author-concentration rows, and
+  stdout had no `suppression_counts`.
+
+Accepted implementation:
+
+- Added default-off hotspot config keys:
+  `coupling_allow_pairs` and `single_maintainer`.
+- `coupling_allow_pairs` suppresses only temporal-coupling rows whose two
+  files match opposite sides of one declared glob pair, after the normal
+  coupling thresholds are met. Rows are counted as `declared_coupling`.
+- `single_maintainer: true` suppresses otherwise-reportable
+  author-concentration rows and counts them as `single_maintainer`.
+- Existing built-in precision suppressions are preserved:
+  `suppressed_own_test_pairs` and `suppressed_solo_author`.
+- Churn-complexity rows remain unsuppressible by both new policy keys; the
+  new tests pin this behavior.
+- Markdown and stdout now expose the config-driven counts through
+  `suppression_counts`.
+- `SKILL.md` documents defaults, semantics, counted classes, and the
+  unsuppressible churn-complexity limit.
+
+Self-audit reshaping:
+
+- First GREEN implementation passed the new tests but grew self-audit by
+  complexity/MI rows in the coupling module and a duplicate-token row in
+  hotspot orchestration.
+- Refactored finding construction into `skills/hotspot-audit/scripts/_audit_coupling_finding.py`,
+  moved counted-policy constants to shared hotspot state, shortened coupling
+  helpers, and changed the knowledge orchestration helper signature to avoid
+  the duplicate-token row.
+
+Verification:
+
+- `python3 -m pytest skills/hotspot-audit/tests/test_family_policy.py -q --color=no`
+  -> `5 passed in 0.40s`.
+- `python3 -m pytest skills/hotspot-audit/tests -q --color=no`
+  -> `38 passed in 2.52s`.
+- `python3 scripts/check_self_audit.py` -> `status=pass`, `count=92`,
+  `baseline=92`.
+- `python3 scripts/check_security_audit.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_docs_consistency.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_dependency_audit.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
+  `baseline=0`, `suites=17`.

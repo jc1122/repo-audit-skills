@@ -26,11 +26,15 @@ def _knowledge_or_suppression(
     authors: dict[str, dict[str, int]],
     thresholds: dict,
     ev: _EvidenceCtx,
-) -> tuple[list[hc.Finding], bool]:
-    """Return knowledge findings, or flag a solo-author repository suppression."""
-    if len(_distinct_authors(authors)) <= 1:
-        return [], True
-    return _knowledge_concentration(existing, churn, authors, thresholds, ev), False
+) -> tuple[list[hc.Finding], bool, int]:
+    """Return knowledge findings plus built-in and policy suppression counts."""
+    solo_author = len(_distinct_authors(authors)) <= 1
+    findings = _knowledge_concentration(existing, churn, authors, thresholds, ev)
+    if thresholds.get("single_maintainer") is True:
+        return [], solo_author, len(findings)
+    if solo_author:
+        return [], True, 0
+    return findings, False, 0
 
 
 def _knowledge_concentration(

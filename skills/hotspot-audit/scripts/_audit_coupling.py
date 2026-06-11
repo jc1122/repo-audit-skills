@@ -9,25 +9,45 @@ identical findings list.
 
 from __future__ import annotations
 
+from fnmatch import fnmatchcase
 from pathlib import PurePosixPath
 
-from _audit_shared import LEAF, _EvidenceCtx, hc
+from _audit_coupling_finding import coupling_finding
+from _audit_shared import _EvidenceCtx, hc
+
+
+def _source_name_for_test(path: str) -> str | None:
+    name = PurePosixPath(path).name
+    if not name.startswith("test_") or not name.endswith(".py"):
+        return None
+    return f"{name.removeprefix('test_').removesuffix('.py')}.py"
 
 
 def _is_own_test_pair(a: str, b: str) -> bool:
     """Return True when a source file is paired with its own test file."""
-    a_name = PurePosixPath(a).name
-    b_name = PurePosixPath(b).name
+    return _source_name_for_test(a) == PurePosixPath(b).name or (
+        _source_name_for_test(b) == PurePosixPath(a).name
+    )
 
-    def source_stem_for_test(filename: str) -> str | None:
-        if not filename.startswith("test_") or not filename.endswith(".py"):
-            return None
-        return filename.removeprefix("test_").removesuffix(".py")
 
-    a_test_stem = source_stem_for_test(a_name)
-    b_test_stem = source_stem_for_test(b_name)
-    return (a_test_stem is not None and b_name == f"{a_test_stem}.py") or (
-        b_test_stem is not None and a_name == f"{b_test_stem}.py"
+def _valid_glob_pair(pair: object) -> bool:
+    return (
+        isinstance(pair, (list, tuple))
+        and len(pair) == 2
+        and all(isinstance(item, str) for item in pair)
+    )
+
+
+def _is_declared_coupling(a: str, b: str, declared_pairs: object) -> bool:
+    if not isinstance(declared_pairs, list):
+        return False
+    return any(
+        _valid_glob_pair(pair)
+        and (
+            (fnmatchcase(a, pair[0]) and fnmatchcase(b, pair[1]))
+            or (fnmatchcase(a, pair[1]) and fnmatchcase(b, pair[0]))
+        )
+        for pair in declared_pairs
     )
 
 
@@ -36,7 +56,7 @@ def _temporal_coupling(
     churn: dict[str, int],
     thresholds: dict,
     ev: _EvidenceCtx,
-) -> tuple[list[hc.Finding], int]:
+) -> tuple[list[hc.Finding], int, int]:
     """Return RESTRUCTURE findings for co-changing file pairs.
 
     The coupling ratio is ``co_changes / min(churn[a], churn[b])``.
@@ -48,6 +68,7 @@ def _temporal_coupling(
 
     findings: list[hc.Finding] = []
     suppressed_own_test_pairs = 0
+    suppressed_declared_coupling = 0
     for a, b in sorted(pair_co):
         co = pair_co[(a, b)]
         if co < min_co:
@@ -58,30 +79,13 @@ def _temporal_coupling(
         if _is_own_test_pair(a, b):
             suppressed_own_test_pairs += 1
             continue
+        if _is_declared_coupling(
+            a,
+            b,
+            thresholds.get("coupling_allow_pairs", []),
+        ):
+            suppressed_declared_coupling += 1
+            continue
 
-        findings.append(
-            hc.Finding(
-                leaf=LEAF,
-                signal="RESTRUCTURE",
-                severity="medium",
-                path=a,
-                line_start=1,
-                line_end=1,
-                symbol=f"{a}<->{b}",
-                metric_name="temporal_coupling_ratio",
-                metric_value=round(ratio, 2),
-                metric_threshold=min_ratio,
-                evidence_tool="git",
-                evidence_raw=(
-                    f"{co} co-changes of {a} and {b} "
-                    f"in last {ev.num_commits_read} commits "
-                    f"(max {ev.max_commits}) from {ev.short_sha}"
-                ),
-                confidence="medium",
-                suggested_action=(
-                    "Files co-change; move the shared concern into one module "
-                    "or merge them"
-                ),
-            )
-        )
-    return findings, suppressed_own_test_pairs
+        findings.append(coupling_finding((a, b), co, ratio, min_ratio, ev))
+    return findings, suppressed_own_test_pairs, suppressed_declared_coupling

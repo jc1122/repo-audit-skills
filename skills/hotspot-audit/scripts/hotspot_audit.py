@@ -15,9 +15,9 @@ Analysis pipeline
 
 All analysis is deterministic; no network, no external tools beyond git.
 
-Precision suppressions count solo-author knowledge skips and own-test temporal
-pair skips in both stdout and the Markdown report, so filtered noise remains
-auditable.
+Precision suppressions count solo-author knowledge skips, own-test temporal
+pair skips, and explicit family-policy suppressions in both stdout and the
+Markdown report, so filtered noise remains auditable.
 """
 
 from __future__ import annotations
@@ -30,10 +30,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from _audit_shared import (  # noqa: E402
+    DECLARED_COUPLING,
     DEFAULT_THRESHOLDS,
     LEAF,
+    SINGLE_MAINTAINER,
     ToolError,
     _EvidenceCtx,
+    default_suppression_counts,
     hc,
 )
 from _audit_git import (  # noqa: E402
@@ -48,12 +51,64 @@ from _audit_coupling import _temporal_coupling  # noqa: E402
 from _audit_knowledge import _knowledge_or_suppression  # noqa: E402
 
 
-_LAST_ANALYSIS_META = {"suppressed_solo_author": False, "suppressed_own_test_pairs": 0}
+_LAST_ANALYSIS_META = {
+    "suppressed_solo_author": False,
+    "suppressed_own_test_pairs": 0,
+    "suppression_counts": default_suppression_counts(),
+}
 
 
 # ---------------------------------------------------------------------------
 # orchestration
 # ---------------------------------------------------------------------------
+
+
+def _reset_analysis_meta() -> None:
+    _LAST_ANALYSIS_META.update(
+        suppressed_solo_author=False,
+        suppressed_own_test_pairs=0,
+        suppression_counts=default_suppression_counts(),
+    )
+
+
+def _record_suppression_count(name: str, count: int) -> None:
+    _LAST_ANALYSIS_META["suppression_counts"][name] = count
+
+
+def _collect_coupling_findings(
+    commits: list[dict],
+    existing: dict[str, Path],
+    churn: dict[str, int],
+    thresholds: dict,
+    ev: _EvidenceCtx,
+) -> list[hc.Finding]:
+    coupling_findings, own_test_count, declared_count = _temporal_coupling(
+        _count_cochange_pairs(
+            commits,
+            existing,
+            int(thresholds["max_commit_files"]),
+        ),
+        churn,
+        thresholds,
+        ev,
+    )
+    _LAST_ANALYSIS_META["suppressed_own_test_pairs"] = own_test_count
+    _record_suppression_count(DECLARED_COUPLING, declared_count)
+    return coupling_findings
+
+
+def _collect_knowledge_findings(
+    file_stats: tuple[dict[str, Path], dict[str, int], dict[str, dict[str, int]]],
+    thresholds: dict,
+    ev: _EvidenceCtx,
+) -> list[hc.Finding]:
+    existing, churn, authors = file_stats
+    knowledge_findings, solo_author, single_maintainer_count = (
+        _knowledge_or_suppression(existing, churn, authors, thresholds, ev)
+    )
+    _LAST_ANALYSIS_META["suppressed_solo_author"] = solo_author
+    _record_suppression_count(SINGLE_MAINTAINER, single_maintainer_count)
+    return knowledge_findings
 
 
 def analyze_tree(
@@ -64,9 +119,7 @@ def analyze_tree(
     max_commits: int,
 ) -> list[hc.Finding]:
     """Core analysis.  Raises ToolError on input / git errors."""
-    _LAST_ANALYSIS_META.update(
-        suppressed_solo_author=False, suppressed_own_test_pairs=0
-    )
+    _reset_analysis_meta()
 
     root = Path(root)
     _validate_git_root(root)
@@ -84,23 +137,12 @@ def analyze_tree(
     churn, authors, existing = _collect_file_stats(commits, source_prefixes, root)
     findings: list[hc.Finding] = []
     findings.extend(_churn_hotspots(existing, churn, thresholds, ev))
-    coupling_findings, suppressed_own_test_pairs = _temporal_coupling(
-        _count_cochange_pairs(
-            commits,
-            existing,
-            int(thresholds["max_commit_files"]),
-        ),
-        churn,
-        thresholds,
-        ev,
+    findings.extend(
+        _collect_coupling_findings(commits, existing, churn, thresholds, ev)
     )
-    _LAST_ANALYSIS_META["suppressed_own_test_pairs"] = suppressed_own_test_pairs
-    findings.extend(coupling_findings)
-    knowledge_findings, suppressed_solo_author = _knowledge_or_suppression(
-        existing, churn, authors, thresholds, ev
+    findings.extend(
+        _collect_knowledge_findings((existing, churn, authors), thresholds, ev)
     )
-    _LAST_ANALYSIS_META["suppressed_solo_author"] = suppressed_solo_author
-    findings.extend(knowledge_findings)
     return hc.sort_findings(findings)
 
 
@@ -116,6 +158,7 @@ def render_report(findings: list[hc.Finding]) -> str:
     value, and severity level.  Groups are sorted alphabetically by
     signal name; within each group findings appear in sort order.
     """
+    suppression_counts = _LAST_ANALYSIS_META["suppression_counts"]
     lines = [
         "# hotspot-audit report",
         "",
@@ -123,6 +166,8 @@ def render_report(findings: list[hc.Finding]) -> str:
         f"{int(_LAST_ANALYSIS_META['suppressed_solo_author'])}",
         f"`suppressed_own_test_pairs`="
         f"{_LAST_ANALYSIS_META['suppressed_own_test_pairs']}",
+        f"`{DECLARED_COUPLING}`={suppression_counts[DECLARED_COUPLING]}",
+        f"`{SINGLE_MAINTAINER}`={suppression_counts[SINGLE_MAINTAINER]}",
         "",
     ]
     if not findings:
