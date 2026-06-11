@@ -333,85 +333,56 @@ def parse_test_metadata(root: Path, suite_files: list[str]) -> list[TestMeta]:
         mod = ast.parse(src, filename=str(path))
         stack: list[str] = []
 
+        def add_test_node(
+            node: ast.FunctionDef | ast.AsyncFunctionDef,
+            *,
+            _stack: list[str] = stack,
+            _path: Path = path,
+            _src: str = src,
+        ) -> None:
+            if not node.name.startswith("test_"):
+                return
+            cls = _stack[-1] if _stack else ""
+            try:
+                relpath = str(_path.relative_to(root))
+            except ValueError:
+                relpath = str(_path)
+            nodeid = (
+                f"{relpath}::{cls}::{node.name}" if cls else f"{relpath}::{node.name}"
+            )
+            calls = extract_calls(node)
+            fn_src = ast.get_source_segment(_src, node) or ""
+            assertions = infer_assertion_types(node, calls, fn_src)
+            entry = infer_entrypoint(
+                calls, fn_src, file_fallback=relpath, class_fallback=cls
+            )
+            intent = infer_intent(node.name, entry, assertions, fn_src)
+            tests.append(
+                TestMeta(
+                    nodeid=nodeid,
+                    file=relpath,
+                    class_name=cls,
+                    test_name=node.name,
+                    entrypoint=entry,
+                    intent=intent,
+                    assertion_types=assertions,
+                    assert_count=count_assertions(node),
+                    is_parametrized=detect_parametrized(node),
+                    src_tokens=tokenize_normalized(fn_src),
+                )
+            )
+
         class V(ast.NodeVisitor):
             def visit_ClassDef(self, node: ast.ClassDef, *, _stack=stack) -> Any:
                 _stack.append(node.name)
                 self.generic_visit(node)
                 _stack.pop()
 
-            def visit_FunctionDef(
-                self, node: ast.FunctionDef, *, _stack=stack, _path=path, _src=src
-            ) -> Any:
-                if not node.name.startswith("test_"):
-                    return
-                cls = _stack[-1] if _stack else ""
-                try:
-                    relpath = str(_path.relative_to(root))
-                except ValueError:
-                    relpath = str(_path)
-                nodeid = (
-                    f"{relpath}::{cls}::{node.name}"
-                    if cls
-                    else f"{relpath}::{node.name}"
-                )
-                calls = extract_calls(node)
-                fn_src = ast.get_source_segment(_src, node) or ""
-                assertions = infer_assertion_types(node, calls, fn_src)
-                entry = infer_entrypoint(
-                    calls, fn_src, file_fallback=relpath, class_fallback=cls
-                )
-                intent = infer_intent(node.name, entry, assertions, fn_src)
-                tests.append(
-                    TestMeta(
-                        nodeid=nodeid,
-                        file=relpath,
-                        class_name=cls,
-                        test_name=node.name,
-                        entrypoint=entry,
-                        intent=intent,
-                        assertion_types=assertions,
-                        assert_count=count_assertions(node),
-                        is_parametrized=detect_parametrized(node),
-                        src_tokens=tokenize_normalized(fn_src),
-                    )
-                )
+            def visit_FunctionDef(self, node: ast.FunctionDef) -> Any:
+                add_test_node(node)
 
-            def visit_AsyncFunctionDef(
-                self, node: ast.AsyncFunctionDef, *, _stack=stack, _path=path, _src=src
-            ) -> Any:
-                if not node.name.startswith("test_"):
-                    return
-                cls = _stack[-1] if _stack else ""
-                try:
-                    relpath = str(_path.relative_to(root))
-                except ValueError:
-                    relpath = str(_path)
-                nodeid = (
-                    f"{relpath}::{cls}::{node.name}"
-                    if cls
-                    else f"{relpath}::{node.name}"
-                )
-                calls = extract_calls(node)
-                fn_src = ast.get_source_segment(_src, node) or ""
-                assertions = infer_assertion_types(node, calls, fn_src)
-                entry = infer_entrypoint(
-                    calls, fn_src, file_fallback=relpath, class_fallback=cls
-                )
-                intent = infer_intent(node.name, entry, assertions, fn_src)
-                tests.append(
-                    TestMeta(
-                        nodeid=nodeid,
-                        file=relpath,
-                        class_name=cls,
-                        test_name=node.name,
-                        entrypoint=entry,
-                        intent=intent,
-                        assertion_types=assertions,
-                        assert_count=count_assertions(node),
-                        is_parametrized=detect_parametrized(node),
-                        src_tokens=tokenize_normalized(fn_src),
-                    )
-                )
+            def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> Any:
+                add_test_node(node)
 
         V().visit(mod)
 

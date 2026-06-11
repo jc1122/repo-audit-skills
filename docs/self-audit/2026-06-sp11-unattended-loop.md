@@ -442,3 +442,92 @@ Ship evidence:
   Skills CLI helper is unavailable; the installed audit/test/security/hygiene
   lanes are usable immediately. repo-P also selected installed
   `perf-benchmark` and `perf-optimization`.
+- Follow-up evidence commit:
+  `d430a93ac3f52a3402b146636ea0558431ed6a03`
+  (`docs(self-audit): record SP11 iteration-one ship evidence`) pushed to
+  `main`; the `v0.5.2` tag remains on the release commit above.
+- CI run `27375571015` on `d430a93` completed successfully in `6m13s`.
+  `gh run view 27375571015 --log | rg -i "deprecated|deprecation|punycode|DEP0040|node16|node20"`
+  returned no matches. A broader warning scan matched only the checkout git
+  hint line, not a runtime deprecation.
+
+## Iteration 2
+
+### C-0 installed readback and diagnosis
+
+Iteration anchor SHAs:
+
+- repo-A `/home/jakub/projects/repo-audit-skills`:
+  `d430a93ac3f52a3402b146636ea0558431ed6a03`.
+- repo-B `/home/jakub/projects/repo-audit-refactor-optimize`:
+  `7c23276ad6fb72ec1c05d93f8992e20ddbc9d989`.
+- repo-P `/home/jakub/projects/perf-benchmark-skill`:
+  `ac896751703cba56bbbd99e201c1f355c5238567`.
+
+Installed readback:
+
+- Bootstrap probes used the installed
+  `/home/jakub/.agents/skills/repo-audit-refactor-optimize` checker with
+  `--extra-root /home/jakub/.agents/skills`.
+- repo-A, repo-B, and repo-P all exited 0 with `install_candidates=[]`,
+  `restart_required=false`, and `stop_before_discovery=false`.
+- The installed repo-audit leaves used by the probes read back as `0.5.2`.
+- Bootstrap artifacts:
+  `artifacts/sp11/iteration-02/bootstrap/repo-a/bootstrap`,
+  `artifacts/sp11/iteration-02/bootstrap/repo-b/bootstrap`, and
+  `artifacts/sp11/iteration-02/bootstrap/repo-p/bootstrap`.
+
+Installed diagnosis waves:
+
+- repo-A scoped command used source prefixes `scripts`, `shared`, and every
+  `skills/*/scripts` directory; the first accidental `--source-prefix skills`
+  run was discarded because it included skill test fixtures and produced
+  1,494 `bandit_B101` rows unrelated to the production backlog.
+- repo-A corrected wave summary:
+  code-health `65`, security `47`, hygiene/docs/dependency `0`, hotspot `91`;
+  total `203`. Top concentration remains
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py` (`34`),
+  `skills/test-audit-pipeline/scripts/audit_pipeline.py` (`13`), and
+  `skills/test-quality-assurance/scripts/audit_test_quality.py` (`12`).
+- repo-A security rows are the trusted-subprocess class visible in the raw
+  installed wave; the source gate's configured policy counts and suppresses
+  them to keep `scripts/security_baseline.json` at `[]`.
+- repo-B scoped wave summary:
+  code-health `4`, security/hygiene/docs/dependency `0`, hotspot `5`;
+  total `9`.
+- repo-P scoped wave summary:
+  code-health `40`, security `21`, hygiene/docs/dependency `0`, hotspot `6`;
+  total `67`.
+- Diagnosis artifacts:
+  `artifacts/sp11/iteration-02/c0-wave/repo-a-scoped`,
+  `artifacts/sp11/iteration-02/c0-wave/repo-b-scoped`, and
+  `artifacts/sp11/iteration-02/c0-wave/repo-p-scoped`.
+
+### B2 repo-A structural batch 1
+
+Accepted implementation:
+
+- Targeted the same-file duplicate in
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py` at
+  `parse_test_metadata`: `visit_FunctionDef` and `visit_AsyncFunctionDef`
+  had duplicate metadata-recording bodies.
+- Extracted a loop-local `add_test_node` helper with explicit default-bound
+  loop values to avoid late-binding lint regressions.
+- Removed the stale duplicate baseline identity
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py#3692f2649583`
+  from `scripts/self_audit_baseline.json` in the same change.
+- This is a mechanical duplicate extraction, so it used golden-suite gate
+  evidence rather than a behavior-bearing mutation gate.
+
+Verification:
+
+- Pre-change `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no`
+  -> `208 passed in 105.35s`.
+- Post-change `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no`
+  -> `208 passed in 114.15s`.
+- `python3 scripts/check_self_audit.py` -> `status=pass`, `count=91`,
+  `baseline=91`.
+- `python3 scripts/check_security_audit.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
+  `baseline=0`, `suites=17`.
