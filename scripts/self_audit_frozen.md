@@ -40,6 +40,26 @@ Each entry: path :: leaf/metric :: reason.
   content-hash symbols that are line-shift-immune. Baseline stayed count-neutral
   at 107; exactly 28 duplication entries were migrated and no non-duplication
   identities changed.
+- **SP9 K1-T1** (fix + shrink): adding docs-consistency `--exclude-prefix` changed the
+  `build_parser` block enough to dissolve the prior
+  `skills/docs-consistency-audit/scripts/docs_consistency_audit.py` <->
+  `skills/test-effectiveness-audit/scripts/_cli.py:39-50` duplicate_tokens clone. The stale
+  line-pinned baseline entry was removed in the same commit; no replacement identity emitted.
+  Baseline 107 -> 106.
+- **SP9 K1-T3** (count-neutral): quality-audit's format-config gate shifted four
+  pre-existing `dead_code_audit.py` <-> `quality_audit.py` duplicate_tokens line ranges.
+  The stale `:104-114`, `:121-134`, `:28-58`, and `:68-89` symbols were replaced by
+  `:119-129`, `:136-149`, `:33-63`, and `:83-104` in the same commit. Baseline stays 106.
+- **SP9 K1-T4** (count-neutral): dead-code-audit's test-reference suppression shifted two
+  pre-existing duplicate_tokens line ranges. The stale `dead_code_audit.py:239-260` and
+  `dead_code_audit.py:31-58` symbols were replaced by `:275-296` and `:33-60` in the same
+  commit. Baseline stays 106.
+- **SP9 K5-T1** (merge resolution): after merging K2 first and K1 second, regenerated
+  `scripts/self_audit_snapshot.json` from the merge tree and replaced the baseline with
+  that snapshot. Snapshot count is 106. Compared with post-K2 main, the only new identity
+  is a content-hash replacement for the existing `dead_code_audit.py` <->
+  `quality_audit.py` duplicate pair; the stale docs-consistency/test-effectiveness clone
+  remains dissolved. No count growth and no genuine new finding.
 
 ## Frozen findings (Phase 1 R4 — convergence)
 
@@ -61,31 +81,30 @@ freeze remains). See the "SP4 Phase 2" round log.
 ### C. Cross-leaf CLI/parse duplication (20)
 **Reason:** each code-health leaf is an independently-installable skill with a self-contained `scripts/` dir (only `health_common.py` is shared/vendored). The residual overlaps are small argparse/CLI skeletons and tool-output-parsing idioms that cannot be deduped without forbidden cross-skill imports. Empirically (Phase 1 R2), hoisting shared helpers into `health_common` did **not** reduce duplication — it relocated clones into the 6×-vendored module and added 6 `maintainability_index` findings (net +2). Frozen as intrinsic to the standalone-vendored-leaf architecture.
 - `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: duplication/duplicate_tokens :: skills/complexity-audit/scripts/complexity_audit.py:243-255 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/dead-code-audit/scripts/dead_code_audit.py:239-260 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/dead-code-audit/scripts/dead_code_audit.py:275-296 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:143-154 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:21-32 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/structure-audit/scripts/structure_audit.py:352-358 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:171-183 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:184-210 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:104-114 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:121-134 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:28-58 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:68-89 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:119-129 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:136-149 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:33-63 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:83-104 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/dead-code-audit/scripts/dead_code_audit.py:31-58 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/dead-code-audit/scripts/dead_code_audit.py:33-60 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:29-42 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/duplication-audit/scripts/duplication_audit.py:42-52 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/coverage-gap-audit/scripts/coverage_gap_audit.py` :: duplication/duplicate_tokens :: skills/structure-audit/scripts/structure_audit.py:337-344 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `scripts/check_coverage_gap.py` :: duplication/duplicate_tokens :: scripts/check_self_audit.py:23-31 :: shared snapshot/baseline ratchet idiom across the gate scripts; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `scripts/check_coverage_gap.py` :: duplication/duplicate_tokens :: scripts/self_audit.py:23-31 :: shared snapshot/baseline ratchet idiom across the gate scripts; dedup needs forbidden cross-skill imports (see R2 evidence)
 
-### C2. SP7 cross-leaf leaf-helper duplication (3)
-**Reason:** identical to section C — SP7 leaves are independently-installable skills with self-contained `scripts/` dirs (only `health_common.py` is vendored). The leaf skeleton functions/flags pinned by plan C-2/C-3 (the `_git(root, *args)` subprocess wrapper; the `load_thresholds(config_path)` JSON-overlay helper; the `build_parser` argparse block exposing the mandated `--root`/`--source-prefix`/`--out-dir`/`--config`/`--format` flags) are instantiated to one shape across leaves; they cannot be shared without a forbidden cross-skill import, and the R2 evidence shows hoisting into `shared/`/`health_common.py` is net-negative (relocates clones into the 6×-vendored module + adds `maintainability_index` findings). These clones are invisible in any single branch (each branch holds only its own copy) and only surface at integration. Frozen as intrinsic to the standalone-vendored-leaf architecture.
+### C2. SP7 cross-leaf leaf-helper duplication (2)
+**Reason:** identical to section C — SP7 leaves are independently-installable skills with self-contained `scripts/` dirs (only `health_common.py` is vendored). The helper skeletons pinned by plan C-2/C-3 (the `_git(root, *args)` subprocess wrapper and the `load_thresholds(config_path)` JSON-overlay helper) are instantiated to one shape across leaves; they cannot be shared without a forbidden cross-skill import, and the R2 evidence shows hoisting into `shared/`/`health_common.py` is net-negative (relocates clones into the 6×-vendored module + adds `maintainability_index` findings). These clones are invisible in any single branch (each branch holds only its own copy) and only surface at integration. Frozen as intrinsic to the standalone-vendored-leaf architecture.
 - `skills/hotspot-audit/scripts/_audit_git.py` :: duplication/duplicate_tokens :: skills/repo-hygiene-audit/scripts/_git_utils.py:36-53 :: cross-leaf `_git` subprocess wrapper, vendored per-leaf (own copy — leaves are self-contained per C-5); dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/repo-hygiene-audit/scripts/_thresholds.py` :: duplication/duplicate_tokens :: skills/security-audit/scripts/_reporting.py:25-33 :: cross-leaf C-3 `load_thresholds` skeleton helper, instantiated per-leaf; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/docs-consistency-audit/scripts/docs_consistency_audit.py` :: duplication/duplicate_tokens :: skills/test-effectiveness-audit/scripts/_cli.py:39-50 :: cross-leaf C-2/C-3 `build_parser` CLI skeleton (the mandated --root/--source-prefix/--out-dir/--config/--format flags); dedup needs forbidden cross-skill imports (see R2 evidence)
 
 ### D. Module-level maintainability_index (12)
 **Reason:** whole-module MI for single-file standalone tools. Each leaf/gate script is intentionally one self-contained file (required for vendored install); lowering module MI means splitting into multi-file packages, which breaks the single-file install model and is out of scope (spec: structure preserved, no cross-skill imports).

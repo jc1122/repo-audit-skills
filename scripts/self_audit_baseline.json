@@ -189,12 +189,6 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py#02c72987483a"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
     "symbol": "skills/quality-audit/scripts/quality_audit.py#03765eb179e5"
   },
   {
@@ -210,16 +204,16 @@
     "symbol": "skills/quality-audit/scripts/quality_audit.py#71284d1a2702"
   },
   {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "skills/quality-audit/scripts/quality_audit.py#96bc26976698"
+  },
+  {
     "leaf": "complexity",
     "metric": "maintainability_index",
     "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
     "symbol": "<module>"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
-    "symbol": "skills/test-effectiveness-audit/scripts/_cli.py#fc9a58442aad"
   },
   {
     "leaf": "complexity",

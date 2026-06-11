@@ -15,6 +15,24 @@ from pathlib import Path
 from _audit_shared import LEAF, _EvidenceCtx, hc
 
 
+def _distinct_authors(authors: dict[str, dict[str, int]]) -> set[str]:
+    """Return the distinct author names present in collected file history."""
+    return {author for per_file in authors.values() for author in per_file}
+
+
+def _knowledge_or_suppression(
+    existing: dict[str, Path],
+    churn: dict[str, int],
+    authors: dict[str, dict[str, int]],
+    thresholds: dict,
+    ev: _EvidenceCtx,
+) -> tuple[list[hc.Finding], bool]:
+    """Return knowledge findings, or flag a solo-author repository suppression."""
+    if len(_distinct_authors(authors)) <= 1:
+        return [], True
+    return _knowledge_concentration(existing, churn, authors, thresholds, ev), False
+
+
 def _knowledge_concentration(
     existing: dict[str, Path],
     churn: dict[str, int],

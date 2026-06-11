@@ -23,6 +23,11 @@ DEFAULT_CONFIG = {
     "ruff_ignore": "F401,F811,F841,C901",
 }
 
+LAST_ANALYSIS_METADATA = {
+    "format_check": "not run",
+    "suppressed_format_files": 0,
+}
+
 _TYPE_RE = re.compile(
     r"^(?P<path>[^:]+):(?P<line>\d+):(?:(?P<col>\d+):)?\s*error:\s*(?P<msg>.*?)(?:\s*\[(?P<code>[\w-]+)\])?$"
 )
@@ -53,6 +58,16 @@ def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
             p.relative_to(root).as_posix().startswith(pre) for pre in source_prefixes
         )
     ]
+
+
+def _format_config_declared(root: Path) -> bool:
+    if any((root / n).is_file() for n in (".ruff.toml", "ruff.toml")):
+        return True
+    py = root / "pyproject.toml"
+    if not py.is_file():
+        return False
+    text = py.read_text(encoding="utf-8", errors="replace")
+    return "[tool.ruff" in text or "[tool.black" in text
 
 
 def _ruff_lint(root: Path, rel_files: list[str], config: dict) -> list[hc.Finding]:
@@ -217,28 +232,49 @@ def _type_findings(root: Path, rel_files: list[str], config: dict) -> list[hc.Fi
 
 
 def analyze_tree(root, source_prefixes, config) -> list[hc.Finding]:
+    global LAST_ANALYSIS_METADATA
+
     root = Path(root)
     files = _iter_python_files(root, list(source_prefixes or []))
+    LAST_ANALYSIS_METADATA = {
+        "format_check": "not run",
+        "suppressed_format_files": 0,
+    }
     if not files:
         return []
     rel_files = [p.relative_to(root).as_posix() for p in files]
     findings = _ruff_lint(root, rel_files, config)
-    findings += _ruff_format(root, rel_files)
+    if _format_config_declared(root):
+        findings += _ruff_format(root, rel_files)
+        LAST_ANALYSIS_METADATA = {
+            "format_check": "checked",
+            "suppressed_format_files": 0,
+        }
+    else:
+        LAST_ANALYSIS_METADATA = {
+            "format_check": "skipped (no declared standard)",
+            "suppressed_format_files": len(rel_files),
+        }
     findings += _type_findings(root, rel_files, config)
     return hc.sort_findings(findings)
 
 
-def render_report(findings: list[hc.Finding]) -> str:
+def render_report(findings: list[hc.Finding], metadata: dict | None = None) -> str:
     lines = ["# quality-audit report", ""]
+    if metadata:
+        lines.append(f"- format_check: {metadata.get('format_check', 'not run')}")
+        lines.append(
+            f"- suppressed_format_files: {metadata.get('suppressed_format_files', 0)}"
+        )
+        lines.append("")
     if not findings:
         lines.append("No findings.")
         return "\n".join(lines) + "\n"
-    by_signal: dict[str, list[hc.Finding]] = {}
-    for f in findings:
-        by_signal.setdefault(f.signal, []).append(f)
-    for signal in sorted(by_signal):
-        lines.append(f"## {signal} ({len(by_signal[signal])})")
-        for f in by_signal[signal]:
+    signals = sorted({finding.signal for finding in findings})
+    for signal in signals:
+        group = [finding for finding in findings if finding.signal == signal]
+        lines.append(f"## {signal} ({len(group)})")
+        for f in group:
             lines.append(
                 f"- `{f.path}:{f.line_start}` {f.metric_name} — "
                 f"{f.evidence_raw} [{f.severity}]"
@@ -299,11 +335,21 @@ def main(argv: list[str] | None = None) -> int:
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
+    metadata = dict(LAST_ANALYSIS_METADATA)
     data = hc.write_findings(findings, args.out_dir, LEAF)
     Path(args.out_dir, "quality_report.md").write_text(
-        render_report(findings), encoding="utf-8"
+        render_report(findings, metadata), encoding="utf-8"
     )
-    print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "findings": len(data),
+                "leaf": LEAF,
+                **metadata,
+            }
+        )
+    )
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 
 

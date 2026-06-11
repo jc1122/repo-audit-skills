@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from pathlib import PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
@@ -22,6 +23,7 @@ DEFAULT_THRESHOLDS = {
 
 OWNED_RUFF_CODES = ("F401", "F811", "F841")
 VULTURE_KEEP = {"function", "class", "method", "property"}
+_LAST_SUPPRESSED_TEST_REFERENCED = 0
 _VULTURE_RE = re.compile(
     r"^(?P<path>.+?):(?P<line>\d+): unused (?P<kind>[\w ]+?) "
     r"'(?P<name>[^']+)' \((?P<conf>\d+)% confidence\)$"
@@ -123,6 +125,23 @@ def _vulture_findings(
     return findings
 
 
+def _test_referenced(
+    symbols: set[str], root: Path, source_prefixes: list[str]
+) -> set[str]:
+    dirs = {root / "tests"} | {
+        root / PurePosixPath(prefix).parent / "tests" for prefix in source_prefixes
+    }
+    dirs |= {root / PurePosixPath(prefix) / "tests" for prefix in source_prefixes}
+    hits: set[str] = set()
+    for directory in sorted(dirs):
+        if not directory.is_dir():
+            continue
+        for path in sorted(directory.rglob("test_*.py")):
+            text = path.read_text(encoding="utf-8", errors="replace")
+            hits |= {symbol for symbol in symbols if symbol in text}
+    return hits
+
+
 def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
     rel_files = [p.relative_to(root).as_posix() for p in files]
     cmd = [
@@ -186,17 +205,34 @@ def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
 
 
 def analyze_tree(root, source_prefixes, thresholds, allowlist=None) -> list[hc.Finding]:
+    global _LAST_SUPPRESSED_TEST_REFERENCED
+    _LAST_SUPPRESSED_TEST_REFERENCED = 0
     root = Path(root)
-    files = _iter_python_files(root, list(source_prefixes or []))
+    source_prefixes = list(source_prefixes or [])
+    files = _iter_python_files(root, source_prefixes)
     if not files:
         return []
-    findings = _vulture_findings(root, files, thresholds, allowlist)
-    findings += _ruff_findings(root, files)
+    vulture_findings = _vulture_findings(root, files, thresholds, allowlist)
+    referenced = _test_referenced(
+        {finding.symbol for finding in vulture_findings}, root, source_prefixes
+    )
+    if referenced:
+        before = len(vulture_findings)
+        vulture_findings = [
+            finding for finding in vulture_findings if finding.symbol not in referenced
+        ]
+        _LAST_SUPPRESSED_TEST_REFERENCED = before - len(vulture_findings)
+    findings = vulture_findings + _ruff_findings(root, files)
     return hc.sort_findings(findings)
 
 
 def render_report(findings: list[hc.Finding]) -> str:
-    lines = ["# dead-code-audit report", ""]
+    lines = [
+        "# dead-code-audit report",
+        "",
+        f"suppressed_test_referenced: {_LAST_SUPPRESSED_TEST_REFERENCED}",
+        "",
+    ]
     if not findings:
         lines.append("No findings.")
         return "\n".join(lines) + "\n"
@@ -266,7 +302,16 @@ def main(argv: list[str] | None = None) -> int:
     Path(args.out_dir, "dead-code_report.md").write_text(
         render_report(findings), encoding="utf-8"
     )
-    print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "findings": len(data),
+                "leaf": LEAF,
+                "suppressed_test_referenced": _LAST_SUPPRESSED_TEST_REFERENCED,
+            }
+        )
+    )
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 
 
