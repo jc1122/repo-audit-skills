@@ -3,7 +3,7 @@
 `npm run check:coverage` (part of `npm run check`) does three things:
 1. Runs every pytest suite (root + 7 skills) as separate processes under
    pytest-cov (separate processes — the suites collide if collected together).
-2. Combines coverage into `.self_audit_out/coverage/coverage.json`.
+2. Combines coverage into a gitignored self-audit coverage JSON artifact.
 3. Runs the coverage-gap-audit leaf over the production scope and ratchets the
    normalized findings against `scripts/coverage_gap_baseline.json`.
 

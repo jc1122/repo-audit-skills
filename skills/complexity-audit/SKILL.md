@@ -12,8 +12,8 @@ description: >
 
 ## Overview
 
-A code-health leaf skill. It reports functions that are too complex or too long and
-modules with low maintainability, as advisory findings. It does not refactor anything.
+Reports functions that are too complex or too long and modules with low
+maintainability. Advisory only; it does not refactor.
 
 ## Quick Start
 
@@ -35,12 +35,12 @@ python3 scripts/complexity_audit.py \
 - `1` — advisory findings present.
 - `2` — tool/config error (e.g. lizard or radon not installed).
 
-## Tools and Thresholds
+## Flags and Thresholds
 
-See `skills/complexity-audit/references/rubric.md`. Override thresholds with `--config thresholds.json`.
+`--source-prefix` is repeatable. Override thresholds with `--config
+thresholds.json`; see `skills/complexity-audit/references/rubric.md`.
 
 ## Notes
 
-- `--source-prefix` filters to product code (repeatable).
 - Findings are deterministic: identical input yields byte-identical
   `complexity_findings.json`.

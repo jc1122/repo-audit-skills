@@ -27,3 +27,14 @@ fixed once in shared/health_common.py and re-vendored byte-identical), 1 B108 ha
 Residual 49 frozen per-finding (26 B603 subprocess-no-shell, 17 B404 subprocess-import,
 4 B607 partial-path, 2 B105 false-positive on the literal 'False') with individual
 justifications in the security frozen log. Baseline = 49; zero unjustified entries.
+
+## Advisory mode (out-of-band)
+
+To run advisory checks, generate the upstream report offline on a network-allowed
+machine: `pip-audit -f json -o /tmp/pip_audit.json`.
+
+Then run:
+`python3 skills/security-audit/scripts/security_audit.py --root . --out-dir <dir> <prefixes> --advisory-report /tmp/pip_audit.json`.
+
+Advisory findings are diagnosis-only and must not be added to the gate baseline.
+The npm security gate remains bandit-only and offline, per SP8 rationale.

@@ -11,11 +11,15 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gate_common import verdict  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 LEAF = ROOT / "skills" / "coverage-gap-audit" / "scripts" / "coverage_gap_audit.py"
 OUT = ROOT / ".self_audit_out" / "coverage"
 SNAPSHOT = ROOT / "scripts" / "coverage_gap_snapshot.json"
-BASELINE = ROOT / "scripts" / "coverage_gap_baseline.json"
+BASELINE_PATH = "scripts/coverage_gap_baseline.json"
+BASELINE = ROOT / BASELINE_PATH
 RCFILE = ROOT / ".coveragerc"
 SUITES = [
     "tests",
@@ -134,36 +138,47 @@ def main(argv: list[str] | None = None) -> int:
         help="Use an existing coverage.py JSON report instead of running suites "
         "(testing/debugging only).",
     )
+    parser.add_argument(
+        "--snapshot",
+        help="Use an existing coverage-gap snapshot instead of running coverage+leaf.",
+    )
+    parser.add_argument(
+        "--baseline",
+        help="Alternate baseline JSON (testing only).",
+    )
     args = parser.parse_args(argv)
     suite_results: dict[str, int] = {}
-    if args.coverage_json:
+    if args.snapshot:
+        current = json.loads(Path(args.snapshot).read_text(encoding="utf-8"))
+    elif args.coverage_json:
         coverage_json = Path(args.coverage_json)
+        current = run_leaf(coverage_json)
     else:
         coverage_json, suite_results = run_suites_with_coverage()
         failed = {s: rc for s, rc in suite_results.items() if rc != 0}
         if failed:
             print(json.dumps({"status": "fail", "failed_suites": failed}, indent=2))
             return 1
-    current = run_leaf(coverage_json)
+        current = run_leaf(coverage_json)
+
     SNAPSHOT.write_text(json.dumps(current, indent=2, sort_keys=True) + "\n")
-    baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
-    base = {tuple(sorted(d.items())) for d in baseline}
-    new = [d for d in current if tuple(sorted(d.items())) not in base]
-    if new:
-        print(json.dumps({"status": "fail", "new_findings": new}, indent=2))
+    baseline = json.loads(Path(args.baseline or BASELINE).read_text(encoding="utf-8"))
+    code, payload = verdict(current, baseline, baseline_path=BASELINE_PATH)
+    if code != 0:
+        print(json.dumps(payload, indent=2))
         return 1
     print(
         json.dumps(
             {
                 "status": "pass",
+                "count": payload["count"],
+                "baseline": payload["baseline"],
                 "suites": len(suite_results) or None,
-                "count": len(current),
-                "baseline": len(baseline),
             },
             indent=2,
         )
     )
-    return 0
+    return code
 
 
 if __name__ == "__main__":

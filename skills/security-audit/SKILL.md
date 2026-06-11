@@ -13,19 +13,14 @@ description: >
 
 ## Overview
 
-A code-health leaf skill that runs bandit static security analysis over a tree
-and reports issues as advisory `SECURITY` findings. It is deliberately
-STANDALONE (not registered in the umbrella `leaf_registry.json`): bandit on
-subprocess-heavy tooling repositories produces a large, repo-specific baseline
-that would bury the umbrella's self-audit signal, and it carries a heavier
-dependency. Run it deliberately.
+Runs bandit static analysis and reports advisory `SECURITY` findings. It is
+deliberately standalone (not registered in `leaf_registry.json`) because bandit
+baselines are repo-specific and dependency-heavy.
 
 ## Requirements
 
 - `bandit==1.9.4` (pinned; verified on Python 3.14). Install with
-  `pip install bandit==1.9.4`. The leaf probes for bandit via
-  `importlib.util.find_spec` before running and exits with a tool error
-  (exit 2) if it is absent.
+  `pip install bandit==1.9.4`. Missing bandit exits `2`.
 
 ## Quick Start
 
@@ -56,7 +51,7 @@ bandit is invoked as `python -m bandit -r <targets> -f json -q`, where
 - `security_findings.json` — sorted findings (shared schema).
 - `security_report.md` — grouped summary.
 
-## bandit to finding mapping
+## Mapping
 
 | bandit issue_severity | finding severity | bandit issue_confidence | finding confidence | metric_value |
 |---|---|---|---|---|
@@ -64,17 +59,15 @@ bandit is invoked as `python -m bandit -r <targets> -f json -q`, where
 | MEDIUM | medium | MEDIUM | medium | 2.0 |
 | LOW | low | LOW | low | 1.0 |
 
-Per bandit result: `signal = SECURITY`, `path` = result `filename` made
-root-relative (POSIX), `line_start = line_number`, `line_end = max(line_range)`,
-`symbol = test_name`, `metric_name = "bandit_<test_id>"`, `metric_threshold = 0.0`,
-`evidence.tool = "bandit"`, `evidence.raw = "<issue_text> [<test_id>]"`,
-`suggested_action = "Review and remediate <test_id> at <path>:<line>"`.
-bandit exits 1 when it finds issues; exit codes outside {0,1} or unparseable
-JSON are treated as a tool error.
+Each bandit result maps to `signal = SECURITY`, root-relative POSIX `path`,
+`symbol = test_name`, `metric_name = "bandit_<test_id>"`, threshold `0.0`,
+`evidence.tool = "bandit"`, and a review/remediate suggested action. bandit
+exit `1` means findings; other unexpected exits or bad JSON are tool errors.
 
 ## Advisory mode
 
-`--advisory-report PATH` ingests a pip-audit-shaped JSON document:
+`--advisory-report PATH` ingests a pip-audit-shaped JSON document generated out
+of band:
 
 ```json
 {
@@ -93,13 +86,11 @@ JSON are treated as a tool error.
 }
 ```
 
-Each package with a non-empty `vulns` list emits one `SECURITY` finding:
-`path` = `pyproject.toml` if it exists under `--root`, else `<advisory>`;
-`symbol` = package name; `metric_name = "dependency_vulnerabilities"`;
-`metric_value = len(vulns)`; severity per the C-8 mapping (`critical`/`high`
-to high, `medium`/null to medium, `low` to low); confidence `high`;
-`evidence.tool = "advisory-report"`. No network access is ever performed
-in-band; the report must be produced out of band.
+Each package with `vulns` emits one `SECURITY` finding: path `pyproject.toml`
+when present else `<advisory>`, symbol package name, metric
+`dependency_vulnerabilities`, value `len(vulns)`, severity mapping
+`critical/high -> high`, `medium/null -> medium`, `low -> low`, confidence
+`high`, tool `advisory-report`. No in-band network access occurs.
 
 ## Exit codes
 
@@ -110,8 +101,6 @@ in-band; the report must be produced out of band.
 
 ## Determinism and limits
 
-Findings are sorted by the shared `sort_findings` key and use root-relative
-POSIX paths, so output is byte-deterministic across runs for a fixed bandit
-version. bandit is a static analyzer: it reports patterns, not proven exploits,
-so every finding is advisory and needs human review. The pin (`bandit==1.9.4`)
-is load-bearing for golden stability.
+Findings are sorted by shared `sort_findings` and use root-relative POSIX paths,
+so output is byte-deterministic for fixed `bandit==1.9.4`. bandit reports
+patterns, not proven exploits; every finding needs human review.

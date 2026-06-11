@@ -3,8 +3,11 @@
 code; emit a normalized snapshot."""
 
 from __future__ import annotations
+
 import argparse
+import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -18,6 +21,7 @@ PIPELINE = (
     / "code_health_pipeline.py"
 )
 SNAPSHOT = ROOT / "scripts" / "self_audit_snapshot.json"
+_TAIL = re.compile(r"(\S+):(\d+)-(\d+)$")
 
 
 def _prefixes() -> list[str]:
@@ -26,6 +30,31 @@ def _prefixes() -> list[str]:
         if (d / "scripts").is_dir():
             pres.append(f"skills/{d.name}/scripts")
     return pres
+
+
+def _stable_symbol(root: Path, finding: dict) -> str:
+    if finding["leaf"] != "duplication":
+        return finding["location"]["symbol"]
+
+    sym = finding["location"]["symbol"]
+    match = _TAIL.search(sym)
+    if not match:
+        return sym
+
+    try:
+        lines = (
+            (root / match.group(1))
+            .read_text(encoding="utf-8", errors="replace")
+            .splitlines()
+        )
+    except OSError:
+        return sym
+
+    frag = "\n".join(
+        line.strip() for line in lines[int(match.group(2)) - 1 : int(match.group(3))]
+    )
+    digest = hashlib.sha256(frag.encode()).hexdigest()[:12]
+    return f"{sym[: match.start(1)]}{match.group(1)}#{digest}"
 
 
 def run(out_dir: Path) -> list[dict]:
@@ -47,7 +76,7 @@ def run(out_dir: Path) -> list[dict]:
             {
                 "leaf": f["leaf"],
                 "path": f["path"],
-                "symbol": f["location"]["symbol"],
+                "symbol": _stable_symbol(ROOT, f),
                 "metric": f["metric"]["name"],
             }
             for f in summary.get("findings", [])

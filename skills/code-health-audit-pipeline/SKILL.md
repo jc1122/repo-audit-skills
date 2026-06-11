@@ -12,8 +12,8 @@ description: >
 
 ## Overview
 
-Runs the code-health leaves once, deterministically, and produces a single ranked
-backlog plus a machine-readable summary with a supervisor decision.
+Runs registered code-health leaves once, merges their findings, and emits a
+ranked backlog plus a machine-readable supervisor decision.
 
 ## Quick Start
 
@@ -24,7 +24,7 @@ python3 scripts/code_health_pipeline.py \
   --out-dir /tmp/code-health
 ```
 
-## Output
+## Outputs
 
 ```
 out-dir/
@@ -42,7 +42,7 @@ out-dir/
 - `0` PASS, `1` ADVISE (findings present), `2` GATE (hard gate breached, including any
   leaf erroring).
 
-## Configuration
+## Flags
 
 - `--languages python` (default) — filters which leaves run via the registry.
 - `--registry PATH` — override the leaf registry.
