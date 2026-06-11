@@ -9,7 +9,26 @@ identical findings list.
 
 from __future__ import annotations
 
+from pathlib import PurePosixPath
+
 from _audit_shared import LEAF, _EvidenceCtx, hc
+
+
+def _is_own_test_pair(a: str, b: str) -> bool:
+    """Return True when a source file is paired with its own test file."""
+    a_name = PurePosixPath(a).name
+    b_name = PurePosixPath(b).name
+
+    def source_stem_for_test(filename: str) -> str | None:
+        if not filename.startswith("test_") or not filename.endswith(".py"):
+            return None
+        return filename.removeprefix("test_").removesuffix(".py")
+
+    a_test_stem = source_stem_for_test(a_name)
+    b_test_stem = source_stem_for_test(b_name)
+    return (a_test_stem is not None and b_name == f"{a_test_stem}.py") or (
+        b_test_stem is not None and a_name == f"{b_test_stem}.py"
+    )
 
 
 def _temporal_coupling(
@@ -17,7 +36,7 @@ def _temporal_coupling(
     churn: dict[str, int],
     thresholds: dict,
     ev: _EvidenceCtx,
-) -> list[hc.Finding]:
+) -> tuple[list[hc.Finding], int]:
     """Return RESTRUCTURE findings for co-changing file pairs.
 
     The coupling ratio is ``co_changes / min(churn[a], churn[b])``.
@@ -28,12 +47,16 @@ def _temporal_coupling(
     min_ratio = float(thresholds["min_coupling_ratio"])
 
     findings: list[hc.Finding] = []
+    suppressed_own_test_pairs = 0
     for a, b in sorted(pair_co):
         co = pair_co[(a, b)]
         if co < min_co:
             continue
         ratio = co / min(churn[a], churn[b])
         if ratio < min_ratio:
+            continue
+        if _is_own_test_pair(a, b):
+            suppressed_own_test_pairs += 1
             continue
 
         findings.append(
@@ -61,4 +84,4 @@ def _temporal_coupling(
                 ),
             )
         )
-    return findings
+    return findings, suppressed_own_test_pairs

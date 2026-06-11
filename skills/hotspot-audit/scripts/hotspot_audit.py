@@ -14,6 +14,10 @@ Analysis pipeline
 5. Write findings as JSON + optional Markdown report.
 
 All analysis is deterministic; no network, no external tools beyond git.
+
+Precision suppressions count solo-author knowledge skips and own-test temporal
+pair skips in both stdout and the Markdown report, so filtered noise remains
+auditable.
 """
 
 from __future__ import annotations
@@ -41,7 +45,10 @@ from _audit_collect import _collect_file_stats  # noqa: E402
 from _audit_churn import _churn_hotspots  # noqa: E402
 from _audit_cochange import _count_cochange_pairs  # noqa: E402
 from _audit_coupling import _temporal_coupling  # noqa: E402
-from _audit_knowledge import _knowledge_concentration  # noqa: E402
+from _audit_knowledge import _knowledge_or_suppression  # noqa: E402
+
+
+_LAST_ANALYSIS_META = {"suppressed_solo_author": False, "suppressed_own_test_pairs": 0}
 
 
 # ---------------------------------------------------------------------------
@@ -57,6 +64,10 @@ def analyze_tree(
     max_commits: int,
 ) -> list[hc.Finding]:
     """Core analysis.  Raises ToolError on input / git errors."""
+    _LAST_ANALYSIS_META.update(
+        suppressed_solo_author=False, suppressed_own_test_pairs=0
+    )
+
     root = Path(root)
     _validate_git_root(root)
 
@@ -71,24 +82,25 @@ def analyze_tree(
 
     ev = _EvidenceCtx(len(commits), max_commits, resolved_sha[:12])
     churn, authors, existing = _collect_file_stats(commits, source_prefixes, root)
-
     findings: list[hc.Finding] = []
     findings.extend(_churn_hotspots(existing, churn, thresholds, ev))
-    findings.extend(
-        _temporal_coupling(
-            _count_cochange_pairs(
-                commits,
-                existing,
-                int(thresholds["max_commit_files"]),
-            ),
-            churn,
-            thresholds,
-            ev,
+    coupling_findings, suppressed_own_test_pairs = _temporal_coupling(
+        _count_cochange_pairs(
+            commits,
+            existing,
+            int(thresholds["max_commit_files"]),
         ),
+        churn,
+        thresholds,
+        ev,
     )
-    findings.extend(
-        _knowledge_concentration(existing, churn, authors, thresholds, ev),
+    _LAST_ANALYSIS_META["suppressed_own_test_pairs"] = suppressed_own_test_pairs
+    findings.extend(coupling_findings)
+    knowledge_findings, suppressed_solo_author = _knowledge_or_suppression(
+        existing, churn, authors, thresholds, ev
     )
+    _LAST_ANALYSIS_META["suppressed_solo_author"] = suppressed_solo_author
+    findings.extend(knowledge_findings)
     return hc.sort_findings(findings)
 
 
@@ -104,7 +116,15 @@ def render_report(findings: list[hc.Finding]) -> str:
     value, and severity level.  Groups are sorted alphabetically by
     signal name; within each group findings appear in sort order.
     """
-    lines = ["# hotspot-audit report", ""]
+    lines = [
+        "# hotspot-audit report",
+        "",
+        f"Suppressions: `suppressed_solo_author`="
+        f"{int(_LAST_ANALYSIS_META['suppressed_solo_author'])}",
+        f"`suppressed_own_test_pairs`="
+        f"{_LAST_ANALYSIS_META['suppressed_own_test_pairs']}",
+        "",
+    ]
     if not findings:
         lines.append("No findings.")
         return "\n".join(lines) + "\n"
@@ -196,6 +216,7 @@ def _emit_status(count: int, rev: str, max_commits: int) -> None:
                 "leaf": LEAF,
                 "rev": rev,
                 "max_commits": max_commits,
+                **_LAST_ANALYSIS_META,
             }
         )
     )

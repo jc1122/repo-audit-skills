@@ -66,6 +66,8 @@ python3 scripts/hotspot_audit.py \
 
 - `hotspot_findings.json`  --  sorted findings in the shared code-health schema.
 - `hotspot_report.md`  --  human-readable summary grouped by signal.
+- stdout status JSON includes resolved `rev`, `max_commits`,
+  `suppressed_solo_author`, and `suppressed_own_test_pairs`.
 
 ## Deterministic Pinned-Window Contract
 
@@ -111,7 +113,10 @@ commits: compute `product = churn * nloc`.  Report when
 Pairs of files that change together in the same commits.  Considers commits
 with `1 < len(files) <= max_commit_files`.  Reports pairs where
 `co-changes >= min_coupling_changes` and
-`ratio = co / min(churn_a, churn_b) >= min_coupling_ratio`.
+`ratio = co / min(churn_a, churn_b) >= min_coupling_ratio`.  Source files
+paired with their own tests (for example `foo.py` with a matching test_foo
+module under tests) are suppressed after thresholding and counted as
+`suppressed_own_test_pairs`.
 
 - **Metric:** `temporal_coupling_ratio`
 - **Severity:** `medium`
@@ -122,7 +127,8 @@ with `1 < len(files) <= max_commit_files`.  Reports pairs where
 
 Files dominated by a single author.  For files with
 `churn >= min_author_commits`, report when the top author's share of commits
-exceeds `min_author_share`.
+exceeds `min_author_share`.  Single-author repositories skip this group and
+report `suppressed_solo_author=true`.
 
 - **Metric:** `author_concentration`
 - **Severity:** `low`
@@ -140,6 +146,9 @@ exceeds `min_author_share`.
 - **Huge commits are skipped.**  Commits touching more than `max_commit_files`
   (default 50) are excluded from temporal-coupling analysis to avoid noise
   from mechanical refactors and merge commits.
+- **Precision suppressions are counted.**  Solo-author repositories and
+  source-to-own-test temporal pairs are filtered as known FP classes, but their
+  counters remain visible in stdout and the Markdown report.
 - **Author names are heuristic.**  The analysis uses `%an` (author name) from
   git log  --  typos, email changes, or inconsistent casing by the same person
   will artificially dilute or concentrate authorship counts.
