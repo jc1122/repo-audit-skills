@@ -148,6 +148,20 @@ def test_normalize_findings_empty():
 
 
 # ---------------------------------------------------------------------------
+# production_prefixes
+# ---------------------------------------------------------------------------
+
+
+def test_production_prefixes():
+    mod = _load_module()
+    result = mod.production_prefixes(ROOT)
+    assert isinstance(result, list)
+    assert result[0] == "shared"
+    assert result[1] == "scripts"
+    assert "skills/security-audit/scripts" in result
+
+
+# ---------------------------------------------------------------------------
 # gate_main (with --snapshot so the leaf is never invoked)
 # ---------------------------------------------------------------------------
 

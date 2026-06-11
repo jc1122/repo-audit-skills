@@ -22,6 +22,15 @@ class GateSpec:
     description: str
 
 
+def production_prefixes(root: Path) -> list[str]:
+    """Prod scope: ``shared``, ``scripts``, and each skill's ``scripts/`` dir."""
+    pres = ["shared", "scripts"]
+    for d in sorted((root / "skills").iterdir()):
+        if (d / "scripts").is_dir():
+            pres.append(f"skills/{d.name}/scripts")
+    return pres
+
+
 def identities(findings: list[dict]) -> set[tuple]:
     """Return a deduplicated set of identity tuples for *findings*."""
     return {tuple(sorted(d.items())) for d in findings}
