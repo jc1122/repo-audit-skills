@@ -28,7 +28,8 @@ python3 scripts/dead_code_audit.py \
 ## Output
 
 - `dead-code_findings.json` — sorted findings (shared schema).
-- `dead-code_report.md` — summary.
+- `dead-code_report.md` — summary plus suppression count.
+- stdout status JSON includes `suppressed_test_referenced`.
 
 ## Exit Codes
 
@@ -36,5 +37,10 @@ python3 scripts/dead_code_audit.py \
 
 ## Tools
 
-vulture + ruff (F401/F811/F841 only). See `skills/dead-code-audit/references/rubric.md`. `--allowlist FILE`
-suppresses vulture false positives. Findings are deterministic.
+vulture + ruff (F401/F811/F841 only). See
+`skills/dead-code-audit/references/rubric.md`. `--allowlist FILE` suppresses
+vulture false positives. Vulture function/class/method/property findings whose
+symbols appear in `tests/test_*.py` are suppressed and counted as
+`suppressed_test_referenced`; ruff findings are unaffected. The test-reference
+scan is a conservative substring check, so even a test comment can suppress an
+advisory DELETE. Findings are deterministic.

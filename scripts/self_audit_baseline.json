@@ -105,7 +105,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/complexity-audit/scripts/complexity_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:239-260"
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:275-296"
   },
   {
     "leaf": "duplication",
@@ -135,7 +135,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
-    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:31-58"
+    "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:33-60"
   },
   {
     "leaf": "duplication",
