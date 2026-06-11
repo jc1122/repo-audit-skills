@@ -378,8 +378,11 @@ Verification:
 - First pushed CI run `27374250760` on `e6737e6` passed, but logs contained
   `DEP0040` warnings from `actions/setup-node@v5`; B0.4 acceptance therefore
   required the setup-node v6 fix-forward before tagging.
-- Final acceptance is the post-fix CI run completing with zero deprecation
-  warnings or annotations.
+- Final acceptance: pushed CI run `27374685692` on
+  `c090cbdf2c548b9a44f93ecfd32fb4572ee78723` completed successfully.
+  `gh run view 27374685692 --log | rg -i "deprecated|deprecation|punycode|DEP0040|node16|node20"`
+  returned no matches. A broader warning scan matched only the checkout git
+  hint line, not a runtime deprecation.
 
 ### B1.4 iteration-1 release prep
 
@@ -404,13 +407,38 @@ Local release verification:
   final output `full-pytest: 17/17 suites green`.
 - `npm run pack:dry-run` exited 0; dry-run tarball
   `repo-audit-skills-0.5.2.tgz`; total files `345`.
-- `python3 scripts/check_release.py --require-clean` exited 0 on release-prep
-  commit `794f532`; version `0.5.2`; 16 skills.
+- `python3 scripts/check_release.py --require-clean` exited 0 on the clean
+  release-prep state; version `0.5.2`; 16 skills.
 - Fresh-clone simulation directory: `/tmp/sp11-ci-sim-bN6hJr`.
 - Fresh-clone command shape: clone repo-A, copy `node_modules`, run
   `npm run check`.
 - Fresh-clone result: `npm run check` exited 0; release reported
   `version=0.5.2`; self-audit `92/92`; security, hygiene, docs, dependency,
   and coverage `0/0`; final output `full-pytest: 17/17 suites green`.
-- CI, tag, release, reinstall, and readback evidence will be appended before
-  iteration 2 starts.
+Ship evidence:
+
+- Final release commit: `c090cbdf2c548b9a44f93ecfd32fb4572ee78723`
+  (`ci: use setup-node v6 for release workflow`).
+- `v0.5.2` tag resolves to
+  `c090cbdf2c548b9a44f93ecfd32fb4572ee78723`.
+- GitHub release `repo-audit-skills v0.5.2` is published, non-draft,
+  non-prerelease:
+  `https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.2`.
+- Reinstall command:
+  `node bin/install-repo-audit-skills.js --dest /home/jakub/.agents/skills --force`
+  exited 0 and installed all 16 repo-audit skills.
+- Installed readback from `/home/jakub/.agents/skills`: all 16 repo-audit
+  leaf `SKILL.md` files report version `0.5.2`.
+- Post-install bootstrap probes used the installed root
+  `/home/jakub/.agents/skills` via
+  `python3 scripts/check_skill_requirements.py --repo <repo> --out-dir /tmp/sp11-post-install-bootstrap/<repo> --extra-root /home/jakub/.agents/skills`.
+  repo-A, repo-B, and repo-P all exited 0 with `install_candidates=[]`,
+  `restart_required=false`, and `stop_before_discovery=false`.
+- Post-install bootstrap probe artifacts:
+  `/tmp/sp11-post-install-bootstrap/repo-a/bootstrap`,
+  `/tmp/sp11-post-install-bootstrap/repo-b/bootstrap`, and
+  `/tmp/sp11-post-install-bootstrap/repo-p/bootstrap`.
+- The bootstrap lane remains nonblocking `degraded` because the optional
+  Skills CLI helper is unavailable; the installed audit/test/security/hygiene
+  lanes are usable immediately. repo-P also selected installed
+  `perf-benchmark` and `perf-optimization`.
