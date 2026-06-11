@@ -47,7 +47,7 @@ the frozen plan plus command/artifact evidence recorded here.
 
 ### C-0 diagnosis artifacts
 
-Artifact root: `artifacts/sp11/iteration-01/` (gitignored).
+Artifact root: the gitignored SP11 iteration directory under `artifacts`.
 
 - Bootstrap artifacts:
   `bootstrap/repo-a`, `bootstrap/repo-b`, `bootstrap/repo-p`.
@@ -97,7 +97,7 @@ Accepted implementation:
 - Added npm script `check:pytest`.
 - Appended `&& npm run check:pytest` to the `check` chain, making repo-A a
   10-gate repo.
-- Added `scripts/full_pytest_snapshot.json` to `.gitignore`.
+- Added the generated full-pytest snapshot JSON to `.gitignore`.
 - Added `tests/test_check_full_pytest.py` so the new gate clears the
   coverage-gap ratchet.
 
@@ -125,4 +125,49 @@ Verification:
 - `npm run check` exited 0 with the new 10-gate chain; final gate output:
   `full-pytest: 17/17 suites green`.
 
-Next required plan task: B0.2 opencode-worker-bridge smoke on DeepSeek v4 Pro Max.
+### B0.2 opencode-worker-bridge smoke
+
+Run directory: the B0.2 opencode smoke directory under the gitignored SP11
+iteration artifact tree.
+
+Bridge readiness:
+
+- `python3 /home/jakub/.agents/skills/opencode-worker-bridge/scripts/opencode_worker.py doctor --json`
+  exited 0 with `passed=true`; version `0.2.0`; installed skill root
+  `/home/jakub/.agents/skills/opencode-worker-bridge`.
+- `opencode` binary: `/home/jakub/.nvm/versions/node/v20.20.0/bin/opencode`.
+- Worker start wrote `opencode-worker-state.json` and
+  `opencode-worker-state.log`; OpenCode health was true, version `1.15.13`,
+  base URL `http://127.0.0.1:4096`, pid `2719464`.
+- Live preflight for `provider=deepseek`, `model=deepseek-v4-pro`,
+  `variant=max` exited 0 with `status=passed`; provider and model routes
+  were present.
+
+Worker packet:
+
+- Prompt artifact: `prompt.md`.
+- Job id: `b0.2-complexity-pytest-smoke`.
+- Permission profile: `standard`.
+- Session id: `ses_147f940e1ffeVuLSfA8G5kl5kJ`.
+- Worker command:
+  `python3 -m pytest skills/complexity-audit/tests -q --color=no`.
+- Worker tool output: `13 passed in 1.13s`, exit 0.
+- Worker response: reported command, exit code 0, final output
+  `13 passed in 1.13s`.
+
+Artifact validation:
+
+- Run dir files present: `delegation-report.json`, `job_envelope.json`,
+  `opencode-worker-state.json`, `opencode-worker-state.log`,
+  `preflight-report.json`, `prompt.md`, `worker.status.json`.
+- `run-status` exited 0 with one passed/completed job, no blockers,
+  no failed jobs, worker lifecycle `completed`, worker healthy.
+- `validate job_envelope.json --expect-type job_envelope --expect-schema-version 1`
+  exited 0 with `passed=true`.
+- `validate worker.status.json --expect-type worker_status --expect-schema-version 1`
+  exited 0 with `passed=true`.
+- Orchestrator rerun of the exact command exited 0:
+  `13 passed in 1.15s`.
+
+Next required plan task: B0.3 mutation-signal census on the three
+concentration files, delegated as the background worker while B1 proceeds.
