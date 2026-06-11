@@ -986,3 +986,67 @@ Verification:
   -> 155 passed; wave baseline -> status=pass, count=39, baseline=39. cmp
   returned 0 for wave_findings.json and wave_summary.json.
 - Convergence artifacts are under artifacts/sp11/iteration-03/convergence.
+
+### Iteration 3 C-6 ship gate and re-anchor
+
+Repo-A:
+
+- Released repo-A `v0.5.4` at
+  `65d8a27be0fc9e4c03b8c8019a4a985d8be84639`.
+- GitHub release: https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.4
+- Post-bump source gates: npm run check exited 0 with selfaudit 84/84,
+  security/hygiene/docs/dependency/coverage 0/0, and full-pytest 17/17 suites
+  green.
+- Post-bump installed wave was stable across two runs: code-health 61,
+  security/hygiene/docs/dependency 0, hotspot 128; cmp returned 0 for
+  wave_findings.json and wave_summary.json.
+- Fresh-clone simulation: git clone, npm ci, npm run check, and installed wave
+  completed with the same gate counts and wave summary.
+- CI run 27384773536 completed success; annotation scan for `::warning`,
+  `##[warning]`, deprecated, deprecation, node16, node20, DEP0040, and punycode
+  returned no matches.
+
+Repo-B:
+
+- Released repo-B `v0.4.3` at
+  `561c8396d519cdcd848139b95814d1954d49b72d`.
+- GitHub release: https://github.com/jc1122/repo-audit-refactor-optimize/releases/tag/v0.4.3
+- Pre-push and fresh-clone gates: 106 tests passed, release check passed, and
+  wave baseline passed at count 6.
+- C-6 hotspot re-anchor advanced the wave anchor to `561c839`, then follow-up
+  commit `f6ace4b` recorded the loop-induced run_diagnosis_wave.py churn row
+  as real re-anchor residue. Final baseline is 7 normalized identities.
+- CI run 27384773706 completed success for the release commit; follow-up CI run
+  27385156150 completed success for the re-anchor commit. Annotation scans
+  returned no deprecation or warning-annotation matches.
+
+Repo-P:
+
+- Released repo-P `v0.3.2` at
+  `d97f087b418b2cb9798eee4d7ace0d47d1848115`; nested perf-optimization
+  remains at `0.2.1`.
+- GitHub release: https://github.com/jc1122/perf-benchmark-skill/releases/tag/v0.3.2
+- Pre-push and fresh-clone gates: ruff check and format passed, 155 tests
+  passed, and wave baseline passed at count 39.
+- C-6 hotspot re-anchor advanced the wave anchor to `d97f087`, then follow-up
+  commit `87c052b` documented that no new or stale normalized identities
+  surfaced. Final baseline remains 39 normalized identities.
+- CI run 27384773746 completed success for the release commit; follow-up CI run
+  27385156103 completed success for the re-anchor commit. Annotation scans
+  returned no deprecation or warning-annotation matches.
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into /home/jakub/.agents/skills,
+  then synced repo-B, perf-benchmark, and perf-optimization directories.
+- Installed readback passed: all 16 repo-A leaves at `0.5.4`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.2`;
+  both nested and top-level perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P using the
+  installed repo-audit-refactor-optimize checker.
+- Bootstrap report readback: install_candidates is empty for all three repos;
+  summary.restart_required is false; summary.stop_before_discovery is false.
+- Bootstrap artifact roots:
+  artifacts/sp11/iteration-03/postinstall/repo-a,
+  artifacts/sp11/iteration-03/postinstall/repo-b, and
+  artifacts/sp11/iteration-03/postinstall/repo-p.
