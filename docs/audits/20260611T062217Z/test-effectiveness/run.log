@@ -1,0 +1,70 @@
+===== mutation 1: skills/code-health-audit-pipeline/scripts/code_health_pipeline.py (suite skills/code-health-audit-pipeline/tests) =====
+Traceback (most recent call last):
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/test_effectiveness_audit.py", line 50, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/_cli.py", line 117, in main
+    findings, actual_total = analyze_tree(config)
+                             ~~~~~~~~~~~~^^^^^^^^
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/_pipeline.py", line 74, in analyze_tree
+    subprocess.run(
+    ~~~~~~~~~~~~~~^
+        [sys.executable, "-m", "mutmut", "run"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        text=True,
+        ^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '-m', 'mutmut', 'run']' returned non-zero exit status 1.
+MUTATION_EXIT_1=1
+===== mutation 2: scripts/check_release.py (suite tests) =====
+Traceback (most recent call last):
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/test_effectiveness_audit.py", line 50, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/_cli.py", line 117, in main
+    findings, actual_total = analyze_tree(config)
+                             ~~~~~~~~~~~~^^^^^^^^
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/_pipeline.py", line 74, in analyze_tree
+    subprocess.run(
+    ~~~~~~~~~~~~~~^
+        [sys.executable, "-m", "mutmut", "run"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        text=True,
+        ^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '-m', 'mutmut', 'run']' returned non-zero exit status 1.
+MUTATION_EXIT_2=1
+===== mutation 3: skills/quality-audit/scripts/quality_audit.py (suite skills/quality-audit/tests) =====
+Traceback (most recent call last):
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/test_effectiveness_audit.py", line 50, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/_cli.py", line 117, in main
+    findings, actual_total = analyze_tree(config)
+                             ~~~~~~~~~~~~^^^^^^^^
+  File "/home/jakub/projects/repo-audit-skills/skills/test-effectiveness-audit/scripts/_pipeline.py", line 74, in analyze_tree
+    subprocess.run(
+    ~~~~~~~~~~~~~~^
+        [sys.executable, "-m", "mutmut", "run"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        text=True,
+        ^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '-m', 'mutmut', 'run']' returned non-zero exit status 1.
+MUTATION_EXIT_3=1
+ALL_MUTATION_DONE

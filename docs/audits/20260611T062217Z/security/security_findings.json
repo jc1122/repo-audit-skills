@@ -1,0 +1,1474 @@
+[
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "869f2259ac28d303",
+    "leaf": "security",
+    "location": {
+      "line_end": 10,
+      "line_start": 10,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_coverage_gap.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at scripts/check_coverage_gap.py:10"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "ba7cc2bbd5cf75b7",
+    "leaf": "security",
+    "location": {
+      "line_end": 77,
+      "line_start": 57,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_coverage_gap.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/check_coverage_gap.py:57"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "ba7cc2bbd5cf75b7",
+    "leaf": "security",
+    "location": {
+      "line_end": 96,
+      "line_start": 80,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_coverage_gap.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/check_coverage_gap.py:80"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "ba7cc2bbd5cf75b7",
+    "leaf": "security",
+    "location": {
+      "line_end": 115,
+      "line_start": 113,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_coverage_gap.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/check_coverage_gap.py:113"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "e06aa6a6ee48f1f7",
+    "leaf": "security",
+    "location": {
+      "line_end": 9,
+      "line_start": 9,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_release.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at scripts/check_release.py:9"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "3378f2cd18e1c57e",
+    "leaf": "security",
+    "location": {
+      "line_end": 57,
+      "line_start": 57,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_release.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/check_release.py:57"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "Probable insecure usage of temp file/directory. [B108]",
+      "tool": "bandit"
+    },
+    "id": "6d3e90599ffa9019",
+    "leaf": "security",
+    "location": {
+      "line_end": 142,
+      "line_start": 140,
+      "symbol": "hardcoded_tmp_directory"
+    },
+    "metric": {
+      "name": "bandit_B108",
+      "threshold": 0.0,
+      "value": 2.0
+    },
+    "path": "scripts/check_release.py",
+    "severity": "medium",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B108 at scripts/check_release.py:140"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "f6296ae822f63beb",
+    "leaf": "security",
+    "location": {
+      "line_end": 9,
+      "line_start": 9,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_self_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at scripts/check_self_audit.py:9"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "5d77a80841d11473",
+    "leaf": "security",
+    "location": {
+      "line_end": 31,
+      "line_start": 25,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_self_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/check_self_audit.py:25"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "e223933df3e6cd87",
+    "leaf": "security",
+    "location": {
+      "line_end": 7,
+      "line_start": 7,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_skill_fixtures.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at scripts/check_skill_fixtures.py:7"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "5dbd1b9dbdda4467",
+    "leaf": "security",
+    "location": {
+      "line_end": 41,
+      "line_start": 39,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/check_skill_fixtures.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/check_skill_fixtures.py:39"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "310c74830f2c6b0e",
+    "leaf": "security",
+    "location": {
+      "line_end": 8,
+      "line_start": 8,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/self_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at scripts/self_audit.py:8"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "2f6794b1c439dcac",
+    "leaf": "security",
+    "location": {
+      "line_end": 43,
+      "line_start": 43,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "scripts/self_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at scripts/self_audit.py:43"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "2336372681008b59",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at shared/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "bcb6a43bef8a3666",
+    "leaf": "security",
+    "location": {
+      "line_end": 8,
+      "line_start": 8,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/code-health-audit-pipeline/scripts/code_health_pipeline.py:8"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "815e3049d63a86e5",
+    "leaf": "security",
+    "location": {
+      "line_end": 181,
+      "line_start": 179,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/code-health-audit-pipeline/scripts/code_health_pipeline.py:179"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "3159d7b641bbd06c",
+    "leaf": "security",
+    "location": {
+      "line_end": 8,
+      "line_start": 8,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/complexity-audit/scripts/complexity_audit.py:8"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "10be35d59a8d2115",
+    "leaf": "security",
+    "location": {
+      "line_end": 136,
+      "line_start": 134,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/complexity-audit/scripts/complexity_audit.py:134"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "72ef5c7b9f6b7388",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/complexity-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/complexity-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "33c9b9500b8017ee",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/coverage-gap-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/coverage-gap-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "bdc14fbc71472bfb",
+    "leaf": "security",
+    "location": {
+      "line_end": 9,
+      "line_start": 9,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/dead-code-audit/scripts/dead_code_audit.py:9"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "d2ec8714b9d1bdd8",
+    "leaf": "security",
+    "location": {
+      "line_end": 89,
+      "line_start": 82,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/dead-code-audit/scripts/dead_code_audit.py:82"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "d2ec8714b9d1bdd8",
+    "leaf": "security",
+    "location": {
+      "line_end": 146,
+      "line_start": 139,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/dead-code-audit/scripts/dead_code_audit.py:139"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "fcfbc1da8c18ae8e",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/dead-code-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/dead-code-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "f86acf5c1de9aba7",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/dependency-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/dependency-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "e3460da4018d2c36",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/docs-consistency-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/docs-consistency-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "4dc84a347e061d78",
+    "leaf": "security",
+    "location": {
+      "line_end": 8,
+      "line_start": 8,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/duplication-audit/scripts/duplication_audit.py:8"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "2f36982e1be07811",
+    "leaf": "security",
+    "location": {
+      "line_end": 77,
+      "line_start": 70,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/duplication-audit/scripts/duplication_audit.py:70"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "3a92947a03929bc7",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/duplication-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/duplication-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "8974308e00754943",
+    "leaf": "security",
+    "location": {
+      "line_end": 20,
+      "line_start": 20,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/hotspot-audit/scripts/_audit_git.py:20"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "510980a526d6e10c",
+    "leaf": "security",
+    "location": {
+      "line_end": 39,
+      "line_start": 33,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/hotspot-audit/scripts/_audit_git.py:33"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Starting a process with a partial executable path [B607]",
+      "tool": "bandit"
+    },
+    "id": "15a531b4015c9b52",
+    "leaf": "security",
+    "location": {
+      "line_end": 39,
+      "line_start": 33,
+      "symbol": "start_process_with_partial_path"
+    },
+    "metric": {
+      "name": "bandit_B607",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B607 at skills/hotspot-audit/scripts/_audit_git.py:33"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "510980a526d6e10c",
+    "leaf": "security",
+    "location": {
+      "line_end": 67,
+      "line_start": 63,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/hotspot-audit/scripts/_audit_git.py:63"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Starting a process with a partial executable path [B607]",
+      "tool": "bandit"
+    },
+    "id": "15a531b4015c9b52",
+    "leaf": "security",
+    "location": {
+      "line_end": 67,
+      "line_start": 63,
+      "symbol": "start_process_with_partial_path"
+    },
+    "metric": {
+      "name": "bandit_B607",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B607 at skills/hotspot-audit/scripts/_audit_git.py:63"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "ea9f94abd56d7202",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/hotspot-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/hotspot-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "e858d97ddc20a32a",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/quality-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/quality-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "29817ead94a3f2b9",
+    "leaf": "security",
+    "location": {
+      "line_end": 9,
+      "line_start": 9,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/quality-audit/scripts/quality_audit.py:9"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "f3d9fb44a96c204f",
+    "leaf": "security",
+    "location": {
+      "line_end": 79,
+      "line_start": 72,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/quality-audit/scripts/quality_audit.py:72"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "f3d9fb44a96c204f",
+    "leaf": "security",
+    "location": {
+      "line_end": 130,
+      "line_start": 123,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/quality-audit/scripts/quality_audit.py:123"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "f3d9fb44a96c204f",
+    "leaf": "security",
+    "location": {
+      "line_end": 186,
+      "line_start": 179,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/quality-audit/scripts/quality_audit.py:179"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "9e75917bd9e4d661",
+    "leaf": "security",
+    "location": {
+      "line_end": 14,
+      "line_start": 14,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/repo-hygiene-audit/scripts/_git_utils.py:14"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "a3192aad5fb224df",
+    "leaf": "security",
+    "location": {
+      "line_end": 45,
+      "line_start": 39,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/repo-hygiene-audit/scripts/_git_utils.py:39"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Starting a process with a partial executable path [B607]",
+      "tool": "bandit"
+    },
+    "id": "f4a2d53ae1df603e",
+    "leaf": "security",
+    "location": {
+      "line_end": 45,
+      "line_start": 39,
+      "symbol": "start_process_with_partial_path"
+    },
+    "metric": {
+      "name": "bandit_B607",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B607 at skills/repo-hygiene-audit/scripts/_git_utils.py:39"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "a3192aad5fb224df",
+    "leaf": "security",
+    "location": {
+      "line_end": 66,
+      "line_start": 60,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/repo-hygiene-audit/scripts/_git_utils.py:60"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Starting a process with a partial executable path [B607]",
+      "tool": "bandit"
+    },
+    "id": "f4a2d53ae1df603e",
+    "leaf": "security",
+    "location": {
+      "line_end": 66,
+      "line_start": 60,
+      "symbol": "start_process_with_partial_path"
+    },
+    "metric": {
+      "name": "bandit_B607",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B607 at skills/repo-hygiene-audit/scripts/_git_utils.py:60"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "e525195c6913a58b",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/repo-hygiene-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "89abceba77fd90ee",
+    "leaf": "security",
+    "location": {
+      "line_end": 7,
+      "line_start": 7,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/security-audit/scripts/_bandit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/security-audit/scripts/_bandit.py:7"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "2bff288870438d1b",
+    "leaf": "security",
+    "location": {
+      "line_end": 97,
+      "line_start": 95,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/security-audit/scripts/_bandit.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/security-audit/scripts/_bandit.py:95"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "c5adbe970f2263ae",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/security-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/security-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "789514749454bab7",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/structure-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/structure-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "862ba0c27ccd84e5",
+    "leaf": "security",
+    "location": {
+      "line_end": 21,
+      "line_start": 21,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/test-audit-pipeline/scripts/audit_pipeline.py:21"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "3942e04a5d57ae81",
+    "leaf": "security",
+    "location": {
+      "line_end": 77,
+      "line_start": 71,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/test-audit-pipeline/scripts/audit_pipeline.py:71"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "041669bdb91bb4f1",
+    "leaf": "security",
+    "location": {
+      "line_end": 9,
+      "line_start": 9,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/_evidence.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/test-effectiveness-audit/scripts/_evidence.py:9"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "6760e2bdf41605ca",
+    "leaf": "security",
+    "location": {
+      "line_end": 53,
+      "line_start": 47,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/_evidence.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/test-effectiveness-audit/scripts/_evidence.py:47"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "6760e2bdf41605ca",
+    "leaf": "security",
+    "location": {
+      "line_end": 100,
+      "line_start": 93,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/_evidence.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/test-effectiveness-audit/scripts/_evidence.py:93"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "76924252ebd3853b",
+    "leaf": "security",
+    "location": {
+      "line_end": 16,
+      "line_start": 16,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/test-effectiveness-audit/scripts/_pipeline.py:16"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "ab851f15fa4c5681",
+    "leaf": "security",
+    "location": {
+      "line_end": 81,
+      "line_start": 74,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/test-effectiveness-audit/scripts/_pipeline.py:74"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "ab851f15fa4c5681",
+    "leaf": "security",
+    "location": {
+      "line_end": 95,
+      "line_start": 89,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/_pipeline.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/test-effectiveness-audit/scripts/_pipeline.py:89"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Use of weak SHA1 hash for security. Consider usedforsecurity=False [B324]",
+      "tool": "bandit"
+    },
+    "id": "1b9a48f50fc7f5d3",
+    "leaf": "security",
+    "location": {
+      "line_end": 61,
+      "line_start": 61,
+      "symbol": "hashlib"
+    },
+    "metric": {
+      "name": "bandit_B324",
+      "threshold": 0.0,
+      "value": 3.0
+    },
+    "path": "skills/test-effectiveness-audit/scripts/health_common.py",
+    "severity": "high",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B324 at skills/test-effectiveness-audit/scripts/health_common.py:61"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Try, Except, Continue detected. [B112]",
+      "tool": "bandit"
+    },
+    "id": "3cdfed53d458b25f",
+    "leaf": "security",
+    "location": {
+      "line_end": 124,
+      "line_start": 123,
+      "symbol": "try_except_continue"
+    },
+    "metric": {
+      "name": "bandit_B112",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B112 at skills/test-quality-assurance/scripts/audit_test_quality.py:123"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "Consider possible security implications associated with the subprocess module. [B404]",
+      "tool": "bandit"
+    },
+    "id": "988dceddf38ec195",
+    "leaf": "security",
+    "location": {
+      "line_end": 31,
+      "line_start": 31,
+      "symbol": "blacklist"
+    },
+    "metric": {
+      "name": "bandit_B404",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B404 at skills/test-redundancy-triage/scripts/triage_redundancy.py:31"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "subprocess call - check for execution of untrusted input. [B603]",
+      "tool": "bandit"
+    },
+    "id": "7380070df82169d3",
+    "leaf": "security",
+    "location": {
+      "line_end": 75,
+      "line_start": 68,
+      "symbol": "subprocess_without_shell_equals_true"
+    },
+    "metric": {
+      "name": "bandit_B603",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B603 at skills/test-redundancy-triage/scripts/triage_redundancy.py:68"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "Possible hardcoded password: 'False' [B105]",
+      "tool": "bandit"
+    },
+    "id": "150674ddd97ed5f4",
+    "leaf": "security",
+    "location": {
+      "line_end": 2729,
+      "line_start": 2724,
+      "symbol": "hardcoded_password_string"
+    },
+    "metric": {
+      "name": "bandit_B105",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B105 at skills/test-redundancy-triage/scripts/triage_redundancy.py:2724"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "Possible hardcoded password: 'False' [B105]",
+      "tool": "bandit"
+    },
+    "id": "150674ddd97ed5f4",
+    "leaf": "security",
+    "location": {
+      "line_end": 2888,
+      "line_start": 2885,
+      "symbol": "hardcoded_password_string"
+    },
+    "metric": {
+      "name": "bandit_B105",
+      "threshold": 0.0,
+      "value": 1.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "low",
+    "signal": "SECURITY",
+    "suggested_action": "Review and remediate B105 at skills/test-redundancy-triage/scripts/triage_redundancy.py:2885"
+  }
+]

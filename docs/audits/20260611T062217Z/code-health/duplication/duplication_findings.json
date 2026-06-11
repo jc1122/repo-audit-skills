@@ -1,0 +1,1290 @@
+[
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "scripts/check_coverage_gap.py:42-50 == scripts/self_audit.py:23-31 (55 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "0a8199e6f9874552",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 50,
+      "line_start": 42,
+      "symbol": "scripts/self_audit.py:23-31"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 55.0
+    },
+    "path": "scripts/check_coverage_gap.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between scripts/check_coverage_gap.py and scripts/self_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/complexity-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "c0120295beb4fae7",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/complexity-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/coverage-gap-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "1893035a8aba567b",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/coverage-gap-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/dead-code-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "8c275d5d4b56229c",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/dead-code-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/dependency-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "797662934db80bb9",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/dependency-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/dependency-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/docs-consistency-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "809eb901feb52a25",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/docs-consistency-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/docs-consistency-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/duplication-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "89691efa329839d6",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/duplication-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/hotspot-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "c3cf0d20a995b8f3",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/hotspot-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/hotspot-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/quality-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "1bf18fd6fa290b2d",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/quality-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/quality-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/repo-hygiene-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "3d6cb9edcdb79fc0",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/repo-hygiene-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/repo-hygiene-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/security-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "db84ca0ba501efd4",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/security-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/security-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/structure-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "d746be577fa176a4",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/structure-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/structure-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "shared/health_common.py:1-101 == skills/test-effectiveness-audit/scripts/health_common.py:1-101 (514 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "db53a412fdf03f92",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 101,
+      "line_start": 1,
+      "symbol": "skills/test-effectiveness-audit/scripts/health_common.py:1-101"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 514.0
+    },
+    "path": "shared/health_common.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between shared/health_common.py and skills/test-effectiveness-audit/scripts/health_common.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py:323-335 == skills/complexity-audit/scripts/complexity_audit.py:243-255 (60 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "28c9ac7ebbac1040",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 335,
+      "line_start": 323,
+      "symbol": "skills/complexity-audit/scripts/complexity_audit.py:243-255"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/code-health-audit-pipeline/scripts/code_health_pipeline.py and skills/complexity-audit/scripts/complexity_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py:323-336 == skills/structure-audit/scripts/structure_audit.py:338-351 (65 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "bc933d740535142f",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 336,
+      "line_start": 323,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py:338-351"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 65.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/code-health-audit-pipeline/scripts/code_health_pipeline.py and skills/structure-audit/scripts/structure_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:24-35 == skills/duplication-audit/scripts/duplication_audit.py:21-32 (57 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "a041850fd8f575ad",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 35,
+      "line_start": 24,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:21-32"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 57.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:24-39 == skills/structure-audit/scripts/structure_audit.py:20-41 (89 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "d03fd82219d16c79",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 39,
+      "line_start": 24,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py:20-41"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 89.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/structure-audit/scripts/structure_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:188-199 == skills/duplication-audit/scripts/duplication_audit.py:143-154 (87 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "d93c0f5bf5277d78",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 199,
+      "line_start": 188,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:143-154"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 87.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:188-199 == skills/hotspot-audit/scripts/hotspot_audit.py:107-118 (87 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "32ef0001a3487a1b",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 199,
+      "line_start": 188,
+      "symbol": "skills/hotspot-audit/scripts/hotspot_audit.py:107-118"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 87.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/hotspot-audit/scripts/hotspot_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:188-199 == skills/quality-audit/scripts/quality_audit.py:232-243 (87 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "6ba9ce124bc2fc6a",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 199,
+      "line_start": 188,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:232-243"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 87.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:188-199 == skills/repo-hygiene-audit/scripts/_reporting.py:9-20 (87 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "07ab9e8d0e9a98a8",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 199,
+      "line_start": 188,
+      "symbol": "skills/repo-hygiene-audit/scripts/_reporting.py:9-20"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 87.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/repo-hygiene-audit/scripts/_reporting.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:201-215 == skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142 (79 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "f88900f89f814c67",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 215,
+      "line_start": 201,
+      "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 79.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/coverage-gap-audit/scripts/coverage_gap_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:201-215 == skills/dead-code-audit/scripts/dead_code_audit.py:207-221 (79 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "943ffb04bba44f0d",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 215,
+      "line_start": 201,
+      "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:207-221"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 79.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:201-215 == skills/duplication-audit/scripts/duplication_audit.py:156-170 (79 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "68ab76d84d58b3db",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 215,
+      "line_start": 201,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:156-170"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 79.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:240-260 == skills/dead-code-audit/scripts/dead_code_audit.py:239-260 (112 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "ae6d192c790d7bec",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 260,
+      "line_start": 240,
+      "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:239-260"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 112.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:259-265 == skills/structure-audit/scripts/structure_audit.py:352-358 (71 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "9bf2a410d23bdfe8",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 265,
+      "line_start": 259,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py:352-358"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 71.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/structure-audit/scripts/structure_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:260-265 == skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188 (50 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "6fa411e8e5ce33af",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 265,
+      "line_start": 260,
+      "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 50.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/coverage-gap-audit/scripts/coverage_gap_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:260-265 == skills/dead-code-audit/scripts/dead_code_audit.py:261-266 (50 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "5bcbe199048df0c6",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 265,
+      "line_start": 260,
+      "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:261-266"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 50.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:260-265 == skills/quality-audit/scripts/quality_audit.py:298-303 (50 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "b7575b06afe6e24b",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 265,
+      "line_start": 260,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:298-303"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 50.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:265-273 == skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196 (61 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "de1eca29cb120502",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 273,
+      "line_start": 265,
+      "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 61.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/coverage-gap-audit/scripts/coverage_gap_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:265-273 == skills/dead-code-audit/scripts/dead_code_audit.py:266-274 (61 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "b5f369d6fa3f3ad4",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 273,
+      "line_start": 265,
+      "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:266-274"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 61.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:265-273 == skills/duplication-audit/scripts/duplication_audit.py:210-218 (61 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "c44a4ff4f99f245a",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 273,
+      "line_start": 265,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:210-218"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 61.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:265-273 == skills/quality-audit/scripts/quality_audit.py:303-311 (61 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "9e167aecaf741dc8",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 273,
+      "line_start": 265,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:303-311"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 61.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/complexity-audit/scripts/complexity_audit.py:265-273 == skills/structure-audit/scripts/structure_audit.py:358-366 (61 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "fa697df60db26dae",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 273,
+      "line_start": 265,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py:358-366"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 61.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/structure-audit/scripts/structure_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:22-49 == skills/dead-code-audit/scripts/dead_code_audit.py:31-58 (151 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "2f9ee4a33968465d",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 49,
+      "line_start": 22,
+      "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:31-58"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 151.0
+    },
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:26-36 == skills/duplication-audit/scripts/duplication_audit.py:42-52 (65 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "77d61fd34b0bdead",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 36,
+      "line_start": 26,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:42-52"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 65.0
+    },
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:36-49 == skills/duplication-audit/scripts/duplication_audit.py:29-42 (80 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "e8126f8dc1fd8601",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 49,
+      "line_start": 36,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:29-42"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 80.0
+    },
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:162-169 == skills/structure-audit/scripts/structure_audit.py:337-344 (59 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "0303a013ef3b0410",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 169,
+      "line_start": 162,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py:337-344"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 59.0
+    },
+    "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/structure-audit/scripts/structure_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:28-58 == skills/quality-audit/scripts/quality_audit.py:28-58 (152 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "d272e261f9000177",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 58,
+      "line_start": 28,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:28-58"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 152.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:135-156 == skills/quality-audit/scripts/quality_audit.py:68-89 (95 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "7425b29a5506b82f",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 156,
+      "line_start": 135,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:68-89"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 95.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:137-150 == skills/quality-audit/scripts/quality_audit.py:121-134 (62 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "e0c47af3951653b2",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 150,
+      "line_start": 137,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:121-134"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 62.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:172-182 == skills/quality-audit/scripts/quality_audit.py:104-114 (54 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "7b0ee2c665344578",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 182,
+      "line_start": 172,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:104-114"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 54.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:222-234 == skills/duplication-audit/scripts/duplication_audit.py:171-183 (60 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "636d406d491f3a04",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 234,
+      "line_start": 222,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:171-183"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:222-234 == skills/quality-audit/scripts/quality_audit.py:263-276 (60 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "9e0186975ca2ad73",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 234,
+      "line_start": 222,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:263-276"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:222-234 == skills/structure-audit/scripts/structure_audit.py:323-336 (60 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "30b79da75f9bf99d",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 234,
+      "line_start": 222,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py:323-336"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/structure-audit/scripts/structure_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:238-265 == skills/duplication-audit/scripts/duplication_audit.py:184-210 (180 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "4637fb73f98dc443",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 265,
+      "line_start": 238,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py:184-210"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 180.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "high",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:238-257 == skills/quality-audit/scripts/quality_audit.py:277-296 (109 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "4ed525ca35abe5fe",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 257,
+      "line_start": 238,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py:277-296"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 109.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py:575-586 == skills/test-effectiveness-audit/scripts/_cli.py:39-50 (65 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "4e996603632a4abe",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 586,
+      "line_start": 575,
+      "symbol": "skills/test-effectiveness-audit/scripts/_cli.py:39-50"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 65.0
+    },
+    "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/docs-consistency-audit/scripts/docs_consistency_audit.py and skills/test-effectiveness-audit/scripts/_cli.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/hotspot-audit/scripts/_audit_git.py:30-47 == skills/repo-hygiene-audit/scripts/_git_utils.py:36-53 (73 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "7d812ab04b34209e",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 47,
+      "line_start": 30,
+      "symbol": "skills/repo-hygiene-audit/scripts/_git_utils.py:36-53"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 73.0
+    },
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/hotspot-audit/scripts/_audit_git.py and skills/repo-hygiene-audit/scripts/_git_utils.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/repo-hygiene-audit/scripts/_thresholds.py:14-22 == skills/security-audit/scripts/_reporting.py:25-33 (59 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "4ca5adbc62a4ad41",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 22,
+      "line_start": 14,
+      "symbol": "skills/security-audit/scripts/_reporting.py:25-33"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 59.0
+    },
+    "path": "skills/repo-hygiene-audit/scripts/_thresholds.py",
+    "severity": "medium",
+    "signal": "EXTRACT",
+    "suggested_action": "Extract shared code between skills/repo-hygiene-audit/scripts/_thresholds.py and skills/security-audit/scripts/_reporting.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/test-audit-pipeline/scripts/audit_pipeline.py:687-714 == skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741 (188 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "bfe1301a668d7447",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 714,
+      "line_start": 687,
+      "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 188.0
+    },
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "severity": "high",
+    "signal": "MERGE",
+    "suggested_action": "Merge duplicated block within skills/test-audit-pipeline/scripts/audit_pipeline.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:340-374 == skills/test-redundancy-triage/scripts/triage_redundancy.py:377-411 (192 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "6a1ad60a97b5d412",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 374,
+      "line_start": 340,
+      "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:377-411"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 192.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "high",
+    "signal": "MERGE",
+    "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:774-796 == skills/test-redundancy-triage/scripts/triage_redundancy.py:849-871 (71 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "db7cd64563a6ef8a",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 796,
+      "line_start": 774,
+      "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:849-871"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 71.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "medium",
+    "signal": "MERGE",
+    "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:887-894 == skills/test-redundancy-triage/scripts/triage_redundancy.py:1290-1297 (60 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "0391703078129387",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 894,
+      "line_start": 887,
+      "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1290-1297"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "medium",
+    "signal": "MERGE",
+    "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:887-894 == skills/test-redundancy-triage/scripts/triage_redundancy.py:1369-1376 (56 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "593ca178d720946a",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 894,
+      "line_start": 887,
+      "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1369-1376"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 56.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "medium",
+    "signal": "MERGE",
+    "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1035-1055 == skills/test-redundancy-triage/scripts/triage_redundancy.py:1327-1347 (100 tokens)",
+      "tool": "jscpd"
+    },
+    "id": "6a6ee230f8c07129",
+    "leaf": "duplication",
+    "location": {
+      "line_end": 1055,
+      "line_start": 1035,
+      "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1327-1347"
+    },
+    "metric": {
+      "name": "duplicate_tokens",
+      "threshold": 50.0,
+      "value": 100.0
+    },
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "severity": "medium",
+    "signal": "MERGE",
+    "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+  }
+]

@@ -1,0 +1,2552 @@
+{
+  "exit_code": 1,
+  "findings": [
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/test-audit-pipeline/scripts/audit_pipeline.py:687-714 == skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741 (188 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "bfe1301a668d7447",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 714,
+        "line_start": 687,
+        "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 188.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "high",
+      "signal": "MERGE",
+      "suggested_action": "Merge duplicated block within skills/test-audit-pipeline/scripts/audit_pipeline.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:340-374 == skills/test-redundancy-triage/scripts/triage_redundancy.py:377-411 (192 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "6a1ad60a97b5d412",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 374,
+        "line_start": 340,
+        "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:377-411"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 192.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "MERGE",
+      "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "0/32 statements executed",
+        "tool": "coverage"
+      },
+      "id": "c25344f088c74e62",
+      "leaf": "coverage-gap",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<file>"
+      },
+      "metric": {
+        "name": "file_coverage_percent",
+        "threshold": 50.0,
+        "value": 0.0
+      },
+      "path": "scripts/self_audit.py",
+      "severity": "high",
+      "signal": "TEST",
+      "suggested_action": "Add behavior tests covering scripts/self_audit.py (coverage 0.0% < 50.0%)"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "shared/health_common.py:1-101 == skills/complexity-audit/scripts/health_common.py:1-101 (514 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "c0120295beb4fae7",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 101,
+        "line_start": 1,
+        "symbol": "skills/complexity-audit/scripts/health_common.py:1-101"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 514.0
+      },
+      "path": "shared/health_common.py",
+      "severity": "high",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between shared/health_common.py and skills/complexity-audit/scripts/health_common.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:22-49 == skills/dead-code-audit/scripts/dead_code_audit.py:31-58 (151 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "2f9ee4a33968465d",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 49,
+        "line_start": 22,
+        "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:31-58"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 151.0
+      },
+      "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+      "severity": "high",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:28-58 == skills/quality-audit/scripts/quality_audit.py:28-58 (152 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "d272e261f9000177",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 58,
+        "line_start": 28,
+        "symbol": "skills/quality-audit/scripts/quality_audit.py:28-58"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 152.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "high",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:238-265 == skills/duplication-audit/scripts/duplication_audit.py:184-210 (180 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "4637fb73f98dc443",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 265,
+        "line_start": 238,
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py:184-210"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 180.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "high",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "stage_report( * , out_dir : Path , root : Path , stages_run : list [ str ] , tqa_ok : bool , triage_ok : bool , coverage_ok : bool , skip_triage : bool , skip_coverage : bool , tqa_json_path : Path , cov_json_path : Path , triage_dir : Path , parallel_stages : list [ str ] , ) CCN=43",
+        "tool": "lizard"
+      },
+      "id": "af0f8fdcbdc55fe7",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 536,
+        "line_start": 339,
+        "symbol": "stage_report"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 43.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split stage_report() \u2014 complexity 43 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main( argv : list [ str ] | None = None ) CCN=23",
+        "tool": "lizard"
+      },
+      "id": "d9f75bec75fad4a7",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 777,
+        "line_start": 619,
+        "symbol": "main"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 23.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split main() \u2014 complexity 23 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "score_rubric( summary : dict [ str , Any ] , config : dict [ str , Any ] , cov_json_path : str = \"\" , ) CCN=33",
+        "tool": "lizard"
+      },
+      "id": "cf566af491884591",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 536,
+        "line_start": 365,
+        "symbol": "score_rubric"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 33.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split score_rubric() \u2014 complexity 33 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "render_markdown( report : dict [ str , Any ] ) CCN=37",
+        "tool": "lizard"
+      },
+      "id": "020ef31ad0de4b65",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 795,
+        "line_start": 612,
+        "symbol": "render_markdown"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 37.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split render_markdown() \u2014 complexity 37 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "infer_intent( test_name : str , entrypoint : str , assertions : set [ str ] , src : str ) CCN=24",
+        "tool": "lizard"
+      },
+      "id": "99f39427c6e3916b",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 320,
+        "line_start": 286,
+        "symbol": "infer_intent"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 24.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split infer_intent() \u2014 complexity 24 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_coverage_artifacts( root : Path , out_dir : Path , tests : list [ TestMeta ] , ranked_map : dict [ str , dict [ str , str ] ] , ranked_path : Path | None , comparator_suite_files : list [ str ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) CCN=28",
+        "tool": "lizard"
+      },
+      "id": "2e548df579610336",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1146,
+        "line_start": 881,
+        "symbol": "write_coverage_artifacts"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 28.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split write_coverage_artifacts() \u2014 complexity 28 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_branch_equiv_artifacts( root : Path , out_dir : Path , tests : list [ TestMeta ] , by_cluster : dict [ tuple [ str , str ] , list [ TestMeta ] ] , rows : list [ dict [ str , Any ] ] , coverage_map : dict [ str , dict [ str , Any ] ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) CCN=34",
+        "tool": "lizard"
+      },
+      "id": "88da86c8c62fec0c",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1600,
+        "line_start": 1363,
+        "symbol": "write_branch_equiv_artifacts"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 34.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split write_branch_equiv_artifacts() \u2014 complexity 34 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_confidence_gate_artifact( out_dir : Path , rows : list [ dict [ str , Any ] ] , ) CCN=34",
+        "tool": "lizard"
+      },
+      "id": "c18ad4c9eba37049",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1852,
+        "line_start": 1679,
+        "symbol": "write_confidence_gate_artifact"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 34.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split write_confidence_gate_artifact() \u2014 complexity 34 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_strict_delete_gate( root : Path , out_dir : Path , python_exe : str , env : dict [ str , str ] , suite_files : list [ str ] , post_suite_files : list [ str ] , timeout : int , * , use_xdist : bool , rows : list [ dict [ str , Any ] ] , repeats : int , batch_size : int , max_batches : int , probes_source : list [ MutationProbe ] , mutation_probe_count : int , mutation_max_drop : int , ) CCN=65",
+        "tool": "lizard"
+      },
+      "id": "bd2e13626e9e2801",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2454,
+        "line_start": 2145,
+        "symbol": "run_strict_delete_gate"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 65.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split run_strict_delete_gate() \u2014 complexity 65 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main( ) CCN=43",
+        "tool": "lizard"
+      },
+      "id": "96554b9e0c415c46",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 3106,
+        "line_start": 2457,
+        "symbol": "main"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 43.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split main() \u2014 complexity 43 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main.evaluate( t : TestMeta ) CCN=28",
+        "tool": "lizard"
+      },
+      "id": "fc8e6f833116eb83",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2871,
+        "line_start": 2748,
+        "symbol": "main.evaluate"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 28.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "high",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split main.evaluate() \u2014 complexity 28 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=46.4 rank=A",
+        "tool": "radon"
+      },
+      "id": "9e3fb5d1079fc773",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 46.42275215117272
+      },
+      "path": "scripts/check_coverage_gap.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of scripts/check_coverage_gap.py \u2014 MI 46.4 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=43.7 rank=A",
+        "tool": "radon"
+      },
+      "id": "d8017022c998582e",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 43.674292867558265
+      },
+      "path": "scripts/check_release.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of scripts/check_release.py \u2014 MI 43.7 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=31.7 rank=A",
+        "tool": "radon"
+      },
+      "id": "a45045083205de92",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 31.7182533847864
+      },
+      "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/code-health-audit-pipeline/scripts/code_health_pipeline.py \u2014 MI 31.7 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=37.6 rank=A",
+        "tool": "radon"
+      },
+      "id": "f4b5d8130b0b0c77",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 37.629367351456196
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/complexity-audit/scripts/complexity_audit.py \u2014 MI 37.6 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=43.2 rank=A",
+        "tool": "radon"
+      },
+      "id": "ab01ff6f0682cfee",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 43.18410248862001
+      },
+      "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/coverage-gap-audit/scripts/coverage_gap_audit.py \u2014 MI 43.2 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=36.2 rank=A",
+        "tool": "radon"
+      },
+      "id": "9cb41315da1c8e29",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 36.174747729082306
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/dead-code-audit/scripts/dead_code_audit.py \u2014 MI 36.2 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=23.5 rank=A",
+        "tool": "radon"
+      },
+      "id": "c4c1f4e9196ff80d",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 23.469856351683283
+      },
+      "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/docs-consistency-audit/scripts/docs_consistency_audit.py \u2014 MI 23.5 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=39.6 rank=A",
+        "tool": "radon"
+      },
+      "id": "91127e1385f25b18",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 39.60570136062729
+      },
+      "path": "skills/duplication-audit/scripts/duplication_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/duplication-audit/scripts/duplication_audit.py \u2014 MI 39.6 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=33.6 rank=A",
+        "tool": "radon"
+      },
+      "id": "2ffb8c7e57dff60f",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 33.56496813864776
+      },
+      "path": "skills/quality-audit/scripts/quality_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/quality-audit/scripts/quality_audit.py \u2014 MI 33.6 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=24.3 rank=A",
+        "tool": "radon"
+      },
+      "id": "cce052b9d8493aa4",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 24.278193373943747
+      },
+      "path": "skills/structure-audit/scripts/structure_audit.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/structure-audit/scripts/structure_audit.py \u2014 MI 24.3 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=25.6 rank=A",
+        "tool": "radon"
+      },
+      "id": "fb475629c4df8ff8",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 25.55238878640418
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/test-audit-pipeline/scripts/audit_pipeline.py \u2014 MI 25.6 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=3.8 rank=C",
+        "tool": "radon"
+      },
+      "id": "ce598474b73a50e1",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 3.7895182713980935
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/test-quality-assurance/scripts/audit_test_quality.py \u2014 MI 3.8 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=0.0 rank=C",
+        "tool": "radon"
+      },
+      "id": "7cadac7c95f14224",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 0.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of skills/test-redundancy-triage/scripts/triage_redundancy.py \u2014 MI 0.0 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:774-796 == skills/test-redundancy-triage/scripts/triage_redundancy.py:849-871 (71 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "db7cd64563a6ef8a",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 796,
+        "line_start": 774,
+        "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:849-871"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 71.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "MERGE",
+      "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:887-894 == skills/test-redundancy-triage/scripts/triage_redundancy.py:1290-1297 (60 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "0391703078129387",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 894,
+        "line_start": 887,
+        "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1290-1297"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 60.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "MERGE",
+      "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1035-1055 == skills/test-redundancy-triage/scripts/triage_redundancy.py:1327-1347 (100 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "6a6ee230f8c07129",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 1055,
+        "line_start": 1035,
+        "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py:1327-1347"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 100.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "MERGE",
+      "suggested_action": "Merge duplicated block within skills/test-redundancy-triage/scripts/triage_redundancy.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "scripts/check_coverage_gap.py:42-50 == scripts/self_audit.py:23-31 (55 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "0a8199e6f9874552",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 50,
+        "line_start": 42,
+        "symbol": "scripts/self_audit.py:23-31"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 55.0
+      },
+      "path": "scripts/check_coverage_gap.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between scripts/check_coverage_gap.py and scripts/self_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "decide( findings : list [ dict ] , leaf_exit : dict [ str , int ] , gate : dict ) CCN=15",
+        "tool": "lizard"
+      },
+      "id": "82cf4b2eab260069",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 99,
+        "line_start": 80,
+        "symbol": "decide"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 15.0
+      },
+      "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split decide() \u2014 complexity 15 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py:323-335 == skills/complexity-audit/scripts/complexity_audit.py:243-255 (60 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "28c9ac7ebbac1040",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 335,
+        "line_start": 323,
+        "symbol": "skills/complexity-audit/scripts/complexity_audit.py:243-255"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 60.0
+      },
+      "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/code-health-audit-pipeline/scripts/code_health_pipeline.py and skills/complexity-audit/scripts/complexity_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:24-35 == skills/duplication-audit/scripts/duplication_audit.py:21-32 (57 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "a041850fd8f575ad",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 35,
+        "line_start": 24,
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py:21-32"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 57.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_lizard_findings( root : Path , files : list [ Path ] , thresholds : dict ) NLOC=81",
+        "tool": "lizard"
+      },
+      "id": "d4c839f7dc45f803",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 124,
+        "line_start": 44,
+        "symbol": "_lizard_findings"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 81.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten _lizard_findings() \u2014 81 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_radon_mi_findings( root : Path , files : list [ Path ] , thresholds : dict ) CCN=12",
+        "tool": "lizard"
+      },
+      "id": "f9839d9a0f23ade1",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 176,
+        "line_start": 127,
+        "symbol": "_radon_mi_findings"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 12.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split _radon_mi_findings() \u2014 complexity 12 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:188-199 == skills/duplication-audit/scripts/duplication_audit.py:143-154 (87 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "d93c0f5bf5277d78",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 199,
+        "line_start": 188,
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py:143-154"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 87.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:201-215 == skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142 (79 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "f88900f89f814c67",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 215,
+        "line_start": 201,
+        "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 79.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/coverage-gap-audit/scripts/coverage_gap_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:240-260 == skills/dead-code-audit/scripts/dead_code_audit.py:239-260 (112 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "ae6d192c790d7bec",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 260,
+        "line_start": 240,
+        "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py:239-260"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 112.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/dead-code-audit/scripts/dead_code_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:259-265 == skills/structure-audit/scripts/structure_audit.py:352-358 (71 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "9bf2a410d23bdfe8",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 265,
+        "line_start": 259,
+        "symbol": "skills/structure-audit/scripts/structure_audit.py:352-358"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 71.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/structure-audit/scripts/structure_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:260-265 == skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188 (50 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "6fa411e8e5ce33af",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 265,
+        "line_start": 260,
+        "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 50.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/coverage-gap-audit/scripts/coverage_gap_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/complexity-audit/scripts/complexity_audit.py:265-273 == skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196 (61 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "de1eca29cb120502",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 273,
+        "line_start": 265,
+        "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 61.0
+      },
+      "path": "skills/complexity-audit/scripts/complexity_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/complexity-audit/scripts/complexity_audit.py and skills/coverage-gap-audit/scripts/coverage_gap_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:26-36 == skills/duplication-audit/scripts/duplication_audit.py:42-52 (65 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "77d61fd34b0bdead",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 36,
+        "line_start": 26,
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py:42-52"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 65.0
+      },
+      "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:36-49 == skills/duplication-audit/scripts/duplication_audit.py:29-42 (80 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "e8126f8dc1fd8601",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 49,
+        "line_start": 36,
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py:29-42"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 80.0
+      },
+      "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py:162-169 == skills/structure-audit/scripts/structure_audit.py:337-344 (59 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "0303a013ef3b0410",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 169,
+        "line_start": 162,
+        "symbol": "skills/structure-audit/scripts/structure_audit.py:337-344"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 59.0
+      },
+      "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/coverage-gap-audit/scripts/coverage_gap_audit.py and skills/structure-audit/scripts/structure_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_ruff_findings( root : Path , files : list [ Path ] ) CCN=11",
+        "tool": "lizard"
+      },
+      "id": "a462209af94b9882",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 185,
+        "line_start": 126,
+        "symbol": "_ruff_findings"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 11.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split _ruff_findings() \u2014 complexity 11 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_ruff_findings( root : Path , files : list [ Path ] ) NLOC=60",
+        "tool": "lizard"
+      },
+      "id": "93943860fd85e790",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 185,
+        "line_start": 126,
+        "symbol": "_ruff_findings"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 60.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten _ruff_findings() \u2014 60 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:135-156 == skills/quality-audit/scripts/quality_audit.py:68-89 (95 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "7425b29a5506b82f",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 156,
+        "line_start": 135,
+        "symbol": "skills/quality-audit/scripts/quality_audit.py:68-89"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 95.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:137-150 == skills/quality-audit/scripts/quality_audit.py:121-134 (62 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "e0c47af3951653b2",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 150,
+        "line_start": 137,
+        "symbol": "skills/quality-audit/scripts/quality_audit.py:121-134"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 62.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:172-182 == skills/quality-audit/scripts/quality_audit.py:104-114 (54 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "7b0ee2c665344578",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 182,
+        "line_start": 172,
+        "symbol": "skills/quality-audit/scripts/quality_audit.py:104-114"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 54.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/quality-audit/scripts/quality_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/dead-code-audit/scripts/dead_code_audit.py:222-234 == skills/duplication-audit/scripts/duplication_audit.py:171-183 (60 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "636d406d491f3a04",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 234,
+        "line_start": 222,
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py:171-183"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 60.0
+      },
+      "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/dead-code-audit/scripts/dead_code_audit.py and skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py:575-586 == skills/test-effectiveness-audit/scripts/_cli.py:39-50 (65 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "4e996603632a4abe",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 586,
+        "line_start": 575,
+        "symbol": "skills/test-effectiveness-audit/scripts/_cli.py:39-50"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 65.0
+      },
+      "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/docs-consistency-audit/scripts/docs_consistency_audit.py and skills/test-effectiveness-audit/scripts/_cli.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/hotspot-audit/scripts/_audit_git.py:30-47 == skills/repo-hygiene-audit/scripts/_git_utils.py:36-53 (73 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "7d812ab04b34209e",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 47,
+        "line_start": 30,
+        "symbol": "skills/repo-hygiene-audit/scripts/_git_utils.py:36-53"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 73.0
+      },
+      "path": "skills/hotspot-audit/scripts/_audit_git.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/hotspot-audit/scripts/_audit_git.py and skills/repo-hygiene-audit/scripts/_git_utils.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_ruff_lint( root : Path , rel_files : list [ str ] , config : dict ) NLOC=60",
+        "tool": "lizard"
+      },
+      "id": "12700c298d943652",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 117,
+        "line_start": 58,
+        "symbol": "_ruff_lint"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 60.0
+      },
+      "path": "skills/quality-audit/scripts/quality_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten _ruff_lint() \u2014 60 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_type_findings( root : Path , rel_files : list [ str ] , config : dict ) NLOC=55",
+        "tool": "lizard"
+      },
+      "id": "fbc6979108aec8af",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 216,
+        "line_start": 162,
+        "symbol": "_type_findings"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 55.0
+      },
+      "path": "skills/quality-audit/scripts/quality_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten _type_findings() \u2014 55 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "skills/repo-hygiene-audit/scripts/_thresholds.py:14-22 == skills/security-audit/scripts/_reporting.py:25-33 (59 tokens)",
+        "tool": "jscpd"
+      },
+      "id": "4ca5adbc62a4ad41",
+      "leaf": "duplication",
+      "location": {
+        "line_end": 22,
+        "line_start": 14,
+        "symbol": "skills/security-audit/scripts/_reporting.py:25-33"
+      },
+      "metric": {
+        "name": "duplicate_tokens",
+        "threshold": 50.0,
+        "value": 59.0
+      },
+      "path": "skills/repo-hygiene-audit/scripts/_thresholds.py",
+      "severity": "medium",
+      "signal": "EXTRACT",
+      "suggested_action": "Extract shared code between skills/repo-hygiene-audit/scripts/_thresholds.py and skills/security-audit/scripts/_reporting.py"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_strongly_connected_components( nodes , edges ) CCN=13",
+        "tool": "lizard"
+      },
+      "id": "e706f64dbfdf8eec",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 158,
+        "line_start": 113,
+        "symbol": "_strongly_connected_components"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 13.0
+      },
+      "path": "skills/structure-audit/scripts/structure_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split _strongly_connected_components() \u2014 complexity 13 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "analyze_tree( root , source_prefixes , thresholds ) CCN=20",
+        "tool": "lizard"
+      },
+      "id": "198986ac05f67a2f",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 292,
+        "line_start": 171,
+        "symbol": "analyze_tree"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 20.0
+      },
+      "path": "skills/structure-audit/scripts/structure_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split analyze_tree() \u2014 complexity 20 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "analyze_tree( root , source_prefixes , thresholds ) NLOC=115",
+        "tool": "lizard"
+      },
+      "id": "d3a4639ef8a232eb",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 292,
+        "line_start": 171,
+        "symbol": "analyze_tree"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 115.0
+      },
+      "path": "skills/structure-audit/scripts/structure_audit.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten analyze_tree() \u2014 115 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "build_summary( stage_results : dict , findings : list , * , root : str = \"\" , stages_run : list [ str ] | None = None , stage_status : dict [ str , str ] | None = None , parallel_stages : list [ str ] | None = None , cov_summary : dict [ str , Any ] | None = None , tqa_data : dict [ str , Any ] | None = None , triage_summary : dict [ str , Any ] | None = None , now : str | None = None , ) CCN=11",
+        "tool": "lizard"
+      },
+      "id": "ff4440a137da98c9",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 336,
+        "line_start": 281,
+        "symbol": "build_summary"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 11.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split build_summary() \u2014 complexity 11 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "stage_report( * , out_dir : Path , root : Path , stages_run : list [ str ] , tqa_ok : bool , triage_ok : bool , coverage_ok : bool , skip_triage : bool , skip_coverage : bool , tqa_json_path : Path , cov_json_path : Path , triage_dir : Path , parallel_stages : list [ str ] , ) NLOC=175",
+        "tool": "lizard"
+      },
+      "id": "a2a21702a453b74d",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 536,
+        "line_start": 339,
+        "symbol": "stage_report"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 175.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten stage_report() \u2014 175 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "parse_args( argv : list [ str ] | None = None ) NLOC=72",
+        "tool": "lizard"
+      },
+      "id": "84c5dae5099a361a",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 616,
+        "line_start": 544,
+        "symbol": "parse_args"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 72.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten parse_args() \u2014 72 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main( argv : list [ str ] | None = None ) NLOC=134",
+        "tool": "lizard"
+      },
+      "id": "a1b1c52d3549f6bb",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 777,
+        "line_start": 619,
+        "symbol": "main"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 134.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten main() \u2014 134 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "infer_public_hints( root : Path ) CCN=14",
+        "tool": "lizard"
+      },
+      "id": "0b043d0c7be17697",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 136,
+        "line_start": 106,
+        "symbol": "infer_public_hints"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 14.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split infer_public_hints() \u2014 complexity 14 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "summarize( file_metrics : list [ FileMetrics ] ) CCN=15",
+        "tool": "lizard"
+      },
+      "id": "a22e4d2ddd49e49c",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 338,
+        "line_start": 294,
+        "symbol": "summarize"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 15.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split summarize() \u2014 complexity 15 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "score_rubric( summary : dict [ str , Any ] , config : dict [ str , Any ] , cov_json_path : str = \"\" , ) NLOC=148",
+        "tool": "lizard"
+      },
+      "id": "fcc719b1180008d4",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 536,
+        "line_start": 365,
+        "symbol": "score_rubric"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 148.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten score_rubric() \u2014 148 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "compute_delta( current : dict [ str , Any ] , baseline : dict [ str , Any ] ) CCN=14",
+        "tool": "lizard"
+      },
+      "id": "254e540dd9a302b6",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 609,
+        "line_start": 539,
+        "symbol": "compute_delta"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 14.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split compute_delta() \u2014 complexity 14 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "compute_delta( current : dict [ str , Any ] , baseline : dict [ str , Any ] ) NLOC=61",
+        "tool": "lizard"
+      },
+      "id": "72696d408a6bdaf4",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 609,
+        "line_start": 539,
+        "symbol": "compute_delta"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 61.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten compute_delta() \u2014 61 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "render_markdown( report : dict [ str , Any ] ) NLOC=171",
+        "tool": "lizard"
+      },
+      "id": "fe5d6b071216a41d",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 795,
+        "line_start": 612,
+        "symbol": "render_markdown"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 171.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten render_markdown() \u2014 171 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "parse_args( ) NLOC=65",
+        "tool": "lizard"
+      },
+      "id": "db37b0dce388ceee",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 862,
+        "line_start": 798,
+        "symbol": "parse_args"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 65.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten parse_args() \u2014 65 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main( ) CCN=16",
+        "tool": "lizard"
+      },
+      "id": "9e135258becdcdbf",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 959,
+        "line_start": 865,
+        "symbol": "main"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 16.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split main() \u2014 complexity 16 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main( ) NLOC=83",
+        "tool": "lizard"
+      },
+      "id": "2382e78ccd6d247b",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 959,
+        "line_start": 865,
+        "symbol": "main"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 83.0
+      },
+      "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten main() \u2014 83 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "infer_assertion_types( fn : ast . AST , calls : set [ str ] , src : str ) CCN=14",
+        "tool": "lizard"
+      },
+      "id": "0fb929b60453168e",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 203,
+        "line_start": 178,
+        "symbol": "infer_assertion_types"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 14.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split infer_assertion_types() \u2014 complexity 14 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "ensure_coverage_tool( root : Path , out_dir : Path , python_exe : str , env : dict [ str , str ] , timeout : int , ) NLOC=70",
+        "tool": "lizard"
+      },
+      "id": "04b7e5f3003712fd",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 740,
+        "line_start": 660,
+        "symbol": "ensure_coverage_tool"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 70.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten ensure_coverage_tool() \u2014 70 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_single_test_coverage( root : Path , nodeid : str , * , coverage_python : str , env : dict [ str , str ] , timeout : int , tmp_dir : Path , source_prefix : str = \"\" , ) NLOC=62",
+        "tool": "lizard"
+      },
+      "id": "9bb4f0686dff4d49",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 808,
+        "line_start": 743,
+        "symbol": "run_single_test_coverage"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 62.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten run_single_test_coverage() \u2014 62 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "collect_suite_coverage_union( root : Path , suite_files : list [ str ] , * , coverage_python : str , env : dict [ str , str ] , timeout : int , tmp_dir : Path , source_prefix : str = \"\" , ) NLOC=65",
+        "tool": "lizard"
+      },
+      "id": "8630b75f294328a0",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 878,
+        "line_start": 811,
+        "symbol": "collect_suite_coverage_union"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 65.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten collect_suite_coverage_union() \u2014 65 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_coverage_artifacts( root : Path , out_dir : Path , tests : list [ TestMeta ] , ranked_map : dict [ str , dict [ str , str ] ] , ranked_path : Path | None , comparator_suite_files : list [ str ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) NLOC=256",
+        "tool": "lizard"
+      },
+      "id": "8615875bc9e72a48",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1146,
+        "line_start": 881,
+        "symbol": "write_coverage_artifacts"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 256.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten write_coverage_artifacts() \u2014 256 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_mutation_artifacts( out_dir : Path , tests : list [ TestMeta ] , ranked_map : dict [ str , dict [ str , str ] ] , ranked_path : Path | None , ) NLOC=63",
+        "tool": "lizard"
+      },
+      "id": "d706d2e2310669bf",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1248,
+        "line_start": 1179,
+        "symbol": "write_mutation_artifacts"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 63.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten write_mutation_artifacts() \u2014 63 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "collect_node_coverage_runs( root : Path , out_dir : Path , nodeids : list [ str ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) NLOC=71",
+        "tool": "lizard"
+      },
+      "id": "d143e714dae75ac4",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1360,
+        "line_start": 1287,
+        "symbol": "collect_node_coverage_runs"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 71.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten collect_node_coverage_runs() \u2014 71 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_branch_equiv_artifacts( root : Path , out_dir : Path , tests : list [ TestMeta ] , by_cluster : dict [ tuple [ str , str ] , list [ TestMeta ] ] , rows : list [ dict [ str , Any ] ] , coverage_map : dict [ str , dict [ str , Any ] ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) NLOC=221",
+        "tool": "lizard"
+      },
+      "id": "d5de6ebcba364b9e",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1600,
+        "line_start": 1363,
+        "symbol": "write_branch_equiv_artifacts"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 221.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten write_branch_equiv_artifacts() \u2014 221 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "bool_low_signal( meta : TestMeta , ranked : dict [ str , str ] , coverage_row : dict [ str , Any ] | None , * , branch_equiv_row : dict | None = None , ) CCN=18",
+        "tool": "lizard"
+      },
+      "id": "4d28dafd837f68b6",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1648,
+        "line_start": 1603,
+        "symbol": "bool_low_signal"
+      },
+      "metric": {
+        "name": "cyclomatic_complexity",
+        "threshold": 10.0,
+        "value": 18.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Split bool_low_signal() \u2014 complexity 18 exceeds 10"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_confidence_gate_artifact( out_dir : Path , rows : list [ dict [ str , Any ] ] , ) NLOC=152",
+        "tool": "lizard"
+      },
+      "id": "87c1c11cf705d4ad",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1852,
+        "line_start": 1679,
+        "symbol": "write_confidence_gate_artifact"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 152.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten write_confidence_gate_artifact() \u2014 152 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_mutation_probe_kills( root : Path , python_exe : str , env : dict [ str , str ] , suite_files : list [ str ] , deselects : list [ str ] , timeout : int , * , use_xdist : bool , probes : list [ MutationProbe ] , ) NLOC=113",
+        "tool": "lizard"
+      },
+      "id": "9f574749b0a0cb31",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2142,
+        "line_start": 2024,
+        "symbol": "run_mutation_probe_kills"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 113.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten run_mutation_probe_kills() \u2014 113 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_strict_delete_gate( root : Path , out_dir : Path , python_exe : str , env : dict [ str , str ] , suite_files : list [ str ] , post_suite_files : list [ str ] , timeout : int , * , use_xdist : bool , rows : list [ dict [ str , Any ] ] , repeats : int , batch_size : int , max_batches : int , probes_source : list [ MutationProbe ] , mutation_probe_count : int , mutation_max_drop : int , ) NLOC=295",
+        "tool": "lizard"
+      },
+      "id": "1971920675fe00dd",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2454,
+        "line_start": 2145,
+        "symbol": "run_strict_delete_gate"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 295.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten run_strict_delete_gate() \u2014 295 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main( ) NLOC=477",
+        "tool": "lizard"
+      },
+      "id": "e0a285ab63f0d4cd",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 3106,
+        "line_start": 2457,
+        "symbol": "main"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 477.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten main() \u2014 477 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "main.evaluate( t : TestMeta ) NLOC=118",
+        "tool": "lizard"
+      },
+      "id": "3cf2de369e315a13",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2871,
+        "line_start": 2748,
+        "symbol": "main.evaluate"
+      },
+      "metric": {
+        "name": "function_nloc",
+        "threshold": 50.0,
+        "value": 118.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "medium",
+      "signal": "DECOMPOSE",
+      "suggested_action": "Shorten main.evaluate() \u2014 118 lines exceeds 50"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=64.2 rank=A",
+        "tool": "radon"
+      },
+      "id": "d3e79f9a551bd2de",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 64.24045146395854
+      },
+      "path": "scripts/check_vendored_common.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of scripts/check_vendored_common.py \u2014 MI 64.2 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "MI=62.8 rank=A",
+        "tool": "radon"
+      },
+      "id": "e6c3cd727c957c8b",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1,
+        "line_start": 1,
+        "symbol": "<module>"
+      },
+      "metric": {
+        "name": "maintainability_index",
+        "threshold": 65.0,
+        "value": 62.79904872696044
+      },
+      "path": "scripts/self_audit.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Improve maintainability of scripts/self_audit.py \u2014 MI 62.8 below 65"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "_run_one( leaf : dict , root : str , source_prefixes : list [ str ] , out_dir : Path , overrides : dict [ str , str ] , coverage_json : str | None = None , ) params=6",
+        "tool": "lizard"
+      },
+      "id": "3751311caf643126",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 191,
+        "line_start": 161,
+        "symbol": "_run_one"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 6.0
+      },
+      "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of _run_one() \u2014 6 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_leaves( leaves : list [ dict ] , root : str , source_prefixes : list [ str ] , out_dir : Path , overrides : dict [ str , str ] , coverage_json : str | None = None , ) params=6",
+        "tool": "lizard"
+      },
+      "id": "aade2ec3c1e88b7f",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 218,
+        "line_start": 194,
+        "symbol": "run_leaves"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 6.0
+      },
+      "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of run_leaves() \u2014 6 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "stage_coverage( * , python : str , root : Path , source_prefix : str | None , out_dir : Path , test_marker : str , env : dict [ str , str ] , ) params=6",
+        "tool": "lizard"
+      },
+      "id": "4fb1d3836fe48ffa",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 126,
+        "line_start": 93,
+        "symbol": "stage_coverage"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 6.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of stage_coverage() \u2014 6 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "stage_tqa( * , python : str , tqa_script : Path , root : Path , out_dir : Path , cov_json : Path | None , internal_import_patterns : list [ str ] , public_hints : list [ str ] , tqa_baseline : str | None , env : dict [ str , str ] , ) params=9",
+        "tool": "lizard"
+      },
+      "id": "284f1817afc7fea6",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 176,
+        "line_start": 134,
+        "symbol": "stage_tqa"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 9.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of stage_tqa() \u2014 9 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "stage_triage( * , python : str , triage_script : Path , root : Path , suites : list [ str ] , comparator_suites : list [ str ] , source_prefix : str | None , out_dir : Path , max_workers : int , env_pairs : list [ str ] , env : dict [ str , str ] , ) params=10",
+        "tool": "lizard"
+      },
+      "id": "6671bf53985fc074",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 229,
+        "line_start": 184,
+        "symbol": "stage_triage"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 10.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of stage_triage() \u2014 10 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "build_summary( stage_results : dict , findings : list , * , root : str = \"\" , stages_run : list [ str ] | None = None , stage_status : dict [ str , str ] | None = None , parallel_stages : list [ str ] | None = None , cov_summary : dict [ str , Any ] | None = None , tqa_data : dict [ str , Any ] | None = None , triage_summary : dict [ str , Any ] | None = None , now : str | None = None , ) params=10",
+        "tool": "lizard"
+      },
+      "id": "f904fa2c54689255",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 336,
+        "line_start": 281,
+        "symbol": "build_summary"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 10.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of build_summary() \u2014 10 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "stage_report( * , out_dir : Path , root : Path , stages_run : list [ str ] , tqa_ok : bool , triage_ok : bool , coverage_ok : bool , skip_triage : bool , skip_coverage : bool , tqa_json_path : Path , cov_json_path : Path , triage_dir : Path , parallel_stages : list [ str ] , ) params=12",
+        "tool": "lizard"
+      },
+      "id": "9bde91143b4bc463",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 536,
+        "line_start": 339,
+        "symbol": "stage_report"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 12.0
+      },
+      "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of stage_report() \u2014 12 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_suite( root : Path , python_exe : str , suite_files : list [ str ] , env : dict [ str , str ] , deselect : str | None , timeout : int , * , use_xdist : bool , ) params=7",
+        "tool": "lizard"
+      },
+      "id": "897b64fe8f38b3f5",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 513,
+        "line_start": 494,
+        "symbol": "run_suite"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 7.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of run_suite() \u2014 7 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_suite_multi( root : Path , python_exe : str , suite_files : list [ str ] , env : dict [ str , str ] , deselects : list [ str ] | None , timeout : int , * , use_xdist : bool , ) params=7",
+        "tool": "lizard"
+      },
+      "id": "a6696fa1f05feac6",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 546,
+        "line_start": 516,
+        "symbol": "run_suite_multi"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 7.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of run_suite_multi() \u2014 7 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_single_test_coverage( root : Path , nodeid : str , * , coverage_python : str , env : dict [ str , str ] , timeout : int , tmp_dir : Path , source_prefix : str = \"\" , ) params=7",
+        "tool": "lizard"
+      },
+      "id": "32e848cac134ad48",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 808,
+        "line_start": 743,
+        "symbol": "run_single_test_coverage"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 7.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of run_single_test_coverage() \u2014 7 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "collect_suite_coverage_union( root : Path , suite_files : list [ str ] , * , coverage_python : str , env : dict [ str , str ] , timeout : int , tmp_dir : Path , source_prefix : str = \"\" , ) params=7",
+        "tool": "lizard"
+      },
+      "id": "6c894c24dd3960ef",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 878,
+        "line_start": 811,
+        "symbol": "collect_suite_coverage_union"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 7.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of collect_suite_coverage_union() \u2014 7 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_coverage_artifacts( root : Path , out_dir : Path , tests : list [ TestMeta ] , ranked_map : dict [ str , dict [ str , str ] ] , ranked_path : Path | None , comparator_suite_files : list [ str ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) params=11",
+        "tool": "lizard"
+      },
+      "id": "3276b3ea35efdc15",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1146,
+        "line_start": 881,
+        "symbol": "write_coverage_artifacts"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 11.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of write_coverage_artifacts() \u2014 11 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "collect_node_coverage_runs( root : Path , out_dir : Path , nodeids : list [ str ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) params=8",
+        "tool": "lizard"
+      },
+      "id": "201086fa31749b3a",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1360,
+        "line_start": 1287,
+        "symbol": "collect_node_coverage_runs"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 8.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of collect_node_coverage_runs() \u2014 8 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "write_branch_equiv_artifacts( root : Path , out_dir : Path , tests : list [ TestMeta ] , by_cluster : dict [ tuple [ str , str ] , list [ TestMeta ] ] , rows : list [ dict [ str , Any ] ] , coverage_map : dict [ str , dict [ str , Any ] ] , * , python_exe : str , env : dict [ str , str ] , timeout : int , max_workers : int , source_prefix : str = \"\" , ) params=11",
+        "tool": "lizard"
+      },
+      "id": "7402b277f3b52aac",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 1600,
+        "line_start": 1363,
+        "symbol": "write_branch_equiv_artifacts"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 11.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of write_branch_equiv_artifacts() \u2014 11 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_mutation_probe_kills( root : Path , python_exe : str , env : dict [ str , str ] , suite_files : list [ str ] , deselects : list [ str ] , timeout : int , * , use_xdist : bool , probes : list [ MutationProbe ] , ) params=8",
+        "tool": "lizard"
+      },
+      "id": "b6f01a4d0b2b7ea7",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2142,
+        "line_start": 2024,
+        "symbol": "run_mutation_probe_kills"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 8.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of run_mutation_probe_kills() \u2014 8 exceeds 5"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "raw": "run_strict_delete_gate( root : Path , out_dir : Path , python_exe : str , env : dict [ str , str ] , suite_files : list [ str ] , post_suite_files : list [ str ] , timeout : int , * , use_xdist : bool , rows : list [ dict [ str , Any ] ] , repeats : int , batch_size : int , max_batches : int , probes_source : list [ MutationProbe ] , mutation_probe_count : int , mutation_max_drop : int , ) params=15",
+        "tool": "lizard"
+      },
+      "id": "c8fdedd3045c8f83",
+      "leaf": "complexity",
+      "location": {
+        "line_end": 2454,
+        "line_start": 2145,
+        "symbol": "run_strict_delete_gate"
+      },
+      "metric": {
+        "name": "parameter_count",
+        "threshold": 5.0,
+        "value": 15.0
+      },
+      "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+      "severity": "low",
+      "signal": "SIMPLIFY",
+      "suggested_action": "Reduce parameters of run_strict_delete_gate() \u2014 15 exceeds 5"
+    }
+  ],
+  "leaves": {
+    "complexity": {
+      "count": 79,
+      "exit": 1,
+      "status": "findings"
+    },
+    "coverage-gap": {
+      "count": 1,
+      "exit": 1,
+      "status": "findings"
+    },
+    "dead-code": {
+      "count": 0,
+      "exit": 0,
+      "status": "clean"
+    },
+    "dependency": {
+      "count": 0,
+      "exit": 0,
+      "status": "clean"
+    },
+    "docs-consistency": {
+      "count": 0,
+      "exit": 0,
+      "status": "clean"
+    },
+    "duplication": {
+      "count": 28,
+      "exit": 1,
+      "status": "findings"
+    },
+    "quality": {
+      "count": 0,
+      "exit": 0,
+      "status": "clean"
+    },
+    "repo-hygiene": {
+      "count": 0,
+      "exit": 0,
+      "status": "clean"
+    },
+    "structure": {
+      "count": 0,
+      "exit": 0,
+      "status": "clean"
+    }
+  },
+  "supervisor": "ADVISE",
+  "totals": {
+    "by_severity": {
+      "high": 18,
+      "low": 18,
+      "medium": 72
+    },
+    "by_signal": {
+      "DECOMPOSE": 48,
+      "EXTRACT": 23,
+      "MERGE": 5,
+      "SIMPLIFY": 31,
+      "TEST": 1
+    },
+    "count": 108
+  }
+}

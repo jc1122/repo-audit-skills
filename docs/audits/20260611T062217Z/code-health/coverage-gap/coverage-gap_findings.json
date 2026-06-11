@@ -1,0 +1,25 @@
+[
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "0/32 statements executed",
+      "tool": "coverage"
+    },
+    "id": "c25344f088c74e62",
+    "leaf": "coverage-gap",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "<file>"
+    },
+    "metric": {
+      "name": "file_coverage_percent",
+      "threshold": 50.0,
+      "value": 0.0
+    },
+    "path": "scripts/self_audit.py",
+    "severity": "high",
+    "signal": "TEST",
+    "suggested_action": "Add behavior tests covering scripts/self_audit.py (coverage 0.0% < 50.0%)"
+  }
+]
