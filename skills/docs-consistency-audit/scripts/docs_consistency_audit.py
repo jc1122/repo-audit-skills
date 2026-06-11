@@ -197,11 +197,16 @@ def _line_tokens(line: str) -> list[str]:
 
 
 def _script_for_tokens(tokens: list[str], root_path: Path) -> tuple[str, Path] | None:
-    """Return (token, path) for the first token naming an existing .py file."""
+    """Return (token, path) for the first token naming an existing in-root .py file."""
+    root_resolved = root_path.resolve()
     for tok in tokens[1:]:
         if tok.endswith(".py"):
             candidate = root_path / tok
             if candidate.is_file():
+                try:
+                    candidate.resolve().relative_to(root_resolved)
+                except ValueError:
+                    continue  # token resolves outside --root; skip (env-dependent)
                 return tok, candidate
     return None
 

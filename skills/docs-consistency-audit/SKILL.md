@@ -118,3 +118,5 @@ exists on the current ``argparse`` version; a future ``argparse`` release could
 rename it, and the guard test is written to fail loudly if that happens.
 
 **Import-introspection caveat:** targets are imported; only modules defining build_parser and importing argparse are eligible; never point --root at untrusted code you would not import.
+
+Absolute path tokens that resolve outside ``--root`` are skipped (environment-dependent, cannot be made root-relative).
