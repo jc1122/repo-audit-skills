@@ -288,6 +288,7 @@ Verification:
   `baseline=0`.
 - `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
   `baseline=0`, `suites=17`.
+
 - `npm run check` exited 0 with the 10-gate chain; security reported
   `count=0`, `baseline=0`, coverage reported `count=0`, `baseline=0`,
   `suites=17`, and the final gate output was
@@ -563,3 +564,18 @@ Verification:
   `baseline=0`.
 - `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
   `baseline=0`, `suites=17`.
+
+### Repo-A convergence after B2 batch 2
+
+- Full-gate run 1 after batch 2: `npm run check` exited 0; self-audit
+  `88/88`, security/hygiene/docs/dependency/coverage `0/0`, final output
+  `full-pytest: 17/17 suites green`.
+- Scoped wave run 1, pinned to iteration anchor `d430a93`: code-health `63`,
+  security `47`, hygiene/docs/dependency `0`, hotspot `91`.
+- Full-gate run 2: `npm run check` exited 0 with the same gate counts and
+  final output `full-pytest: 17/17 suites green`.
+- Scoped wave run 2 matched run 1 exactly; `cmp` on both `wave_findings.json`
+  and `wave_summary.json` returned 0.
+- Convergence artifacts:
+  `artifacts/sp11/iteration-02/convergence/repo-a-wave-run1` and
+  `artifacts/sp11/iteration-02/convergence/repo-a-wave-run2`.
