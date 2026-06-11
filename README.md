@@ -1,18 +1,16 @@
 # Repo Audit Skills
 
-Deterministic, advisory repo-audit skills (`0.5.0`). Leaves never mutate the
+Deterministic, advisory repo-audit skills (`0.5.1`). Leaves never mutate the
 audited repository and are run with `--root`.
 
-## v0.5.0 highlights
+## v0.5.1 highlights
 
-- Docs-consistency supports `--exclude-prefix` and skips generated path
-  placeholders such as `docs/audits/<run-id>/run_report.json`.
-- Precision suppressions are counted in reports for placeholder docs tokens,
-  solo-author hotspot findings, own-test temporal-coupling pairs,
-  test-referenced vulture findings, and config-gated format checks.
-- Self-audit duplication identities use content hashes instead of line ranges,
-  and the coverage gate now detects stale baselines through `gate_common`.
-- Test-effectiveness reports mutmut baseline failures as clean tool errors.
+- Docs-consistency resolves path references against tracked git files by
+  default, with `--filesystem-paths` available for local artifact checks.
+- Complexity-audit relaxes module-MI findings for standalone CLI entrypoints
+  above the entrypoint floor while keeping function-level checks active.
+- Self-audit baseline is ratcheted from 106 findings to 92 after the precision
+  fixes dissolved stale findings.
 
 ## Skill families
 

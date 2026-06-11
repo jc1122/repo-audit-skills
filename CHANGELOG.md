@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 - 2026-06-11
+
+- Updated docs-consistency to track-only path resolution.
+- Relaxed complexity MI boundaries with an MI floor and entrypoint MI reporting updates.
+- Ratcheted self-audit baseline from 106 to 92.
+
 ## 0.5.0 - 2026-06-11
 
 - Added docs-consistency `--exclude-prefix` and placeholder token skipping for generated output paths.
