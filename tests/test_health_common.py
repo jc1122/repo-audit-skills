@@ -63,3 +63,8 @@ def test_exit_code_constants():
 
 def test_test_signal_is_in_schema():
     assert "TEST" in hc.SIGNALS
+
+
+def test_perf_and_security_signals_in_schema():
+    assert "PERF" in hc.SIGNALS
+    assert "SECURITY" in hc.SIGNALS

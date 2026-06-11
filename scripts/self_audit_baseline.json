@@ -33,7 +33,7 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "shared/health_common.py",
-    "symbol": "skills/complexity-audit/scripts/health_common.py:1-99"
+    "symbol": "skills/complexity-audit/scripts/health_common.py:1-101"
   },
   {
     "leaf": "complexity",
