@@ -121,10 +121,6 @@ Verification:
   `baseline=49`.
 - `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
   `baseline=0`, `suites=17`.
-- `npm run check` exited 0 with the 10-gate chain; self-audit reported
-  `count=92`, `baseline=92`, security/docs/dependency/coverage reported
-  zero findings against zero baselines, and the final gate output was
-  `full-pytest: 17/17 suites green`.
 - `python3 scripts/check_full_pytest.py` -> `full-pytest: 17/17 suites green`.
 - `npm run check` exited 0 with the new 10-gate chain; final gate output:
   `full-pytest: 17/17 suites green`.
@@ -353,3 +349,29 @@ Verification:
   `baseline=0`.
 - `python3 scripts/check_coverage_gap.py` -> `status=pass`, `count=0`,
   `baseline=0`, `suites=17`.
+- `npm run check` exited 0 with the 10-gate chain; self-audit reported
+  `count=92`, `baseline=92`, security/docs/dependency/coverage reported
+  zero findings against zero baselines, and the final gate output was
+  `full-pytest: 17/17 suites green`.
+
+### B0.4 repo-A CI runtime bump
+
+Accepted implementation:
+
+- Updated `.github/workflows/check.yml` from `actions/checkout@v4` to
+  `actions/checkout@v5`.
+- Updated `actions/setup-node@v4` to `actions/setup-node@v5` and changed
+  `node-version` from `20` to `22`.
+- Updated `actions/setup-python@v5` to `actions/setup-python@v6`.
+- No gate logic changed.
+
+Verification:
+
+- External release-page check before editing confirmed the intended released
+  major versions for checkout, setup-node, and setup-python.
+- `python3 scripts/check_docs_consistency.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- `python3 scripts/check_repo_hygiene.py` -> `status=pass`, `count=0`,
+  `baseline=0`.
+- Final acceptance is the B1.4 CI run completing with zero deprecation
+  annotations.
