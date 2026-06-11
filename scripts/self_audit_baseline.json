@@ -189,25 +189,25 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py:104-114"
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:119-129"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py:121-134"
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:136-149"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py:28-58"
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:33-63"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py:68-89"
+    "symbol": "skills/quality-audit/scripts/quality_audit.py:83-104"
   },
   {
     "leaf": "complexity",
