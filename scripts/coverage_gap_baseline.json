@@ -1,6 +1,1 @@
-[
-  {
-    "metric": "file_coverage_percent",
-    "path": "scripts/self_audit.py"
-  }
-]
+[]
