@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.3 - 2026-06-11
+
+- Reduced test-redundancy-triage self-audit complexity/duplication rows through
+  focused helper extraction and command-context sharing.
+- Recorded SP11 iteration 2 convergence evidence for repo-A, repo-B, and
+  repo-P.
+- Kept all release, self-audit, security, hygiene, docs, dependency, coverage,
+  and full-pytest gates green after the iteration-2 changes.
+
 ## 0.5.2 - 2026-06-11
 
 - Added the full-pytest aggregate gate so all 17 skill/root suites run in

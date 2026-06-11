@@ -579,3 +579,209 @@ Verification:
 - Convergence artifacts:
   `artifacts/sp11/iteration-02/convergence/repo-a-wave-run1` and
   `artifacts/sp11/iteration-02/convergence/repo-a-wave-run2`.
+
+### B3 repo-B declared-coupling ratchet
+
+Accepted implementation:
+
+- Added scripts/hotspot_audit_config.json with declared hotspot coupling
+  pairs for SKILL.md<->references/pipeline.md and
+  scripts/skill_bootstrap_manifest.json<->tests/test_check_skill_requirements.py.
+- Added scripts/wave_anchor.txt pinned to
+  7c23276ad6fb72ec1c05d93f8992e20ddbc9d989.
+- Updated the wave runner and baseline checker to forward --rev and
+  --hotspot-config to the hotspot lane.
+- Ratcheted scripts/wave_baseline.json from 9 to 7 normalized identities.
+- Committed as repo-B fe404c6 (feat(wave): count declared hotspot coupling).
+
+Verification:
+
+- python3 -m pytest tests/test_run_diagnosis_wave.py tests/test_check_wave_baseline.py -q --color=no
+  -> 10 passed.
+- WAVE_RUNNER=$PWD/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=7, baseline=7.
+- python3 -m pytest -q --color=no -> 103 passed.
+
+### B3 repo-B bootstrap request ratchet
+
+Accepted implementation:
+
+- Added BootstrapReportRequest in scripts/_bootstrap_report.py.
+- Kept build_bootstrap_report(repo_root=..., manifest_path=..., ...)
+  compatibility through a keyword shim while allowing the new request-object
+  call form.
+- Added focused request-object and mixed-call rejection tests.
+- Ratcheted scripts/wave_baseline.json from 7 to 6 normalized identities by
+  removing the stale build_bootstrap_report parameter_count row.
+- Committed as repo-B fa35e50
+  (refactor(bootstrap): group report request inputs).
+
+Verification:
+
+- python3 -m pytest tests/test_bootstrap_report.py tests/test_check_skill_requirements.py -q --color=no
+  -> 79 passed.
+- python3 -m pytest -q --color=no -> 105 passed.
+- First wave baseline run produced a stale-baseline failure for only the
+  build_bootstrap_report parameter_count identity.
+- After the ratchet,
+  WAVE_RUNNER=$PWD/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=6, baseline=6.
+- Final post-edit python3 -m pytest -q --color=no -> 105 passed.
+
+### B3 repo-B CI runtime bump
+
+Accepted implementation:
+
+- Updated .github/workflows/check.yml from actions/checkout@v4 to
+  actions/checkout@v6.
+- Updated .github/workflows/check.yml from actions/setup-python@v5 to
+  actions/setup-python@v6.
+- Committed as repo-B da73ebb (ci: use current GitHub action majors).
+
+Verification:
+
+- python3 -m pytest -q --color=no -> 105 passed.
+- python3 scripts/check_release.py -> {"status": "pass"}.
+- git diff --check exited 0.
+
+### B3 repo-B security-config runner plumbing
+
+Accepted implementation:
+
+- Added --security-config to scripts/run_diagnosis_wave.py.
+- Forwarded the option to the security lane as the leaf's --config flag.
+- Added SECURITY_CONFIG / scripts/security_audit_config.json support to
+  scripts/check_wave_baseline.py, matching the existing hotspot-config path.
+- Added runner and baseline-checker tests for security config forwarding.
+- Committed as repo-B daba823
+  (feat(wave): forward security audit config).
+
+Verification:
+
+- python3 -m pytest tests/test_run_diagnosis_wave.py tests/test_check_wave_baseline.py -q --color=no
+  -> 11 passed.
+- python3 -m pytest -q --color=no -> 106 passed.
+- WAVE_RUNNER=$PWD/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=6, baseline=6.
+
+### Repo-B convergence after B3
+
+- Current repo-B head: daba823.
+- Convergence run 3: python3 -m pytest -q --color=no -> 106 passed.
+- Convergence run 3 wave:
+  WAVE_RUNNER=$PWD/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=6, baseline=6.
+- Convergence run 4: python3 -m pytest -q --color=no -> 106 passed.
+- Convergence run 4 wave:
+  WAVE_RUNNER=$PWD/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=6, baseline=6.
+- Scoped wave run 4 matched run 3 exactly; cmp on both
+  wave_findings.json and wave_summary.json returned 0.
+- Convergence artifacts:
+  artifacts/sp11/iteration-02/convergence/repo-b-run3 and
+  artifacts/sp11/iteration-02/convergence/repo-b-run4.
+
+### B4 repo-P CI runtime bump
+
+Accepted implementation:
+
+- Updated .github/workflows/check.yml from actions/checkout@v4 to
+  actions/checkout@v6.
+- Updated .github/workflows/check.yml from actions/setup-python@v5 to
+  actions/setup-python@v6.
+- Committed as repo-P 3644301 (ci: use current GitHub action majors).
+
+Verification:
+
+- ruff check scripts/ tests/ -> All checks passed!.
+- ruff format --check scripts/ tests/ -> 16 files already formatted.
+- python3 -m pytest tests/ -q --color=no -> 92 passed.
+- git diff --check exited 0.
+
+### B4 repo-P security and hotspot policy ratchet
+
+Accepted implementation:
+
+- Added scripts/security_audit_config.json with the security leaf's
+  trusted_subprocess policy for B404, B603, and B607 under scripts/**
+  and perf-optimization/scripts/**.
+- Added scripts/hotspot_audit_config.json declaring the intentional
+  README.md, SKILL.md, and scripts/perf_benchmark_pipeline.py coupling
+  pairs, plus single_maintainer: true.
+- Added scripts/wave_anchor.txt pinned to
+  ac896751703cba56bbbd99e201c1f355c5238567.
+- Updated scripts/check_wave_baseline.py to forward the anchor and both
+  configs to the source wave runner.
+- Rewrote three TIER_RANK maps to avoid Bandit B105 false positives while
+  preserving the PASS tier value.
+- Kept PERF finding IDs stable and removed B324 by using
+  hashlib.sha1(..., usedforsecurity=False) for deterministic non-security
+  IDs.
+- Ratcheted repo-P wave baseline from 55 normalized identities to 41.
+- Committed as repo-P 3a9b35c
+  (feat(wave): count perf security and hotspot policy).
+
+Verification:
+
+- Focused policy tests:
+  python3 -m pytest tests/test_check_wave_baseline.py tests/test_findings_bridge.py tests/test_ledger.py tests/test_pipeline_scoring_reporting.py -q --color=no
+  -> 48 passed.
+- Configured security leaf:
+  python3 /home/jakub/.agents/skills/security-audit/scripts/security_audit.py --root /home/jakub/projects/perf-benchmark-skill --out-dir /tmp/sp11-repo-p-security-configured --source-prefix scripts --source-prefix perf-optimization/scripts --config scripts/security_audit_config.json
+  -> findings=0, trusted_subprocess=17.
+- ruff check scripts/ tests/ perf-optimization/scripts/verify_win.py ->
+  All checks passed!.
+- ruff format --check scripts/ tests/ perf-optimization/scripts/verify_win.py
+  -> 17 files already formatted.
+- python3 -m pytest -q --color=no -> 155 passed.
+- WAVE_RUNNER=/home/jakub/projects/repo-audit-refactor-optimize/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=41, baseline=41.
+
+### B4 repo-P reporting complexity ratchet
+
+Accepted implementation:
+
+- Split _summarize_wall_time_metrics in
+  scripts/perf_benchmark/reporting.py into focused helpers for
+  pytest-benchmark summaries, per-size timing summaries, and flat timing
+  summaries.
+- Removed the now-unused _cv_for_runs helper after the wave flagged it as
+  dead-code growth.
+- Ratcheted repo-P wave baseline from 41 normalized identities to 39 by
+  removing _summarize_wall_time_metrics cyclomatic_complexity and
+  function_nloc.
+- Committed as repo-P b41cba6
+  (refactor(reporting): split wall time summary metrics).
+
+Verification:
+
+- python3 -m pytest tests/test_pipeline_scoring_reporting.py -q --color=no
+  -> 19 passed.
+- ruff check scripts/perf_benchmark/reporting.py tests/test_pipeline_scoring_reporting.py
+  -> All checks passed!.
+- ruff format --check scripts/perf_benchmark/reporting.py tests/test_pipeline_scoring_reporting.py
+  -> 2 files already formatted.
+- ruff check scripts/ tests/ perf-optimization/scripts/verify_win.py ->
+  All checks passed!.
+- ruff format --check scripts/ tests/ perf-optimization/scripts/verify_win.py
+  -> 17 files already formatted.
+- python3 -m pytest -q --color=no -> 155 passed.
+- WAVE_RUNNER=/home/jakub/projects/repo-audit-refactor-optimize/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=39, baseline=39.
+
+### Repo-P convergence after B4
+
+- Current repo-P head: b41cba6.
+- Convergence run 1: python3 -m pytest -q --color=no -> 155 passed.
+- Convergence run 1 wave:
+  WAVE_RUNNER=/home/jakub/projects/repo-audit-refactor-optimize/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=39, baseline=39.
+- Convergence run 2: python3 -m pytest -q --color=no -> 155 passed.
+- Convergence run 2 wave:
+  WAVE_RUNNER=/home/jakub/projects/repo-audit-refactor-optimize/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=39, baseline=39.
+- Scoped wave run 2 matched run 1 exactly; cmp on both
+  wave_findings.json and wave_summary.json returned 0.
+- Convergence artifacts:
+  artifacts/sp11/iteration-02/convergence/repo-p-run1 and
+  artifacts/sp11/iteration-02/convergence/repo-p-run2.
