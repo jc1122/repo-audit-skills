@@ -49,13 +49,17 @@ REPOS (entry state; verify, proceed only if gates green):
 - Installed: 16 leaves @ 0.5.1, repo-audit-refactor-optimize 0.4.1,
   perf-benchmark 0.3.0, perf-optimization 0.2.0; bootstrap probe exit 0.
 
-WORKERS: PRIMARY = opencode-worker-bridge (file-backed packets per C-7: one
-goal, <=2 files, failing test included, exact command + expected output,
-<=8k tokens; the JSON artifacts under the run dir are the only evidence).
-FALLBACK (automatic, logged, per packet) = native subagent workers on bridge
-INFRASTRUCTURE failure only (unreachable/auth/quota); a gate-failing CHANGE
-is a normal discard/retry, NOT a route switch. A worker's green is NEVER
-evidence — re-run every gate yourself and read real output.
+WORKERS: PRIMARY = OpenCode DeepSeek v4 Pro Max via opencode-worker-bridge
+(file-backed packets per C-7: one goal, <=2 files, failing test included,
+exact command + expected output, <=8k tokens; the JSON artifacts under the
+run dir are the only evidence). FALLBACK (automatic, one-way, logged) = on
+exhaustion or infrastructure failure (credits/quota, auth/billing, bridge
+unreachable) switch to NATIVE gpt-5.5 subagent workers — identical packets,
+same file-backed artifact requirements — for that packet and all later
+ones, without pausing; do NOT route the fallback through opencode. A
+gate-failing CHANGE is a normal discard/retry, NOT a route switch. A
+worker's green is NEVER evidence — re-run every gate yourself and read real
+output.
 
 ITERATION 1 — foundation + precision (repo-A):
 C-0 diagnosis with the current install -> B0.1 full-pytest aggregator gate
