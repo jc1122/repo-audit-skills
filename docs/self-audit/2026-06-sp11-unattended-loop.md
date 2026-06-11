@@ -785,3 +785,78 @@ Verification:
 - Convergence artifacts:
   artifacts/sp11/iteration-02/convergence/repo-p-run1 and
   artifacts/sp11/iteration-02/convergence/repo-p-run2.
+
+### Iteration 2 C-6 ship gate and re-anchor
+
+Repo-A:
+
+- Released repo-A `v0.5.3` at
+  `b2b9ec1fda271e1fe4c9bba0c16d4fe27ec45d6b`.
+- GitHub release: https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.3
+- Source gate: npm run check exited 0; self-audit 88/88,
+  security/hygiene/docs/dependency/coverage 0/0, full-pytest 17/17 suites
+  green.
+- Fresh-clone simulation: npm ci followed by npm run check exited 0 with the
+  same gate counts.
+- CI run 27380272598 completed success; log scan for deprecated,
+  deprecation, node16, node20, DEP0040, punycode, and warning patterns returned
+  no matches.
+
+Repo-B:
+
+- Released repo-B `v0.4.2` at
+  `125103f72d68bd5701dcf49f6ae4e3356dcf5aaf`.
+- GitHub release: https://github.com/jc1122/repo-audit-refactor-optimize/releases/tag/v0.4.2
+- Pre-push gate before re-anchor: 106 tests passed, release check passed, wave
+  baseline passed at count 6.
+- C-6 hotspot re-anchor advanced the wave anchor from `7c23276` to
+  `5fe3b5b`, then the final re-anchor commit `125103f` added counted
+  declared-coupling pairs for CHANGELOG.md<->SKILL.md and
+  scripts/wave_baseline.json<->scripts/wave_frozen.md.
+- Final baseline is 7 normalized identities: 3 complexity rows and 4 real
+  churn-complexity hotspot rows. The new scripts/run_diagnosis_wave.py churn
+  row is recorded as loop-induced re-anchor residue for iteration 3, not
+  hidden.
+- Fresh-clone simulation after the re-anchor commit: 106 tests passed, release
+  check passed, wave baseline passed at count 7.
+- CI run 27381069859 completed success; log scan for deprecated,
+  deprecation, node16, node20, DEP0040, punycode, and warning patterns returned
+  no matches.
+
+Repo-P:
+
+- Released repo-P `v0.3.1` at
+  `e63f5d4155d2150febe92120c0f88823ce864971`; nested perf-optimization ships
+  at `0.2.1`.
+- GitHub release: https://github.com/jc1122/perf-benchmark-skill/releases/tag/v0.3.1
+- Pre-push gate before re-anchor: ruff check and format passed, 155 tests
+  passed, wave baseline passed at count 39.
+- C-6 hotspot re-anchor advanced the wave anchor from `ac89675` to
+  `b5ed162`, then the final re-anchor commit `e63f5d4` added the counted
+  declared-coupling pair for
+  scripts/wave_baseline.json<->scripts/wave_frozen.md.
+- Final baseline is 41 normalized identities: 37 complexity rows and 4 real
+  churn-complexity hotspot rows. The new scripts/perf_benchmark/scoring.py and
+  scripts/wave_baseline.json churn rows are recorded as loop-induced
+  re-anchor residue for iteration 3, not hidden.
+- Fresh-clone simulation after the re-anchor commit: ruff check and format
+  passed, 155 tests passed, wave baseline passed at count 41.
+- CI run 27381069733 completed success; log scan for deprecated,
+  deprecation, node16, node20, DEP0040, punycode, and warning patterns returned
+  no matches.
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into the installed skill
+  root, then synced repo-B, perf-benchmark, and perf-optimization directories.
+- Installed readback passed: all 16 repo-A leaves at `0.5.3`;
+  repo-audit-refactor-optimize at `0.4.2`; perf-benchmark at `0.3.1`;
+  both nested and top-level perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P using the
+  installed repo-audit-refactor-optimize checker.
+- Bootstrap report readback: install_candidates is empty for all three repos;
+  summary.restart_required is false; summary.stop_before_discovery is false.
+- Bootstrap artifact roots:
+  artifacts/sp11/iteration-02/postinstall/repo-a,
+  artifacts/sp11/iteration-02/postinstall/repo-b, and
+  artifacts/sp11/iteration-02/postinstall/repo-p.
