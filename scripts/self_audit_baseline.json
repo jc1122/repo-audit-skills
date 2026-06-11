@@ -216,6 +216,12 @@
     "symbol": "<module>"
   },
   {
+    "leaf": "duplication",
+    "metric": "duplicate_tokens",
+    "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+    "symbol": "skills/test-effectiveness-audit/scripts/_cli.py:39-50"
+  },
+  {
     "leaf": "complexity",
     "metric": "maintainability_index",
     "path": "skills/duplication-audit/scripts/duplication_audit.py",

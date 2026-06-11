@@ -167,3 +167,13 @@ def test_main_with_artifact_runs_gated_leaf(tmp_path):
     summary = json.loads((out / "code_health_summary.json").read_text())
     assert "argv-log" in summary["leaves"]
     assert summary["leaves"]["argv-log"]["exit"] == 0
+
+
+def test_real_registry_test_effectiveness_skipped_without_mutation_scope():
+    """The registered test-effectiveness leaf (requires mutation_scope) fail-safe
+    skips when its artifact is absent, so it never enters the runnable set and
+    therefore never gates the pipeline."""
+    leaves = ch.load_registry(ch.DEFAULT_REGISTRY)
+    runnable, skipped = ch._partition_leaves(leaves, None)
+    assert {"leaf": "test-effectiveness", "reason": "requires mutation_scope artifact"} in skipped
+    assert "test-effectiveness" not in {r["name"] for r in runnable}
