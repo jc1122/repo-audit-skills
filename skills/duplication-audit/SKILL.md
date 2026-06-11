@@ -11,8 +11,7 @@ description: >
 
 ## Overview
 
-A code-health leaf skill. It reports duplicated code blocks as advisory findings; it
-does not refactor anything.
+Reports duplicated code blocks as advisory findings. It does not refactor.
 
 ## Quick Start
 
@@ -34,12 +33,12 @@ python3 scripts/duplication_audit.py \
 
 ## Tools and Thresholds
 
-`jscpd` via `npx`. See `skills/duplication-audit/references/rubric.md`. Override with `--config thresholds.json`
-(keys `min_tokens`, `min_lines`).
+`jscpd` via `npx`. Override with `--config thresholds.json` (`min_tokens`,
+`min_lines`); see `skills/duplication-audit/references/rubric.md`.
 
 ## Notes
 
-- `--source-prefix` filters to product code (repeatable).
+- `--source-prefix` is repeatable and filters product code.
 - Findings are deterministic: identical input yields byte-identical
   `duplication_findings.json`.
 - One finding per clone pair (cross-file → EXTRACT, same-file → MERGE).

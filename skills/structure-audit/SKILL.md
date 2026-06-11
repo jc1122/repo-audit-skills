@@ -12,8 +12,8 @@ description: >
 
 ## Overview
 
-A code-health leaf skill reporting import cycles, god-modules, and optional layering
-violations as advisory RESTRUCTURE findings.
+Reports import cycles, god-modules, and optional layering violations as advisory
+RESTRUCTURE findings.
 
 ## Quick Start
 
@@ -35,5 +35,6 @@ python3 scripts/structure_audit.py \
 
 ## Config
 
-`--config` JSON keys: `max_fan_out`, `max_fan_in`, `layers` (ordered top→bottom prefix
-list). See `skills/structure-audit/references/rubric.md`. Findings are deterministic.
+`--source-prefix` is repeatable. `--config` JSON keys: `max_fan_out`,
+`max_fan_in`, `layers` (ordered top-to-bottom prefix list). See
+`skills/structure-audit/references/rubric.md`. Findings are deterministic.
