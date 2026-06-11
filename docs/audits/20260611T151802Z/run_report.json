@@ -1,0 +1,240 @@
+{
+  "schema_version": 2,
+  "repo_root": "/home/jakub/projects/repo-audit-skills",
+  "started_utc": "2026-06-11T15:18:02Z",
+  "finished_utc": "2026-06-11T15:36:10Z",
+  "orchestrator_skill_version": "0.4.0+sp10-a4676e8",
+  "lanes": {
+    "bootstrap": {
+      "status": "pass",
+      "summary": {
+        "active_lanes": [
+          "bootstrap",
+          "test-python",
+          "code-health-python",
+          "coverage-python",
+          "security",
+          "performance",
+          "hygiene",
+          "orchestration"
+        ],
+        "restart_required": false,
+        "stop_before_discovery": false
+      },
+      "source_skills_root": "/home/jakub/projects/repo-audit-skills/skills",
+      "source_package_version": "0.5.1",
+      "installed_readback_version": "0.5.0",
+      "installed_readback_note": "Expected before T6; reinstall is explicitly human-gated."
+    },
+    "wave": {
+      "skills_root": "/home/jakub/projects/repo-audit-skills/skills",
+      "scope": [
+        "shared",
+        "scripts",
+        "skills/*/scripts"
+      ],
+      "run1": {
+        "summary": {
+          "code-health": {
+            "exit": 1,
+            "status": "findings",
+            "findings": 33
+          },
+          "security": {
+            "exit": 1,
+            "status": "findings",
+            "findings": 43
+          },
+          "hygiene": {
+            "exit": 0,
+            "status": "ok",
+            "findings": 0
+          },
+          "docs": {
+            "exit": 0,
+            "status": "ok",
+            "findings": 0
+          },
+          "dependency": {
+            "exit": 0,
+            "status": "ok",
+            "findings": 0
+          },
+          "hotspot": {
+            "exit": 1,
+            "status": "findings",
+            "findings": 58
+          }
+        },
+        "raw_findings": 134,
+        "normalized_identities": 123
+      },
+      "run2": {
+        "summary": {
+          "code-health": {
+            "exit": 1,
+            "status": "findings",
+            "findings": 33
+          },
+          "security": {
+            "exit": 1,
+            "status": "findings",
+            "findings": 43
+          },
+          "hygiene": {
+            "exit": 0,
+            "status": "ok",
+            "findings": 0
+          },
+          "docs": {
+            "exit": 0,
+            "status": "ok",
+            "findings": 0
+          },
+          "dependency": {
+            "exit": 0,
+            "status": "ok",
+            "findings": 0
+          },
+          "hotspot": {
+            "exit": 1,
+            "status": "findings",
+            "findings": 58
+          }
+        },
+        "raw_findings": 134,
+        "normalized_identities": 123
+      },
+      "convergence": {
+        "status": "pass",
+        "new_in_run2": 0,
+        "stale_in_run2": 0
+      }
+    },
+    "gates": {
+      "npm_run_check": {
+        "status": "pass",
+        "version": "0.5.1",
+        "selfaudit": {
+          "count": 92,
+          "baseline": 92
+        },
+        "security": {
+          "count": 49,
+          "baseline": 49
+        },
+        "hygiene": {
+          "count": 0,
+          "baseline": 0
+        },
+        "docs": {
+          "count": 0,
+          "baseline": 0
+        },
+        "dependency": {
+          "count": 0,
+          "baseline": 0
+        },
+        "coverage": {
+          "count": 0,
+          "baseline": 0,
+          "suites": 17
+        }
+      }
+    }
+  },
+  "findings_totals": {
+    "wave_raw_findings": 134,
+    "wave_normalized_identities": 123,
+    "code_health_findings": 33,
+    "security_findings": 43,
+    "hotspot_findings": 58,
+    "docs_findings": 0,
+    "dependency_findings": 0,
+    "hygiene_findings": 0,
+    "selfaudit_baseline_after_t3": 92,
+    "selfaudit_baseline_before_sp10": 106
+  },
+  "backlog": {
+    "accepted": [
+      {
+        "class": "wave-runner-scope",
+        "rule": "Fix living-doc scope at the runner when historical plan/spec docs create environment-dependent path findings.",
+        "evidence": "docs lane went from 191 findings to 0 after excluding docs/superpowers in repo-audit-refactor-optimize commit a4676e8."
+      }
+    ],
+    "deferred": [
+      {
+        "class": "code-health",
+        "rule": "Defer broad vendored-leaf architecture debt unless a bounded precision fix shrinks a ratcheted baseline.",
+        "evidence": "33 code-health findings remain; repo-A selfaudit is already equality-ratcheted at 92 after SP10 T3."
+      },
+      {
+        "class": "security",
+        "rule": "Defer trusted local subprocess wrappers to the security baseline until a dedicated security round can replace or annotate them consistently.",
+        "evidence": "43 wave security findings; canonical security gate remains pass at 49/49."
+      },
+      {
+        "class": "hotspot",
+        "rule": "Use hotspot findings for ordering future work, not as a release blocker without a bounded structural candidate.",
+        "evidence": "58 hotspot findings, mostly temporal coupling among SKILL.md/package/release metadata and known churn files."
+      }
+    ],
+    "coverage_gated": [],
+    "wont_fix": []
+  },
+  "batches": [
+    {
+      "name": "SP10 T1 docs tracked-path precision",
+      "commit": "4dad9d2",
+      "evidence": "docs-consistency tracked-path default, --filesystem-paths opt-out, docs gate remains 0/0."
+    },
+    {
+      "name": "SP10 T2 entrypoint MI precision",
+      "commit": "5c1e771",
+      "evidence": "entrypoint_mi_relaxed counter and mi_entrypoint_low floor 20."
+    },
+    {
+      "name": "SP10 T3 selfaudit ratchet",
+      "commit": "29fbcf7",
+      "evidence": "selfaudit baseline shrank 106 -> 92, no new freezes."
+    },
+    {
+      "name": "SP10 T4 release metadata",
+      "commit": "eba4ca7",
+      "evidence": "v0.5.1 metadata, local gates, and patched fresh-clone simulation green."
+    },
+    {
+      "name": "SP10 T5 runner living-doc support fix",
+      "commit": "a4676e8",
+      "evidence": "repo-A docs wave findings 191 -> 0; repo-B runner tests 101 passed."
+    },
+    {
+      "name": "SP10 T5 repo-A structural remediation",
+      "commit": null,
+      "evidence": "No repo-A post-release source batch accepted; remaining findings are baseline debt or hotspot ordering signals, deferred for a dedicated refactor round."
+    }
+  ],
+  "verification": [
+    {
+      "command": "python3 scripts/check_skill_requirements.py --repo /home/jakub/projects/repo-audit-skills --out-dir docs/audits/20260611T151802Z --extra-root /home/jakub/.claude/skills",
+      "status": "pass",
+      "evidence": "restart_required=false, stop_before_discovery=false; installed leaves still 0.5.0 as expected pre-T6."
+    },
+    {
+      "command": "python3 scripts/run_diagnosis_wave.py ... --skills-root /home/jakub/projects/repo-audit-skills/skills",
+      "status": "pass",
+      "evidence": "run1/run2 identical: 123 normalized identities, 0 new, 0 stale; docs/dependency/hygiene zero."
+    },
+    {
+      "command": "npm run check",
+      "status": "pass",
+      "evidence": "release 0.5.1; selfaudit 92/92; security 49/49; hygiene/docs/dependency 0/0; coverage 0/0 across 17 suites."
+    }
+  ],
+  "warnings": [
+    "Installed ~/.claude/.codex skill readback remains 0.5.0 until the T6 human-gated reinstall.",
+    "Bootstrap helper skills are unavailable; raw CLI fallback remains active.",
+    "No benchmark surface detected for repo-A."
+  ]
+}

@@ -1,0 +1,255 @@
+[
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "decide( findings : list [ dict ] , leaf_exit : dict [ str , int ] , gate : dict ) CCN=15",
+      "tool": "lizard"
+    },
+    "id": "82cf4b2eab260069",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 99,
+      "line_start": 80,
+      "symbol": "decide"
+    },
+    "metric": {
+      "name": "cyclomatic_complexity",
+      "threshold": 10.0,
+      "value": 15.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Split decide() \u2014 complexity 15 exceeds 10"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_run_one( leaf : dict , root : str , source_prefixes : list [ str ] , out_dir : Path , overrides : dict [ str , str ] , coverage_json : str | None = None , ) params=6",
+      "tool": "lizard"
+    },
+    "id": "3751311caf643126",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 191,
+      "line_start": 161,
+      "symbol": "_run_one"
+    },
+    "metric": {
+      "name": "parameter_count",
+      "threshold": 5.0,
+      "value": 6.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "low",
+    "signal": "SIMPLIFY",
+    "suggested_action": "Reduce parameters of _run_one() \u2014 6 exceeds 5"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "run_leaves( leaves : list [ dict ] , root : str , source_prefixes : list [ str ] , out_dir : Path , overrides : dict [ str , str ] , coverage_json : str | None = None , ) params=6",
+      "tool": "lizard"
+    },
+    "id": "aade2ec3c1e88b7f",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 218,
+      "line_start": 194,
+      "symbol": "run_leaves"
+    },
+    "metric": {
+      "name": "parameter_count",
+      "threshold": 5.0,
+      "value": 6.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "low",
+    "signal": "SIMPLIFY",
+    "suggested_action": "Reduce parameters of run_leaves() \u2014 6 exceeds 5"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_lizard_findings( root : Path , files : list [ Path ] , thresholds : dict ) NLOC=81",
+      "tool": "lizard"
+    },
+    "id": "d4c839f7dc45f803",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 133,
+      "line_start": 53,
+      "symbol": "_lizard_findings"
+    },
+    "metric": {
+      "name": "function_nloc",
+      "threshold": 50.0,
+      "value": 81.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Shorten _lizard_findings() \u2014 81 lines exceeds 50"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_ruff_findings( root : Path , files : list [ Path ] ) CCN=11",
+      "tool": "lizard"
+    },
+    "id": "a462209af94b9882",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 204,
+      "line_start": 145,
+      "symbol": "_ruff_findings"
+    },
+    "metric": {
+      "name": "cyclomatic_complexity",
+      "threshold": 10.0,
+      "value": 11.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Split _ruff_findings() \u2014 complexity 11 exceeds 10"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_ruff_findings( root : Path , files : list [ Path ] ) NLOC=60",
+      "tool": "lizard"
+    },
+    "id": "93943860fd85e790",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 204,
+      "line_start": 145,
+      "symbol": "_ruff_findings"
+    },
+    "metric": {
+      "name": "function_nloc",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Shorten _ruff_findings() \u2014 60 lines exceeds 50"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_ruff_lint( root : Path , rel_files : list [ str ] , config : dict ) NLOC=60",
+      "tool": "lizard"
+    },
+    "id": "12700c298d943652",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 132,
+      "line_start": 73,
+      "symbol": "_ruff_lint"
+    },
+    "metric": {
+      "name": "function_nloc",
+      "threshold": 50.0,
+      "value": 60.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Shorten _ruff_lint() \u2014 60 lines exceeds 50"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_type_findings( root : Path , rel_files : list [ str ] , config : dict ) NLOC=55",
+      "tool": "lizard"
+    },
+    "id": "fbc6979108aec8af",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 231,
+      "line_start": 177,
+      "symbol": "_type_findings"
+    },
+    "metric": {
+      "name": "function_nloc",
+      "threshold": 50.0,
+      "value": 55.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Shorten _type_findings() \u2014 55 lines exceeds 50"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "_strongly_connected_components( nodes , edges ) CCN=13",
+      "tool": "lizard"
+    },
+    "id": "e706f64dbfdf8eec",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 158,
+      "line_start": 113,
+      "symbol": "_strongly_connected_components"
+    },
+    "metric": {
+      "name": "cyclomatic_complexity",
+      "threshold": 10.0,
+      "value": 13.0
+    },
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Split _strongly_connected_components() \u2014 complexity 13 exceeds 10"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "analyze_tree( root , source_prefixes , thresholds ) CCN=20",
+      "tool": "lizard"
+    },
+    "id": "198986ac05f67a2f",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 292,
+      "line_start": 171,
+      "symbol": "analyze_tree"
+    },
+    "metric": {
+      "name": "cyclomatic_complexity",
+      "threshold": 10.0,
+      "value": 20.0
+    },
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Split analyze_tree() \u2014 complexity 20 exceeds 10"
+  },
+  {
+    "confidence": "high",
+    "evidence": {
+      "raw": "analyze_tree( root , source_prefixes , thresholds ) NLOC=115",
+      "tool": "lizard"
+    },
+    "id": "d3a4639ef8a232eb",
+    "leaf": "complexity",
+    "location": {
+      "line_end": 292,
+      "line_start": 171,
+      "symbol": "analyze_tree"
+    },
+    "metric": {
+      "name": "function_nloc",
+      "threshold": 50.0,
+      "value": 115.0
+    },
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Shorten analyze_tree() \u2014 115 lines exceeds 50"
+  }
+]

@@ -1,0 +1,1336 @@
+[
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of package.json and skills/coverage-gap-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "0aa4d78cb476bea5",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "package.json<->skills/coverage-gap-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "package.json",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of package.json and skills/quality-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "4c252b70352d04cb",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "package.json<->skills/quality-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "package.json",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "14 commits x 179 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "8f4460425947bc21",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "scripts/check_release.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 2506.0
+    },
+    "path": "scripts/check_release.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: scripts/check_release.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of scripts/check_release.py and scripts/check_skill_fixtures.py in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "4fbc0def95dfac62",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "scripts/check_release.py<->scripts/check_skill_fixtures.py"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 1.0
+    },
+    "path": "scripts/check_release.py",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "17 commits x 554 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "6183c612456c57e3",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "scripts/self_audit_baseline.json"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 9418.0
+    },
+    "path": "scripts/self_audit_baseline.json",
+    "severity": "high",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: scripts/self_audit_baseline.json changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "16 co-changes of scripts/self_audit_baseline.json and scripts/self_audit_frozen.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "8c697a0da1b68d17",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "scripts/self_audit_baseline.json<->scripts/self_audit_frozen.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.94
+    },
+    "path": "scripts/self_audit_baseline.json",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "22 commits x 225 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "95b8fdff26a04623",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "scripts/self_audit_frozen.md"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 4950.0
+    },
+    "path": "scripts/self_audit_frozen.md",
+    "severity": "high",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: scripts/self_audit_frozen.md changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/complexity-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "daf01158b02410f8",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/complexity-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/coverage-gap-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "80392f129ed79435",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/coverage-gap-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/dead-code-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "c6426b557d17ea78",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/dead-code-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/duplication-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "94291b2c54e25fb1",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/duplication-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/quality-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "5d5640bfee18ce71",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/quality-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/structure-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "0b45a69f9da64941",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/structure-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/test-audit-pipeline/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "5708dcb764c2484a",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/test-audit-pipeline/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "6d74d5282389331c",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/code-health-audit-pipeline/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "4a938a28f322eed5",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "8 commits x 331 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "69f9cc6bcd436a0c",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 2648.0
+    },
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/code-health-audit-pipeline/scripts/code_health_pipeline.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/complexity-audit/SKILL.md and skills/coverage-gap-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "6f3482698cae7787",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/coverage-gap-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/complexity-audit/SKILL.md and skills/dead-code-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "9a250507aa408bde",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/dead-code-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/complexity-audit/SKILL.md and skills/duplication-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "62d0d65506cb1531",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/duplication-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/complexity-audit/SKILL.md and skills/quality-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "c3abca87e3e4d2dc",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/quality-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/complexity-audit/SKILL.md and skills/structure-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "86492246f4fe4a93",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/structure-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/complexity-audit/SKILL.md and skills/test-audit-pipeline/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "538cb40369645549",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/test-audit-pipeline/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/complexity-audit/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "8d41a2fdd3f912eb",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/complexity-audit/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "d1d8f9fbbb6f07e3",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/complexity-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 commits x 294 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "89e1455a0ee0fd6d",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/complexity-audit/scripts/complexity_audit.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 2058.0
+    },
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/complexity-audit/scripts/complexity_audit.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/coverage-gap-audit/SKILL.md and skills/dead-code-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "bdddb4ee629b66c9",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/dead-code-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/coverage-gap-audit/SKILL.md and skills/duplication-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "df06652df80aed0a",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/duplication-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/coverage-gap-audit/SKILL.md and skills/quality-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "6acde10f1fe5e474",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/quality-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/coverage-gap-audit/SKILL.md and skills/structure-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "56a2633da5174eaf",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/structure-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/coverage-gap-audit/SKILL.md and skills/test-audit-pipeline/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "38ae91981bf65e97",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/test-audit-pipeline/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/coverage-gap-audit/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "36b89a627a711de5",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/coverage-gap-audit/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "757f63710599758a",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/coverage-gap-audit/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.86
+    },
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/dead-code-audit/SKILL.md and skills/duplication-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "9b40b01a37db2ce7",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/SKILL.md<->skills/duplication-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/dead-code-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/dead-code-audit/SKILL.md and skills/quality-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "5ab37639afbb476d",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/SKILL.md<->skills/quality-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/dead-code-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/dead-code-audit/SKILL.md and skills/structure-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "a8658cf66c30f10a",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/SKILL.md<->skills/structure-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/dead-code-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/dead-code-audit/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "52c6a095da1c49c3",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/dead-code-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/dead-code-audit/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "9350ea04f63477dd",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/dead-code-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 commits x 285 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "3204ee2836293850",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 1995.0
+    },
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "severity": "low",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/dead-code-audit/scripts/dead_code_audit.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 commits x 661 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "b4b261e5d92e84d7",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 3966.0
+    },
+    "path": "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/docs-consistency-audit/scripts/docs_consistency_audit.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/duplication-audit/SKILL.md and skills/quality-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "b581d4a2485828f1",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/SKILL.md<->skills/quality-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/duplication-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/duplication-audit/SKILL.md and skills/structure-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "4d9ab80001a04825",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/SKILL.md<->skills/structure-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/duplication-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/duplication-audit/SKILL.md and skills/test-audit-pipeline/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "0b8ae3feb3567e55",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/SKILL.md<->skills/test-audit-pipeline/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/duplication-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/duplication-audit/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "c4a2caf1e08292e5",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/duplication-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/duplication-audit/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "2fe5e9592659a3f6",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/duplication-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 commits x 191 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "eff251a52e66e37c",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/duplication-audit/scripts/duplication_audit.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 1146.0
+    },
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "severity": "low",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/duplication-audit/scripts/duplication_audit.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/quality-audit/SKILL.md and skills/structure-audit/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "a2b8c9cd08512463",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/quality-audit/SKILL.md<->skills/structure-audit/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/quality-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/quality-audit/SKILL.md and skills/test-audit-pipeline/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "3cfff400518a0e9e",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/quality-audit/SKILL.md<->skills/test-audit-pipeline/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/quality-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/quality-audit/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "b37e492d049ff910",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/quality-audit/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/quality-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 co-changes of skills/quality-audit/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "56e6ed18b6c45e66",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/quality-audit/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.71
+    },
+    "path": "skills/quality-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 commits x 323 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "5ed65c229bb43aa0",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/quality-audit/scripts/quality_audit.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 2261.0
+    },
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "severity": "medium",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/quality-audit/scripts/quality_audit.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "6 co-changes of skills/structure-audit/SKILL.md and skills/test-audit-pipeline/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "6eb02819e34cace1",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/structure-audit/SKILL.md<->skills/test-audit-pipeline/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.75
+    },
+    "path": "skills/structure-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/structure-audit/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "366fdcc52697e644",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/structure-audit/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/structure-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/structure-audit/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "db3cb7613a6b3ef6",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/structure-audit/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/structure-audit/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "5 commits x 327 nloc in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "8e9975155decebc2",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/structure-audit/scripts/structure_audit.py"
+    },
+    "metric": {
+      "name": "churn_complexity_product",
+      "threshold": 1000.0,
+      "value": 1635.0
+    },
+    "path": "skills/structure-audit/scripts/structure_audit.py",
+    "severity": "low",
+    "signal": "DECOMPOSE",
+    "suggested_action": "Hotspot: skills/structure-audit/scripts/structure_audit.py changes often and is large; split along change axes"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/test-audit-pipeline/SKILL.md and skills/test-quality-assurance/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "b1bc2d129601d537",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/test-audit-pipeline/SKILL.md<->skills/test-quality-assurance/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/test-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "7 co-changes of skills/test-audit-pipeline/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "14ba3026a2e20308",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/test-audit-pipeline/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 0.88
+    },
+    "path": "skills/test-audit-pipeline/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  },
+  {
+    "confidence": "medium",
+    "evidence": {
+      "raw": "8 co-changes of skills/test-quality-assurance/SKILL.md and skills/test-redundancy-triage/SKILL.md in last 195 commits (max 500) from eba4ca785e12",
+      "tool": "git"
+    },
+    "id": "d05ab36bf37d940a",
+    "leaf": "hotspot",
+    "location": {
+      "line_end": 1,
+      "line_start": 1,
+      "symbol": "skills/test-quality-assurance/SKILL.md<->skills/test-redundancy-triage/SKILL.md"
+    },
+    "metric": {
+      "name": "temporal_coupling_ratio",
+      "threshold": 0.7,
+      "value": 1.0
+    },
+    "path": "skills/test-quality-assurance/SKILL.md",
+    "severity": "medium",
+    "signal": "RESTRUCTURE",
+    "suggested_action": "Files co-change; move the shared concern into one module or merge them"
+  }
+]
