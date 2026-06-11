@@ -14,6 +14,12 @@ Each entry: path :: leaf/metric :: symbol :: reason.
   `scripts/check_release.py` (→ `tempfile.gettempdir()`); 1 B112 try/except/continue in
   `skills/test-quality-assurance/scripts/audit_test_quality.py` (narrowed to typed exceptions).
   The residual 49 are frozen per-finding below. Baseline seeded at 49; zero unjustified.
+- **SP8 G4-R2** (shrink attempt — no honest shrink): examined the 2 B105 false positives (the
+  boolean dict field deselect_suite_pass — bandit over-matches the "pass" substring) and the 47
+  subprocess findings. No real fix exists without either a schema-breaking key rename that would
+  churn the triage golden suite, or a "# nosec" suppression (not a fix). The B603/B404/B607
+  residual is intrinsic to an audit toolkit that wraps pinned external binaries. Baseline
+  unchanged at 49; zero unjustified.
 
 ### A. subprocess import (B404 `blacklist`) — 17
 **Reason:** Each audit leaf shells out to its pinned external tool (bandit / mutmut / jscpd / ruff / git / node). `import subprocess` is required; it is used only with list-args and never `shell=True`.

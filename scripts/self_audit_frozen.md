@@ -26,6 +26,16 @@ Each entry: path :: leaf/metric :: reason.
 - **SP7 INT-6** (schema bump, count-neutral): `SIGNALS += PERF, SECURITY` (C-6 hunk) applied to `shared/health_common.py` and re-vendored byte-identical into all 10 leaf copies (`check:vendored` green). The +2 frozenset lines shift the one line-pinned vendored-clone baseline entry: `shared/health_common.py <-> skills/complexity-audit/scripts/health_common.py` re-emits at `:1-101` (was `:1-99`). Exactly 1 stale + 1 new, same pair, NET ZERO new findings (snapshot 105 == baseline 105) — the stale `:1-99` entry was replaced with its `:1-101` twin in the same commit. No metric changed; pure line-range churn from the additive schema edit.
 - **SP7 INT-7** (freeze): merging `security-audit` (A5, standalone per C-7; its scripts still enter the duplication scan) added exactly 1 finding — a cross-leaf clone of the C-3 `load_thresholds` skeleton helper: `skills/repo-hygiene-audit/scripts/_thresholds.py` <-> `skills/security-audit/scripts/_reporting.py:25-33`. A5's own freeze candidate (its post-bump `health_common.py` differing from the pre-bump copies) is now OBSOLETE — INT-6 made all 10 copies post-bump, so A5's copy is byte-identical (cmp confirmed) and joins the existing clone group with no new finding. Same standalone-vendored-leaf rationale as section C/C2; PREFER-FIX rejected (forbidden cross-skill import; `shared/` hoist net-negative at R2). Frozen in section C2; baseline ratcheted 105 -> 106 in this commit.
 - **SP7 INT-8** (freeze): merging `test-effectiveness-audit` (A6, registered `languages: ["python"]` + `requires: {mutation_scope: true}`; its pre-bump `health_common.py` re-vendored to post-bump at merge, `check:vendored` green) added exactly 1 finding — a cross-leaf clone of the C-2/C-3 `build_parser` CLI skeleton: `skills/docs-consistency-audit/scripts/docs_consistency_audit.py` <-> `skills/test-effectiveness-audit/scripts/_cli.py:39-50`. The shared argparse block exposes the contract-mandated flags, so it is identical across leaves by mandate. Invisible in either branch; same standalone-vendored-leaf rationale as section C/C2; PREFER-FIX rejected (forbidden cross-skill import; `shared/` hoist net-negative at R2). Frozen in section C2; baseline ratcheted 106 -> 107 in this commit.
+- **SP8 G4-R3** (structural, no attempt taken): the three churn-ranked hotspot files
+  (code_health_pipeline.py 2648, check_release.py 2028, quality_audit.py 1686) are frozen
+  single-file standalone tools whose every per-function finding is already individually
+  justified in sections D/E/F. The standing ledger (Phase-1 R2, SP4-R3) shows clone-extraction
+  and function-splitting in this tree are repeatedly net-negative (relocate clones; add
+  parameter_count / dead_code / maintainability_index). No attempt qualifies as high-value AND
+  finding-neutral; the equality gate would discard any. Baseline 107 unchanged.
+- **SP8 G4-R4** (converge): no unfinished ratchet from R2/R3 — convergence declared after R3.
+  All four new SP8 gate baselines and the self-audit baseline hold at equality; every freeze is
+  individually justified. Baseline 107 unchanged.
 
 ## Frozen findings (Phase 1 R4 — convergence)
 
