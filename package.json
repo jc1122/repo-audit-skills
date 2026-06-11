@@ -1,6 +1,6 @@
 {
   "name": "repo-audit-skills",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Deterministic, advisory repo-audit skills: a code-health family (complexity, duplication, dead-code, structure, quality) with the code-health-audit-pipeline umbrella, a test-audit family (test-quality-assurance, test-redundancy-triage) with the test-audit-pipeline umbrella, plus standalone hotspot, dependency, repo-hygiene, docs-consistency, security, and test-effectiveness leaves.",
   "license": "MIT",
   "bin": {
@@ -23,6 +23,7 @@
   "files": [
     "AGENTS.md",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE",
     "bin/",
     "scripts/",

@@ -1,6 +1,6 @@
 ---
 name: code-health-audit-pipeline
-version: 0.4.0
+version: 0.5.0
 description: >
   Umbrella that runs the code-health leaf skills (complexity, duplication, dead-code,
   structure, quality) in parallel, merges and ranks their findings into one report, and

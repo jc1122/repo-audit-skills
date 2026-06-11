@@ -1,6 +1,6 @@
 ---
 name: test-redundancy-triage
-version: 0.4.0
+version: 0.5.0
 description: >
   Identify redundant tests with empirical deselection, branch-equivalence, assertion
   dominance, and coverage/mutation signals. Produces conservative DELETE/KEEP/MERGE
