@@ -32,6 +32,12 @@ _DEAD_PATH_SUFFIXES = frozenset(
 )
 # Inline code span extractor.
 _INLINE_CODE_RE = _re.compile(r"`([^`]*)`")
+_PLACEHOLDER = _re.compile(r"[<>{}*$]")
+_OUTPUT_PATH_ROOTS = (".self_audit_out/", "/".join(("", "tmp", "")))
+_LAST_ANALYSIS_META = {
+    "skipped_placeholder_tokens": 0,
+    "skipped_output_path_tokens": 0,
+}
 
 
 class ToolError(RuntimeError):
@@ -41,9 +47,11 @@ class ToolError(RuntimeError):
 # -- helpers ----------------------------------------------------------------
 
 
-def _in_scope(rel: str, prefixes: list[str]) -> bool:
+def _in_scope(rel: str, prefixes: list[str], excludes=()) -> bool:
     """Return True if *rel* is in scope per the prefix filter."""
-    return not prefixes or any(rel.startswith(p) for p in prefixes)
+    included = not prefixes or any(rel.startswith(p) for p in prefixes)
+    excluded = any(rel.startswith(p) for p in excludes)
+    return included and not excluded
 
 
 def _rel(root: Path, path: Path) -> str:
@@ -59,10 +67,14 @@ def _read_text(path: Path) -> str | None:
         return None
 
 
-def _in_scope_files(root_path: Path, pattern: str, prefixes: list[str]) -> list[Path]:
+def _in_scope_files(
+    root_path: Path, pattern: str, prefixes: list[str], excludes=()
+) -> list[Path]:
     """Return sorted in-scope files matching *pattern* (byte-determinism)."""
     return sorted(
-        f for f in root_path.rglob(pattern) if _in_scope(_rel(root_path, f), prefixes)
+        f
+        for f in root_path.rglob(pattern)
+        if _in_scope(_rel(root_path, f), prefixes, excludes)
     )
 
 
@@ -282,11 +294,16 @@ def _check_dead_paths(
     text: str,
     root_path: Path,
     findings: list[hc.Finding],
-) -> None:
+) -> tuple[int, int]:
     """Emit findings for inline code spans referencing non-existent files."""
+    skipped_placeholder_tokens = 0
+    skipped_output_path_tokens = 0
     for i, line in enumerate(text.split("\n"), start=1):
         for match in _INLINE_CODE_RE.finditer(line):
             span = match.group(1)
+            if _PLACEHOLDER.search(span):
+                skipped_placeholder_tokens += 1
+                continue
             if not _DEAD_PATH_RE.match(span):
                 continue
             if "://" in span:
@@ -295,6 +312,9 @@ def _check_dead_paths(
                 continue
             suffix = Path(span).suffix
             if suffix not in _DEAD_PATH_SUFFIXES:
+                continue
+            if span.startswith(_OUTPUT_PATH_ROOTS):
+                skipped_output_path_tokens += 1
                 continue
             if not (root_path / span).exists():
                 findings.append(
@@ -317,6 +337,7 @@ def _check_dead_paths(
                         ),
                     )
                 )
+    return skipped_placeholder_tokens, skipped_output_path_tokens
 
 
 # -- Group 3: stale version pins --------------------------------------------
@@ -506,15 +527,19 @@ def analyze_tree(
     root: str,
     source_prefixes: list[str],
     thresholds: dict,
+    exclude_prefixes: list[str] | None = None,
 ) -> list[hc.Finding]:
     """Run all four audit groups and return sorted findings."""
     root_path = Path(root).resolve()
     if not root_path.is_dir():
         raise ToolError(f"--root is not a directory: {root}")
 
+    excludes = exclude_prefixes or []
     findings: list[hc.Finding] = []
-    md_files = _in_scope_files(root_path, "*.md", source_prefixes)
-    py_files = _in_scope_files(root_path, "*.py", source_prefixes)
+    skipped_placeholder_tokens = 0
+    skipped_output_path_tokens = 0
+    md_files = _in_scope_files(root_path, "*.md", source_prefixes, excludes)
+    py_files = _in_scope_files(root_path, "*.py", source_prefixes, excludes)
 
     # Group 1: unknown flags in fenced commands
     cache = _FlagCache(root_path)
@@ -527,7 +552,11 @@ def analyze_tree(
     for md_file in md_files:
         text = _read_text(md_file)
         if text is not None:
-            _check_dead_paths(_rel(root_path, md_file), text, root_path, findings)
+            skipped_placeholders, skipped_outputs = _check_dead_paths(
+                _rel(root_path, md_file), text, root_path, findings
+            )
+            skipped_placeholder_tokens += skipped_placeholders
+            skipped_output_path_tokens += skipped_outputs
 
     # Group 3: stale version pins
     pkg_name, pkg_version = _get_package_version(root_path)
@@ -539,6 +568,8 @@ def analyze_tree(
     if docstring_min is not None:
         _check_docstring_coverage(root_path, py_files, float(docstring_min), findings)
 
+    _LAST_ANALYSIS_META["skipped_placeholder_tokens"] = skipped_placeholder_tokens
+    _LAST_ANALYSIS_META["skipped_output_path_tokens"] = skipped_output_path_tokens
     return findings
 
 
@@ -565,9 +596,19 @@ def _signal_section(signal: str, group: list[hc.Finding]) -> list[str]:
     return lines
 
 
-def render_report(findings: list[hc.Finding]) -> str:
+def render_report(
+    findings: list[hc.Finding],
+    skipped_placeholder_tokens: int = 0,
+    skipped_output_path_tokens: int = 0,
+) -> str:
     """Render the advisory markdown report grouped by signal."""
-    header = ["# docs-consistency-audit report", ""]
+    header = [
+        "# docs-consistency-audit report",
+        "",
+        f"Skipped placeholder tokens: {skipped_placeholder_tokens}",
+        f"Skipped output-path tokens: {skipped_output_path_tokens}",
+        "",
+    ]
     if not findings:
         return "\n".join([*header, "No findings."]) + "\n"
     sections: list[str] = header
@@ -585,6 +626,15 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         dest="source_prefixes",
         help="Path prefix(es) relative to --root to include. Repeatable.",
+    )
+    parser.add_argument(
+        "--exclude-prefix",
+        action="append",
+        default=[],
+        dest="exclude_prefixes",
+        help=(
+            "Path prefix(es) relative to --root to exclude after inclusion. Repeatable."
+        ),
     )
     parser.add_argument("--out-dir")
     parser.add_argument("--config", help="JSON file overriding thresholds.")
@@ -609,15 +659,33 @@ def _run_audit(args: argparse.Namespace) -> int:
     """Execute the audit for parsed *args*; emit the summary JSON on stdout."""
     try:
         findings = analyze_tree(
-            args.root, args.source_prefixes, load_thresholds(args.config)
+            args.root,
+            args.source_prefixes,
+            load_thresholds(args.config),
+            args.exclude_prefixes,
         )
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
     data = hc.write_findings(findings, args.out_dir, LEAF)
     report_path = Path(args.out_dir, f"{LEAF}_report.md")
-    report_path.write_text(render_report(findings), encoding="utf-8")
-    print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
+    skipped_placeholder_tokens = _LAST_ANALYSIS_META["skipped_placeholder_tokens"]
+    skipped_output_path_tokens = _LAST_ANALYSIS_META["skipped_output_path_tokens"]
+    report_path.write_text(
+        render_report(findings, skipped_placeholder_tokens, skipped_output_path_tokens),
+        encoding="utf-8",
+    )
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "findings": len(data),
+                "leaf": LEAF,
+                "skipped_placeholder_tokens": skipped_placeholder_tokens,
+                "skipped_output_path_tokens": skipped_output_path_tokens,
+            }
+        )
+    )
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 
 

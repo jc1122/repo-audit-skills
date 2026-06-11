@@ -36,6 +36,12 @@ Each entry: path :: leaf/metric :: reason.
 - **SP8 G4-R4** (converge): no unfinished ratchet from R2/R3 — convergence declared after R3.
   All four new SP8 gate baselines and the self-audit baseline hold at equality; every freeze is
   individually justified. Baseline 107 unchanged.
+- **SP9 K1-T1** (fix + shrink): adding docs-consistency `--exclude-prefix` changed the
+  `build_parser` block enough to dissolve the prior
+  `skills/docs-consistency-audit/scripts/docs_consistency_audit.py` <->
+  `skills/test-effectiveness-audit/scripts/_cli.py:39-50` duplicate_tokens clone. The stale
+  line-pinned baseline entry was removed in the same commit; no replacement identity emitted.
+  Baseline 107 -> 106.
 
 ## Frozen findings (Phase 1 R4 — convergence)
 
@@ -77,11 +83,10 @@ freeze remains). See the "SP4 Phase 2" round log.
 - `scripts/check_coverage_gap.py` :: duplication/duplicate_tokens :: scripts/check_self_audit.py:23-31 :: shared snapshot/baseline ratchet idiom across the gate scripts; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `scripts/check_coverage_gap.py` :: duplication/duplicate_tokens :: scripts/self_audit.py:23-31 :: shared snapshot/baseline ratchet idiom across the gate scripts; dedup needs forbidden cross-skill imports (see R2 evidence)
 
-### C2. SP7 cross-leaf leaf-helper duplication (3)
-**Reason:** identical to section C — SP7 leaves are independently-installable skills with self-contained `scripts/` dirs (only `health_common.py` is vendored). The leaf skeleton functions/flags pinned by plan C-2/C-3 (the `_git(root, *args)` subprocess wrapper; the `load_thresholds(config_path)` JSON-overlay helper; the `build_parser` argparse block exposing the mandated `--root`/`--source-prefix`/`--out-dir`/`--config`/`--format` flags) are instantiated to one shape across leaves; they cannot be shared without a forbidden cross-skill import, and the R2 evidence shows hoisting into `shared/`/`health_common.py` is net-negative (relocates clones into the 6×-vendored module + adds `maintainability_index` findings). These clones are invisible in any single branch (each branch holds only its own copy) and only surface at integration. Frozen as intrinsic to the standalone-vendored-leaf architecture.
+### C2. SP7 cross-leaf leaf-helper duplication (2)
+**Reason:** identical to section C — SP7 leaves are independently-installable skills with self-contained `scripts/` dirs (only `health_common.py` is vendored). The helper skeletons pinned by plan C-2/C-3 (the `_git(root, *args)` subprocess wrapper and the `load_thresholds(config_path)` JSON-overlay helper) are instantiated to one shape across leaves; they cannot be shared without a forbidden cross-skill import, and the R2 evidence shows hoisting into `shared/`/`health_common.py` is net-negative (relocates clones into the 6×-vendored module + adds `maintainability_index` findings). These clones are invisible in any single branch (each branch holds only its own copy) and only surface at integration. Frozen as intrinsic to the standalone-vendored-leaf architecture.
 - `skills/hotspot-audit/scripts/_audit_git.py` :: duplication/duplicate_tokens :: skills/repo-hygiene-audit/scripts/_git_utils.py:36-53 :: cross-leaf `_git` subprocess wrapper, vendored per-leaf (own copy — leaves are self-contained per C-5); dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/repo-hygiene-audit/scripts/_thresholds.py` :: duplication/duplicate_tokens :: skills/security-audit/scripts/_reporting.py:25-33 :: cross-leaf C-3 `load_thresholds` skeleton helper, instantiated per-leaf; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/docs-consistency-audit/scripts/docs_consistency_audit.py` :: duplication/duplicate_tokens :: skills/test-effectiveness-audit/scripts/_cli.py:39-50 :: cross-leaf C-2/C-3 `build_parser` CLI skeleton (the mandated --root/--source-prefix/--out-dir/--config/--format flags); dedup needs forbidden cross-skill imports (see R2 evidence)
 
 ### D. Module-level maintainability_index (12)
 **Reason:** whole-module MI for single-file standalone tools. Each leaf/gate script is intentionally one self-contained file (required for vendored install); lowering module MI means splitting into multi-file packages, which breaks the single-file install model and is out of scope (spec: structure preserved, no cross-skill imports).

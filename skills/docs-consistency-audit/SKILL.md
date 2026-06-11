@@ -57,9 +57,14 @@ Where ``thresholds.json`` contains:
 |---|---|---|---|
 | ``--root`` | yes | no | Repository root to audit |
 | ``--source-prefix`` | no | yes | Prefix filter for in-scope files (default ``[]`` = everything) |
+| ``--exclude-prefix`` | no | yes | Root-relative prefix filter excluded after inclusion |
 | ``--out-dir`` | yes | no | Directory for output files |
 | ``--config`` | no | no | JSON file overriding ``DEFAULT_THRESHOLDS`` |
 | ``--format`` | no | no | Output format: ``json`` (default) or ``md`` |
+
+Scope is inclusion first, exclusion second: repeat ``--source-prefix`` to limit
+the root-relative file set, then repeat ``--exclude-prefix`` to remove matching
+root-relative prefixes from that included set.
 
 ## Exit Codes
 
@@ -70,7 +75,9 @@ Where ``thresholds.json`` contains:
 ## Output
 
 - ``docs-consistency_findings.json`` -- sorted findings (shared schema, signal ``LINT``).
-- ``docs-consistency_report.md`` -- human-readable summary.
+- ``docs-consistency_report.md`` -- human-readable summary, including skipped token counts.
+- stdout status JSON -- includes ``status``, ``findings``, ``leaf``, and
+  ``skipped_placeholder_tokens`` / ``skipped_output_path_tokens`` on success.
 
 ## Thresholds
 
@@ -97,7 +104,14 @@ option strings produce a finding.
 ### Group 2 -- Dead doc paths
 Confidence: ``medium``. Inline code spans matching
 ``^[A-Za-z0-9_.\-/]+$`` containing ``/`` (but not ``://``) with a source-file
-suffix are checked for existence on disk. Missing paths produce a finding.
+suffix are checked for existence on disk. Missing normal paths produce a
+``doc_path_missing`` finding. Inline path tokens containing any of ``<>{}$*``
+are treated as placeholders, skipped before path validation, and counted in
+``skipped_placeholder_tokens`` in both stdout status and the markdown report.
+Inline path tokens under known generated output roots, currently
+``.self_audit_out/`` and ``/tmp/``, are also skipped before filesystem
+existence checks and counted in ``skipped_output_path_tokens``. Other hidden or
+source-like missing paths are not suppressed.
 
 ### Group 3 -- Stale version pins
 Confidence: ``high``. Package name and version are read from
@@ -120,3 +134,9 @@ rename it, and the guard test is written to fail loudly if that happens.
 **Import-introspection caveat:** targets are imported; only modules defining build_parser and importing argparse are eligible; never point --root at untrusted code you would not import.
 
 Absolute path tokens that resolve outside ``--root`` are skipped (environment-dependent, cannot be made root-relative).
+
+Output-path/runtime references and immutable historical records should be
+excluded with ``--exclude-prefix`` or frozen and justified in docs. Placeholder
+suppression is intentionally narrow: only tokens containing ``<>{}$*`` are
+skipped. Generated-output suppression is limited to ``.self_audit_out/`` and
+``/tmp/``. Ordinary missing paths continue to emit ``doc_path_missing``.
