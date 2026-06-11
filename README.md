@@ -1,16 +1,17 @@
 # Repo Audit Skills
 
-Deterministic, advisory repo-audit skills (`0.5.1`). Leaves never mutate the
+Deterministic, advisory repo-audit skills (`0.5.2`). Leaves never mutate the
 audited repository and are run with `--root`.
 
-## v0.5.1 highlights
+## v0.5.2 highlights
 
-- Docs-consistency resolves path references against tracked git files by
-  default, with `--filesystem-paths` available for local artifact checks.
-- Complexity-audit relaxes module-MI findings for standalone CLI entrypoints
-  above the entrypoint floor while keeping function-level checks active.
-- Self-audit baseline is ratcheted from 106 findings to 92 after the precision
-  fixes dissolved stale findings.
+- Full-pytest aggregation now runs all 17 skill/root suites in isolated import
+  contexts as part of `npm run check`.
+- Security-audit supports counted `trusted_subprocess` suppressions, and the
+  repo security baseline is ratcheted from 49 findings to 0.
+- Hotspot-audit supports counted family policy suppressions for declared
+  coupling pairs and explicit single-maintainer repositories while keeping
+  churn-complexity findings unsuppressible.
 
 ## Skill families
 

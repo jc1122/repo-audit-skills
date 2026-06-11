@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.2 - 2026-06-11
+
+- Added the full-pytest aggregate gate so all 17 skill/root suites run in
+  isolated import contexts.
+- Added counted `trusted_subprocess` suppressions to security-audit and
+  ratcheted the repo security baseline from 49 findings to 0.
+- Added counted hotspot family policy suppressions for declared coupling pairs
+  and explicit single-maintainer repositories while keeping churn-complexity
+  findings unsuppressible.
+- Bumped the GitHub Actions workflow runtimes to checkout v5, setup-node v5
+  with Node 22, and setup-python v6.
+
 ## 0.5.1 - 2026-06-11
 
 - Updated docs-consistency to track-only path resolution.

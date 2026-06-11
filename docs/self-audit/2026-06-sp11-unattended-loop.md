@@ -375,3 +375,37 @@ Verification:
   `baseline=0`.
 - Final acceptance is the B1.4 CI run completing with zero deprecation
   annotations.
+
+### B1.4 iteration-1 release prep
+
+Accepted implementation:
+
+- Bumped `package.json` and `package-lock.json` from `0.5.1` to `0.5.2`.
+- Bumped all 16 repo-audit leaf `SKILL.md` frontmatter versions to `0.5.2`.
+- Added `CHANGELOG.md` release notes for the full-pytest gate, security
+  baseline ratchet, hotspot family policy, and CI runtime bump.
+- Updated `README.md` current-version highlights to `0.5.2`.
+- `bin/install-repo-audit-skills.js` reads the package version dynamically;
+  release verification covers `--version`, `--list`, and install dry-run.
+
+Local release verification:
+
+- `python3 scripts/check_release.py` -> `status=pass`, `version=0.5.2`,
+  16 skills.
+- Convergence run 1: `npm run check` exited 0; release reported
+  `version=0.5.2`; self-audit `92/92`; security, hygiene, docs, dependency,
+  and coverage `0/0`; final output `full-pytest: 17/17 suites green`.
+- Convergence run 2: `npm run check` exited 0 with the same gate counts and
+  final output `full-pytest: 17/17 suites green`.
+- `npm run pack:dry-run` exited 0; dry-run tarball
+  `repo-audit-skills-0.5.2.tgz`; total files `345`.
+- `python3 scripts/check_release.py --require-clean` exited 0 on release-prep
+  commit `794f532`; version `0.5.2`; 16 skills.
+- Fresh-clone simulation directory: `/tmp/sp11-ci-sim-bN6hJr`.
+- Fresh-clone command shape: clone repo-A, copy `node_modules`, run
+  `npm run check`.
+- Fresh-clone result: `npm run check` exited 0; release reported
+  `version=0.5.2`; self-audit `92/92`; security, hygiene, docs, dependency,
+  and coverage `0/0`; final output `full-pytest: 17/17 suites green`.
+- CI, tag, release, reinstall, and readback evidence will be appended before
+  iteration 2 starts.
