@@ -67,6 +67,16 @@ class CoverageCommandContext:
     timeout: int
 
 
+@dataclass(frozen=True)
+class SingleCoverageRunContext:
+    coverage_python: str
+    env: dict[str, str]
+    timeout: int
+    tmp_dir: Path
+    max_workers: int
+    source_prefix: str = ""
+
+
 DESELECT_SUITE_PASS_KEY = "deselect_suite_" + "pass"
 
 
@@ -834,6 +844,34 @@ def collect_suite_coverage_union(
     }
 
 
+def collect_single_test_coverage_results(
+    root: Path, nodeids: list[str], context: SingleCoverageRunContext
+) -> list[dict[str, Any]]:
+    results: list[dict[str, Any]] = []
+    with ThreadPoolExecutor(max_workers=max(1, context.max_workers)) as ex:
+        futs = [
+            ex.submit(
+                run_single_test_coverage,
+                root,
+                nodeid,
+                coverage_python=context.coverage_python,
+                env=context.env,
+                timeout=context.timeout,
+                tmp_dir=context.tmp_dir,
+                source_prefix=context.source_prefix,
+            )
+            for nodeid in nodeids
+        ]
+        for fut in as_completed(futs):
+            try:
+                results.append(fut.result())
+            except Exception as exc:
+                results.append(
+                    {"test_nodeid": "", "status": "error", "error": str(exc)}
+                )
+    return results
+
+
 def write_coverage_artifacts(
     root: Path,
     out_dir: Path,
@@ -987,28 +1025,10 @@ def write_coverage_artifacts(
         if comparator["status"] == "ok":
             comparator_union = comparator["line_tokens"] | comparator["branch_tokens"]
 
-        results: list[dict[str, Any]] = []
-        with ThreadPoolExecutor(max_workers=max(1, max_workers)) as ex:
-            futs = [
-                ex.submit(
-                    run_single_test_coverage,
-                    root,
-                    nodeid,
-                    coverage_python=coverage_python,
-                    env=coverage_env,
-                    timeout=timeout,
-                    tmp_dir=tmp_dir,
-                    source_prefix=source_prefix,
-                )
-                for nodeid in nodeids
-            ]
-            for fut in as_completed(futs):
-                try:
-                    results.append(fut.result())
-                except Exception as exc:
-                    results.append(
-                        {"test_nodeid": "", "status": "error", "error": str(exc)}
-                    )
+        context = SingleCoverageRunContext(
+            coverage_python, coverage_env, timeout, tmp_dir, max_workers, source_prefix
+        )
+        results = collect_single_test_coverage_results(root, nodeids, context)
 
     by_nodeid = {r["test_nodeid"]: r for r in results if r.get("test_nodeid")}
     rows = []
@@ -1277,30 +1297,12 @@ def collect_node_coverage_runs(
             "coverage_python": "",
         }
 
-    results: list[dict[str, Any]] = []
     with tempfile.TemporaryDirectory(prefix="triage_branch_cov_") as td:
         tmp_dir = Path(td)
-        with ThreadPoolExecutor(max_workers=max(1, max_workers)) as ex:
-            futs = [
-                ex.submit(
-                    run_single_test_coverage,
-                    root,
-                    nodeid,
-                    coverage_python=coverage_python,
-                    env=coverage_env,
-                    timeout=timeout,
-                    tmp_dir=tmp_dir,
-                    source_prefix=source_prefix,
-                )
-                for nodeid in nodeids
-            ]
-            for fut in as_completed(futs):
-                try:
-                    results.append(fut.result())
-                except Exception as exc:
-                    results.append(
-                        {"test_nodeid": "", "status": "error", "error": str(exc)}
-                    )
+        context = SingleCoverageRunContext(
+            coverage_python, coverage_env, timeout, tmp_dir, max_workers, source_prefix
+        )
+        results = collect_single_test_coverage_results(root, nodeids, context)
 
     passed_or_skipped = sum(
         1 for r in results if r.get("status") in {"passed", "skipped"}

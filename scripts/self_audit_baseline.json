@@ -519,12 +519,6 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py#02f7b1b8f702"
-  },
-  {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "skills/test-redundancy-triage/scripts/triage_redundancy.py#84fedbc87cdd"
   }
 ]
