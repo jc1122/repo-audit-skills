@@ -15,7 +15,7 @@ human ship authorization.
 
 ## Repos and entry state (2026-06-11)
 
-- repo-A `/home/jakub/projects/repo-audit-skills` — main `56834cd`, v0.5.1; selfaudit baseline 92, security baseline 49, others empty.
+- repo-A `/home/jakub/projects/repo-audit-skills` — main `b7cb74f` (or later with CI green), v0.5.1; selfaudit baseline 92, security baseline 49, others empty.
 - repo-B `/home/jakub/projects/repo-audit-refactor-optimize` — main `7c23276`, v0.4.1; wave baseline 9.
 - repo-P `/home/jakub/projects/perf-benchmark-skill` — main `ac89675`, v0.3.0; wave baseline 55.
 
