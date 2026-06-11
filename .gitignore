@@ -17,3 +17,4 @@ scripts/security_snapshot.json
 scripts/repo_hygiene_snapshot.json
 scripts/docs_consistency_snapshot.json
 scripts/dependency_snapshot.json
+scripts/full_pytest_snapshot.json
