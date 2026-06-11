@@ -27,7 +27,10 @@ python3 scripts/complexity_audit.py \
 ## Output
 
 - `complexity_findings.json` — sorted list of findings (shared schema).
-- `complexity_report.md` — human-readable summary grouped by signal.
+- `complexity_report.md` — human-readable summary grouped by signal, including
+  counted precision suppressions such as `entrypoint_mi_relaxed`.
+- stdout status JSON — includes `status`, `findings`, `leaf`, and
+  `entrypoint_mi_relaxed`.
 
 ## Exit Codes
 
@@ -40,7 +43,18 @@ python3 scripts/complexity_audit.py \
 `--source-prefix` is repeatable. Override thresholds with `--config
 thresholds.json`; see `skills/complexity-audit/references/rubric.md`.
 
+Default thresholds include `mi_low=65`, `mi_medium=50`, and
+`mi_entrypoint_low=20`. Set `"mi_entrypoint_low": null` to disable entrypoint
+module-MI relaxation.
+
 ## Notes
 
 - Findings are deterministic: identical input yields byte-identical
   `complexity_findings.json`.
+- CLI entrypoints with `if __name__ ==` guards suppress module-level
+  maintainability-index findings when MI is at least `mi_entrypoint_low` but
+  below `mi_low`; each suppression increments `entrypoint_mi_relaxed`.
+- The entrypoint relaxation is intentionally narrow: standalone CLI modules can
+  have low module MI because they remain self-contained, while function-level
+  lizard checks still report actionable complexity. Entrypoint modules below
+  the floor still emit `maintainability_index`.

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -22,6 +23,14 @@ DEFAULT_THRESHOLDS = {
     "max_params": 5,
     "mi_low": 65,
     "mi_medium": 50,
+    "mi_entrypoint_low": 20,
+}
+
+_MAIN_GUARD = re.compile(r"^if __name__ ==", re.M)
+
+
+LAST_ANALYSIS_METADATA = {
+    "entrypoint_mi_relaxed": 0,
 }
 
 
@@ -124,11 +133,16 @@ def _lizard_findings(
     return findings
 
 
-def _radon_mi_findings(
-    root: Path, files: list[Path], thresholds: dict
-) -> list[hc.Finding]:
-    if not files:
-        return []
+def _is_entrypoint(path: Path) -> bool:
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    return bool(_MAIN_GUARD.search(text))
+
+
+def _radon_mi_data(files: list[Path]) -> dict:
+    """Run radon MI and return its JSON payload."""
     cmd = ["radon", "mi", "-j", *[str(p) for p in files]]
     try:
         proc = subprocess.run(
@@ -142,59 +156,96 @@ def _radon_mi_findings(
         raise ToolError(
             f"radon mi failed: {proc.stderr.strip() or proc.stdout.strip()}"
         )
-    data = json.loads(proc.stdout or "{}")
+    return json.loads(proc.stdout or "{}")
+
+
+def _entrypoint_mi_relaxed(path: Path, mi: float, thresholds: dict) -> bool:
+    """Return True when entrypoint module MI is above the configured floor."""
+    relaxed_limit = thresholds.get("mi_entrypoint_low")
+    return (
+        relaxed_limit is not None
+        and mi >= float(relaxed_limit)
+        and _is_entrypoint(path)
+    )
+
+
+def _module_mi_finding(
+    root: Path, path: Path, mi: float, rank: str, thresholds: dict
+) -> hc.Finding:
+    """Build a maintainability_index finding for one module."""
+    rel = path.resolve().relative_to(root.resolve()).as_posix()
+    sev = "medium" if mi < thresholds["mi_medium"] else "low"
+    return hc.Finding(
+        leaf=LEAF,
+        signal="SIMPLIFY",
+        severity=sev,
+        path=rel,
+        line_start=1,
+        line_end=1,
+        symbol="<module>",
+        metric_name="maintainability_index",
+        metric_value=mi,
+        metric_threshold=float(thresholds["mi_low"]),
+        evidence_tool="radon",
+        evidence_raw=f"MI={mi:.1f} rank={rank}",
+        confidence="high",
+        suggested_action=(
+            f"Improve maintainability of {rel} — MI {mi:.1f} below "
+            f"{thresholds['mi_low']}"
+        ),
+    )
+
+
+def _radon_mi_findings(
+    root: Path, files: list[Path], thresholds: dict
+) -> list[hc.Finding]:
+    if not files:
+        return []
+    data = _radon_mi_data(files)
     findings: list[hc.Finding] = []
     for fname, info in data.items():
         if not isinstance(info, dict) or "mi" not in info:
             continue
+        path = Path(fname)
         mi = float(info["mi"])
         if mi >= thresholds["mi_low"]:
             continue
-        sev = "medium" if mi < thresholds["mi_medium"] else "low"
-        rel = Path(fname).resolve().relative_to(root.resolve()).as_posix()
+        if _entrypoint_mi_relaxed(path, mi, thresholds):
+            LAST_ANALYSIS_METADATA["entrypoint_mi_relaxed"] += 1
+            continue
         findings.append(
-            hc.Finding(
-                leaf=LEAF,
-                signal="SIMPLIFY",
-                severity=sev,
-                path=rel,
-                line_start=1,
-                line_end=1,
-                symbol="<module>",
-                metric_name="maintainability_index",
-                metric_value=mi,
-                metric_threshold=float(thresholds["mi_low"]),
-                evidence_tool="radon",
-                evidence_raw=f"MI={mi:.1f} rank={info.get('rank', '?')}",
-                confidence="high",
-                suggested_action=(
-                    f"Improve maintainability of {rel} — MI {mi:.1f} below "
-                    f"{thresholds['mi_low']}"
-                ),
-            )
+            _module_mi_finding(root, path, mi, info.get("rank", "?"), thresholds)
         )
     return findings
 
 
 def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
+    global LAST_ANALYSIS_METADATA
     root = Path(root)
+    LAST_ANALYSIS_METADATA = {"entrypoint_mi_relaxed": 0}
     files = _iter_python_files(root, list(source_prefixes or []))
     findings = _lizard_findings(root, files, thresholds)
     findings += _radon_mi_findings(root, files, thresholds)
     return hc.sort_findings(findings)
 
 
-def render_report(findings: list[hc.Finding]) -> str:
+def render_report(findings: list[hc.Finding], metadata: dict | None = None) -> str:
     lines = ["# complexity-audit report", ""]
+    if metadata is not None:
+        lines.extend(
+            [
+                "## Precision counters",
+                f"- entrypoint_mi_relaxed: {metadata.get('entrypoint_mi_relaxed', 0)}",
+                "",
+            ]
+        )
     if not findings:
         lines.append("No findings.")
         return "\n".join(lines) + "\n"
-    by_signal: dict[str, list[hc.Finding]] = {}
-    for f in findings:
-        by_signal.setdefault(f.signal, []).append(f)
-    for signal in sorted(by_signal):
-        lines.append(f"## {signal} ({len(by_signal[signal])})")
-        for f in by_signal[signal]:
+    for signal in sorted({finding.signal for finding in findings}):
+        group = [finding for finding in findings if finding.signal == signal]
+        lines.append(f"## {signal} ({len(group)})")
+        for f in group:
             lines.append(
                 f"- `{f.path}:{f.line_start}` {f.symbol} — {f.metric_name}="
                 f"{f.metric_value:g} (>{f.metric_threshold:g}) [{f.severity}]"
@@ -261,11 +312,17 @@ def main(argv: list[str] | None = None) -> int:
     except ToolError as exc:
         print(json.dumps({"status": "error", "message": str(exc)}))
         return hc.EXIT_ERROR
+    entrypoint_mi_relaxed = LAST_ANALYSIS_METADATA["entrypoint_mi_relaxed"]
     data = hc.write_findings(findings, args.out_dir, LEAF)
-    Path(args.out_dir, "complexity_report.md").write_text(
-        render_report(findings), encoding="utf-8"
+    report = render_report(
+        findings, {"entrypoint_mi_relaxed": entrypoint_mi_relaxed}
     )
-    print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
+    Path(args.out_dir, "complexity_report.md").write_text(
+        report, encoding="utf-8"
+    )
+    status = {"status": "ok", "findings": len(data), "leaf": LEAF}
+    status["entrypoint_mi_relaxed"] = entrypoint_mi_relaxed
+    print(json.dumps(status))
     return hc.EXIT_FINDINGS if data else hc.EXIT_CLEAN
 
 
