@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "repo_root": "/home/jakub/projects/repo-audit-skills",
+  "started_utc": "2026-06-11T06:22:17Z",
+  "finished_utc": "2026-06-11T08:19:29Z",
+  "orchestrator_skill_version": "0.3.1",
+  "lanes": {
+    "bootstrap": "degraded",
+    "code-health-python": "full",
+    "coverage-python": "full",
+    "hygiene": "full",
+    "orchestration": "manual",
+    "performance": "manual",
+    "security": "full",
+    "test-python": "full"
+  },
+  "findings_totals": {
+    "SECURITY": 64,
+    "DECOMPOSE": 57,
+    "SIMPLIFY": 31,
+    "EXTRACT": 23,
+    "LINT": 18,
+    "RESTRUCTURE": 6,
+    "MERGE": 5,
+    "TEST": 1
+  },
+  "backlog": {
+    "accepted": 33,
+    "deferred": 49,
+    "coverage_gated": 0
+  },
+  "batches": [
+    {
+      "id": "G0-bootstrap",
+      "signal": "bootstrap",
+      "files": [
+        "docs/audits/20260611T062217Z/bootstrap/"
+      ],
+      "result": "accepted",
+      "evidence": "3d0af2d \u2014 bootstrap report: 5 FULL lanes, perf/orch manual, bootstrap degraded"
+    },
+    {
+      "id": "G1-diagnosis",
+      "signal": "diagnosis",
+      "files": [
+        "docs/audits/20260611T062217Z/"
+      ],
+      "result": "accepted",
+      "evidence": "138d068 \u2014 8 lanes: security 64, docs 18, hygiene 0, dependency 0, umbrella ADVISE 108, hotspot 15, coverage pass, test-eff N/A (mutmut tool error)"
+    },
+    {
+      "id": "G2-0-gate_common",
+      "signal": "LINT",
+      "files": [
+        "scripts/gate_common.py",
+        "scripts/check_self_audit.py",
+        "tests/test_gate_common.py"
+      ],
+      "result": "accepted",
+      "evidence": "c14476e \u2014 gate_common verdict library; check_self_audit rewired onto gate_main(GateSpec); check:selfaudit 107==107 (0 new/0 stale); 5 gates green; test_check_self_audit byte-unchanged"
+    },
+    {
+      "id": "G2-1-docs-leaf-fix",
+      "signal": "LINT",
+      "files": [
+        "skills/docs-consistency-audit/scripts/docs_consistency_audit.py",
+        "skills/docs-consistency-audit/tests/test_docs_consistency_out_of_root.py",
+        "skills/docs-consistency-audit/SKILL.md"
+      ],
+      "result": "accepted",
+      "evidence": "769c450 \u2014 _script_for_tokens skips out-of-root tokens (no more ValueError crash); regression test; real-repo unprefixed docs run now completes; 5 gates green"
+    },
+    {
+      "id": "G2-2-check-security",
+      "signal": "SECURITY",
+      "files": [
+        "scripts/check_security_audit.py",
+        "tests/test_check_security.py",
+        "scripts/gate_common.py"
+      ],
+      "result": "accepted",
+      "evidence": "e6bdd30 \u2014 thin gate wrapper, production scope; live vs empty baseline: fail 64; check:selfaudit clean"
+    },
+    {
+      "id": "G2-3-check-hygiene",
+      "signal": "LINT",
+      "files": [
+        "scripts/check_repo_hygiene.py",
+        "tests/test_check_repo_hygiene.py"
+      ],
+      "result": "accepted",
+      "evidence": "c20bedb \u2014 unprefixed full-repo gate; live: pass 0; check:selfaudit clean"
+    },
+    {
+      "id": "G2-4-check-docs",
+      "signal": "LINT",
+      "files": [
+        "scripts/check_docs_consistency.py",
+        "tests/test_check_docs.py"
+      ],
+      "result": "accepted",
+      "evidence": "1496601 \u2014 living-docs scope gate; live: fail 18 doc_path_missing; check:selfaudit clean"
+    },
+    {
+      "id": "G2-5-check-dependency",
+      "signal": "LINT",
+      "files": [
+        "scripts/check_dependency_audit.py",
+        "tests/test_check_dependency.py"
+      ],
+      "result": "accepted",
+      "evidence": "e11d52a \u2014 production scope gate; live: pass 0 (manifest:false); check:selfaudit clean"
+    },
+    {
+      "id": "G2-6-runbooks",
+      "signal": "docs",
+      "files": [
+        "docs/self-audit/security.md",
+        "docs/self-audit/repo-hygiene.md",
+        "docs/self-audit/docs-consistency.md",
+        "docs/self-audit/dependency.md"
+      ],
+      "result": "accepted",
+      "evidence": "b245252 \u2014 4 runbooks cloning coverage-gap.md format"
+    },
+    {
+      "id": "G3-coverage-ratchet",
+      "signal": "TEST",
+      "files": [
+        "scripts/coverage_gap_baseline.json"
+      ],
+      "result": "accepted",
+      "evidence": "3e80276 \u2014 coverage baseline 2->1 (check_self_audit.py covered); check:coverage 1==1"
+    },
+    {
+      "id": "G4-R1-fixes",
+      "signal": "mixed",
+      "files": [
+        "shared/health_common.py + 12 vendored copies",
+        "scripts/check_release.py",
+        "skills/test-quality-assurance/scripts/audit_test_quality.py",
+        "8 SKILL.md + sp7 run report"
+      ],
+      "result": "accepted",
+      "evidence": "dbd5416 \u2014 18 docs refs + 13 hashlib (usedforsecurity=False re-vendored) + 1 tmp + 1 try_except; check:vendored green; check:selfaudit 107==107; security leaf 64->49; docs 18->0"
+    },
+    {
+      "id": "G4-R1-seed-wire",
+      "signal": "SECURITY",
+      "files": [
+        "scripts/security_baseline.json",
+        "scripts/repo_hygiene_baseline.json",
+        "scripts/docs_consistency_baseline.json",
+        "scripts/dependency_baseline.json",
+        "scripts/security_frozen.md",
+        "package.json",
+        ".gitignore",
+        "scripts/check_release.py"
+      ],
+      "result": "accepted",
+      "evidence": "879fbd5 \u2014 seed baselines (security 49 frozen per-finding, hygiene/docs/dependency []); wire 9-gate chain; npm run check = 9 gates green"
+    },
+    {
+      "id": "G4-R2-shrink",
+      "signal": "SECURITY",
+      "files": [
+        "scripts/security_frozen.md"
+      ],
+      "result": "discarded",
+      "evidence": "dc463e5 \u2014 no honest shrink: 2 B105 FPs (rename=schema churn, nosec=suppression), 47 subprocess findings intrinsic; baseline unchanged 49"
+    },
+    {
+      "id": "G4-R3-structural",
+      "signal": "DECOMPOSE",
+      "files": [
+        "scripts/self_audit_frozen.md"
+      ],
+      "result": "discarded",
+      "evidence": "dc463e5 \u2014 no attempt taken: hotspot top-3 are frozen single-file tools; ledger (Phase-1 R2, SP4-R3) shows extraction net-negative; equality gate would discard; baseline 107 unchanged"
+    },
+    {
+      "id": "G4-R4-converge",
+      "signal": "none",
+      "files": [],
+      "result": "accepted",
+      "evidence": "dc463e5 \u2014 convergence declared; all baselines hold at equality; zero unjustified"
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm run check",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m pytest --collect-only -q",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m pytest tests -q",
+      "exit_code": 0
+    }
+  ],
+  "warnings": [
+    "Raw .self_audit_out/coverage/coverage.json (284 KB) NOT committed per C-6; coverage-gap leaf findings + report committed under the run dir instead.",
+    "test-effectiveness lane produced NO kill-rate data: mutmut baseline collection fails on all three top-hotspot files because their owning suites contain subprocess-integration tests (e.g. test_byte_identical_across_runs) incompatible with mutmut's mutants/ sandbox; the leaf also raises an uncaught CalledProcessError (_pipeline.py:74) instead of a clean ToolError. Two SP9-backlog items recorded in G1_diagnosis_summary.md.",
+    "performance and orchestration lanes are manual for repo-A (no benchmark surface; verification-before-completion not mirrored) per the G0 bootstrap probe.",
+    "HEAD started at 15682c6 (the SP8 plan commit, docs-only on top of 14fc35b that the plan's empirical pre-flight pinned); npm run check was green there, so the run proceeded per the goal's pre-flight rule."
+  ]
+}
