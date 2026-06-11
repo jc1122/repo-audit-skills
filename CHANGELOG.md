@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.4 - 2026-06-11
+
+- Split test-redundancy-triage coverage collection and coverage-artifact
+  request handling into focused helpers.
+- Ratcheted the self-audit baseline from 88 to 84 normalized identities.
+- Recorded SP11 iteration 3 convergence evidence for repo-A, repo-B, and
+  repo-P.
+
 ## 0.5.3 - 2026-06-11
 
 - Reduced test-redundancy-triage self-audit complexity/duplication rows through

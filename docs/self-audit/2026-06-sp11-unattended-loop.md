@@ -860,3 +860,129 @@ Post-release reinstall/readback:
   artifacts/sp11/iteration-02/postinstall/repo-a,
   artifacts/sp11/iteration-02/postinstall/repo-b, and
   artifacts/sp11/iteration-02/postinstall/repo-p.
+
+## Iteration 3
+
+### C-0 installed-skill diagnosis
+
+- Installed versions used for this iteration: repo-A leaves 0.5.3,
+  repo-audit-refactor-optimize 0.4.2, perf-benchmark 0.3.1, and
+  perf-optimization 0.2.1.
+- Bootstrap probes for repo-A, repo-B, and repo-P exited 0 with no install
+  candidates, restart_required false, and stop_before_discovery false.
+- Baselines at iteration start: repo-A self-audit 88; repo-B wave 7; repo-P
+  wave 41.
+- C-0 artifacts are under artifacts/sp11/iteration-03/bootstrap and
+  artifacts/sp11/iteration-03/c0-wave.
+
+### B2 repo-A structural batches
+
+Accepted batch 1:
+
+- Worktree: /tmp/sp11-attempt-iter3-repo-a-batch1.
+- Extracted single-test coverage collection in
+  skills/test-redundancy-triage/scripts/triage_redundancy.py behind
+  SingleCoverageRunContext and collect_single_test_coverage_results.
+- Removed one stale duplicate baseline identity in the same commit.
+- Committed on repo-A main as f3d0751
+  (refactor(triage): share single-test coverage collection).
+
+Verification:
+
+- python3 -m pytest skills/test-redundancy-triage/tests -q --color=no
+  -> 208 passed.
+- python3 scripts/check_self_audit.py -> status=pass, count=87, baseline=87.
+- npm run check -> status=pass, selfaudit 87/87, zero security/hygiene/docs/
+  dependency/coverage findings, full-pytest 17/17 suites green.
+
+Accepted batch 2:
+
+- Worktree: /tmp/sp11-attempt-iter3-repo-a-batch2.
+- Grouped coverage artifact inputs behind CoverageArtifactOptions and
+  CoverageArtifactRequest in
+  skills/test-redundancy-triage/scripts/triage_redundancy.py.
+- Updated the focused coverage-artifact test and removed three stale baseline
+  identities in the same commit.
+- Committed on repo-A main as ae6cc02
+  (refactor(triage): group coverage artifact inputs).
+
+Verification:
+
+- python3 -m pytest skills/test-redundancy-triage/tests -q --color=no
+  -> 208 passed.
+- python3 scripts/check_self_audit.py -> status=pass, count=84, baseline=84.
+- npm run check -> status=pass, selfaudit 84/84, zero security/hygiene/docs/
+  dependency/coverage findings, full-pytest 17/17 suites green.
+
+### B3 repo-B structural batch
+
+Accepted batch:
+
+- Worktree: /tmp/sp11-attempt-iter3-repo-b-batch1.
+- Extracted diagnosis-wave finding normalization and collection from
+  scripts/run_diagnosis_wave.py into scripts/_wave_findings.py.
+- Removed the stale scripts/run_diagnosis_wave.py churn-complexity baseline
+  identity and documented the 7 -> 6 ratchet in scripts/wave_frozen.md.
+- Committed on repo-B main as 7d3e7be
+  (refactor(wave): extract finding collection).
+
+Verification:
+
+- python3 scripts/run_diagnosis_wave.py --help -> exit 0.
+- python3 -m pytest tests/test_run_diagnosis_wave.py -q --color=no
+  -> 6 passed.
+- python3 -m pytest -q --color=no -> 106 passed.
+- python3 scripts/check_release.py -> status=pass.
+- WAVE_RUNNER=$PWD/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=6, baseline=6.
+
+### B4 repo-P structural batches
+
+Accepted batch 1:
+
+- Worktree: /tmp/sp11-attempt-iter3-repo-p-batch1.
+- Split wall-time CV collection in scripts/perf_benchmark/scoring.py into
+  private helpers for pytest-benchmark, per-size timings, and flat timings.
+- Removed the stale score_wall_time_stability cyclomatic_complexity identity and
+  documented the 41 -> 40 ratchet in scripts/wave_frozen.md.
+- Committed on repo-P main as 8f9b94e
+  (refactor(scoring): split wall time cv collection).
+
+Accepted batch 2:
+
+- Worktree: /tmp/sp11-attempt-iter3-repo-p-batch2.
+- Split cache metric collection in scripts/perf_benchmark/scoring.py into
+  private helpers for file metrics, summary-derived metrics, and fallback
+  selection.
+- Removed the stale score_cache_dim cyclomatic_complexity identity and
+  documented the 40 -> 39 ratchet in scripts/wave_frozen.md.
+- Committed on repo-P main as ee67e78
+  (refactor(scoring): split cache metric collection).
+
+Verification:
+
+- python3 -m pytest tests/test_pipeline_scoring_reporting.py -q --color=no
+  -> 19 passed for both scoring batches.
+- ruff check scripts/ tests/ perf-optimization/scripts/verify_win.py ->
+  All checks passed.
+- ruff format --check scripts/ tests/ perf-optimization/scripts/verify_win.py
+  -> 17 files already formatted.
+- python3 -m pytest -q --color=no -> 155 passed.
+- WAVE_RUNNER=/home/jakub/.agents/skills/repo-audit-refactor-optimize/scripts/run_diagnosis_wave.py SKILLS_ROOT=/home/jakub/.agents/skills python3 scripts/check_wave_baseline.py
+  -> status=pass, count=39, baseline=39.
+
+### Iteration 3 convergence
+
+- Repo-A convergence run 1: npm run check exited 0 with selfaudit 84/84,
+  zero security/hygiene/docs/dependency/coverage findings, and full-pytest
+  17/17 suites green. Installed wave summary: code-health 61, security 0,
+  hygiene/docs/dependency 0, hotspot 106.
+- Repo-A convergence run 2 matched run 1: npm run check exited 0 with the same
+  gate counts. cmp returned 0 for wave_findings.json and wave_summary.json.
+- Repo-B convergence runs 1 and 2: python3 -m pytest -q --color=no
+  -> 106 passed; wave baseline -> status=pass, count=6, baseline=6. cmp
+  returned 0 for wave_findings.json and wave_summary.json.
+- Repo-P convergence runs 1 and 2: python3 -m pytest -q --color=no
+  -> 155 passed; wave baseline -> status=pass, count=39, baseline=39. cmp
+  returned 0 for wave_findings.json and wave_summary.json.
+- Convergence artifacts are under artifacts/sp11/iteration-03/convergence.
