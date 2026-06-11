@@ -9,7 +9,7 @@
 - Added counted hotspot family policy suppressions for declared coupling pairs
   and explicit single-maintainer repositories while keeping churn-complexity
   findings unsuppressible.
-- Bumped the GitHub Actions workflow runtimes to checkout v5, setup-node v5
+- Bumped the GitHub Actions workflow runtimes to checkout v5, setup-node v6
   with Node 22, and setup-python v6.
 
 ## 0.5.1 - 2026-06-11

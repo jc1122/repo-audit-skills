@@ -360,21 +360,26 @@ Accepted implementation:
 
 - Updated `.github/workflows/check.yml` from `actions/checkout@v4` to
   `actions/checkout@v5`.
-- Updated `actions/setup-node@v4` to `actions/setup-node@v5` and changed
+- Updated `actions/setup-node@v4` to `actions/setup-node@v6` and changed
   `node-version` from `20` to `22`.
 - Updated `actions/setup-python@v5` to `actions/setup-python@v6`.
 - No gate logic changed.
 
 Verification:
 
-- External release-page check before editing confirmed the intended released
-  major versions for checkout, setup-node, and setup-python.
+- External release/tag checks confirmed the released major versions for
+  checkout, setup-node, and setup-python. Initial setup-node readback was
+  corrected from v5 to v6 after verifying `actions/setup-node` latest release
+  `v6.4.0` and tags `v6`/`v6.4.0`.
 - `python3 scripts/check_docs_consistency.py` -> `status=pass`, `count=0`,
   `baseline=0`.
 - `python3 scripts/check_repo_hygiene.py` -> `status=pass`, `count=0`,
   `baseline=0`.
-- Final acceptance is the B1.4 CI run completing with zero deprecation
-  annotations.
+- First pushed CI run `27374250760` on `e6737e6` passed, but logs contained
+  `DEP0040` warnings from `actions/setup-node@v5`; B0.4 acceptance therefore
+  required the setup-node v6 fix-forward before tagging.
+- Final acceptance is the post-fix CI run completing with zero deprecation
+  warnings or annotations.
 
 ### B1.4 iteration-1 release prep
 
