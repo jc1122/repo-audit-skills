@@ -58,7 +58,7 @@ class Finding:
 
     def stable_id(self) -> str:
         key = f"{self.leaf}|{self.path}|{self.symbol}|{self.metric_name}"
-        return hashlib.sha1(key.encode("utf-8")).hexdigest()[:16]
+        return hashlib.sha1(key.encode("utf-8"), usedforsecurity=False).hexdigest()[:16]
 
     def to_dict(self) -> dict[str, Any]:
         return {

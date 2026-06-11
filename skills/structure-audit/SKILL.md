@@ -36,4 +36,4 @@ python3 scripts/structure_audit.py \
 ## Config
 
 `--config` JSON keys: `max_fan_out`, `max_fan_in`, `layers` (ordered top→bottom prefix
-list). See `references/rubric.md`. Findings are deterministic.
+list). See `skills/structure-audit/references/rubric.md`. Findings are deterministic.

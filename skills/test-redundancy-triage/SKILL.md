@@ -37,7 +37,7 @@ Evaluate test redundancy with a conservative, evidence-based workflow. Prefer me
 
 ## Run Workflow
 1. Choose target suite files.
-2. Run bundled script `scripts/triage_redundancy.py`.
+2. Run bundled script `skills/test-redundancy-triage/scripts/triage_redundancy.py`.
 3. Review `validation_decision` for each candidate.
 4. Propose edits only for `DELETE_SAFE_HIGH` first.
 
@@ -133,7 +133,7 @@ Intent is inferred generically from assertion types and test name keywords (`ver
 - `KEEP_FOR_CONTRACT`: keep; removing would leave no test in that file+intent cluster.
 - `KEEP_FOR_STABILITY`: keep; suite fails when deselected.
 
-Detailed scoring and thresholds are in `references/decision-rubric.md`.
+Detailed scoring and thresholds are in `skills/test-redundancy-triage/references/decision-rubric.md`.
 
 ## Concurrency Safety
 Always run candidate checks with isolated caches and without nested xdist:

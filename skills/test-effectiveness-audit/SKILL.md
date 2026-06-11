@@ -83,7 +83,7 @@ invocations run inside a sandbox:
 1. Create `work = <out-dir>/.mutmut-work` (wiped at the start of each run).
 2. Copy each `--paths` entry to `work/<same relpath>`.
 3. Copy `--tests-dir` to `work/<same relpath>`.
-4. Write `work/setup.cfg`:
+4. Write `<work>/setup.cfg`:
    ```
    [mutmut]
    source_paths=<space-separated top-level path entries>

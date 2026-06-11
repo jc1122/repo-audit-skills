@@ -36,5 +36,5 @@ python3 scripts/dead_code_audit.py \
 
 ## Tools
 
-vulture + ruff (F401/F811/F841 only). See `references/rubric.md`. `--allowlist FILE`
+vulture + ruff (F401/F811/F841 only). See `skills/dead-code-audit/references/rubric.md`. `--allowlist FILE`
 suppresses vulture false positives. Findings are deterministic.

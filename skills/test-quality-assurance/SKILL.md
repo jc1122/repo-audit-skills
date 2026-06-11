@@ -78,7 +78,7 @@ For each test (or test cluster), classify as:
 5. Change-indicator/snapshot sentinel
 6. Performance benchmark
 
-Use [`scripts/audit_test_quality.py`](scripts/audit_test_quality.py) for a fast baseline metric pass.
+Use [`skills/test-quality-assurance/scripts/audit_test_quality.py`](scripts/audit_test_quality.py) for a fast baseline metric pass.
 
 ```bash
 SKILLS_DIR="${SKILLS_DIR:-$HOME/.codex/skills}"  # or $HOME/.claude/skills
@@ -96,7 +96,7 @@ Portability notes:
 3. Use `--tests-dir` / `--test-glob` when tests are not in a standard `tests/` layout.
 
 ### 4. Score the Suite with the Rubric
-Evaluate against [`references/rubric.md`](references/rubric.md):
+Evaluate against [`skills/test-quality-assurance/references/rubric.md`](references/rubric.md):
 
 1. Behavior focus
 2. White-box justification
@@ -118,7 +118,7 @@ Avoid deleting change indicators automatically; decide intentionally whether to 
 
 ### 6. Produce Findings and Questions
 Findings must be severity-ordered and evidence-linked.
-Use [`references/question-bank.md`](references/question-bank.md) to expand missing questions.
+Use [`skills/test-quality-assurance/references/question-bank.md`](references/question-bank.md) to expand missing questions.
 
 ### 7. Recommend a Minimal Improvement Plan
 Provide 3-8 concrete actions with expected impact, for example:
@@ -150,10 +150,10 @@ Use this report order unless the user asks otherwise:
 
 ## References
 
-1. [`references/rubric.md`](references/rubric.md): scoring dimensions and thresholds.
-2. [`references/question-bank.md`](references/question-bank.md): guided QA questions.
-3. [`scripts/audit_test_quality.py`](scripts/audit_test_quality.py): quick automated inventory.
-4. [`references/sample-report.md`](references/sample-report.md): example output to calibrate expectations.
+1. [`skills/test-quality-assurance/references/rubric.md`](references/rubric.md): scoring dimensions and thresholds.
+2. [`skills/test-quality-assurance/references/question-bank.md`](references/question-bank.md): guided QA questions.
+3. [`skills/test-quality-assurance/scripts/audit_test_quality.py`](scripts/audit_test_quality.py): quick automated inventory.
+4. [`skills/test-quality-assurance/references/sample-report.md`](references/sample-report.md): example output to calibrate expectations.
 
 ## Known Limitations
 

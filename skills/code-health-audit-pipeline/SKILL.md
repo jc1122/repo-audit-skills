@@ -50,5 +50,5 @@ out-dir/
 - `--config PATH` — JSON gate overrides (`max_type_errors`, `max_high_severity`,
   `gate_on_import_cycle`, `gate_on_leaf_error`).
 
-See `references/prioritization.md`, `references/rule-ownership.md`,
-`references/finding-schema.json`.
+See `skills/code-health-audit-pipeline/references/prioritization.md`, `skills/code-health-audit-pipeline/references/rule-ownership.md`,
+`skills/code-health-audit-pipeline/references/finding-schema.json`.

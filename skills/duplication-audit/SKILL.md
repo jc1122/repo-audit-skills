@@ -34,7 +34,7 @@ python3 scripts/duplication_audit.py \
 
 ## Tools and Thresholds
 
-`jscpd` via `npx`. See `references/rubric.md`. Override with `--config thresholds.json`
+`jscpd` via `npx`. See `skills/duplication-audit/references/rubric.md`. Override with `--config thresholds.json`
 (keys `min_tokens`, `min_lines`).
 
 ## Notes

@@ -8,6 +8,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -137,7 +138,7 @@ def check_installer(defects: list[str]) -> None:
             "bin/install-repo-audit-skills.js",
             "--dry-run",
             "--dest",
-            "/tmp/repo-audit-skills-release-check",
+            str(Path(tempfile.gettempdir()) / "repo-audit-skills-release-check"),
             "--force",
         ],
     ]

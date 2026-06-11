@@ -37,7 +37,7 @@ python3 scripts/complexity_audit.py \
 
 ## Tools and Thresholds
 
-See `references/rubric.md`. Override thresholds with `--config thresholds.json`.
+See `skills/complexity-audit/references/rubric.md`. Override thresholds with `--config thresholds.json`.
 
 ## Notes
 

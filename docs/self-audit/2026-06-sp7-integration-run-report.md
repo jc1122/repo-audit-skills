@@ -64,7 +64,7 @@ A5's own in-branch freeze candidate (its post-bump `health_common.py` differing 
 
 ## One PREFER-FIX (not a freeze)
 
-At INT-6, while documenting the swap, a frozen-log reference to a non-existent path (`scripts/health_common.py`) tripped the newly-registered docs-consistency leaf (`doc_path_missing`, scanning `scripts/self_audit_frozen.md` which is in self-audit scope). **Fixed** by citing an existing example path — no freeze, baseline unchanged. (Lesson recorded: markdown under `scripts/` is in self-audit scope; path tokens there must resolve.)
+At INT-6, while documenting the swap, a frozen-log reference to a non-existent path (scripts/health_common.py) tripped the newly-registered docs-consistency leaf (`doc_path_missing`, scanning `scripts/self_audit_frozen.md` which is in self-audit scope). **Fixed** by citing an existing example path — no freeze, baseline unchanged. (Lesson recorded: markdown under `scripts/` is in self-audit scope; path tokens there must resolve.)
 
 ## Schema bump evidence (INT-6, C-6)
 

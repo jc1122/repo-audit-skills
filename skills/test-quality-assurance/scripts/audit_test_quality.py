@@ -120,7 +120,7 @@ def infer_public_hints(root: Path) -> list[str]:
             tree = ast.parse(
                 init_file.read_text(encoding="utf-8"), filename=str(init_file)
             )
-        except Exception:
+        except (SyntaxError, ValueError, OSError, UnicodeDecodeError):
             continue
 
         for node in tree.body:
