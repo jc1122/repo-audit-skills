@@ -13,3 +13,7 @@ artifacts/
 .self_audit_out/
 scripts/self_audit_snapshot.json
 scripts/coverage_gap_snapshot.json
+scripts/security_snapshot.json
+scripts/repo_hygiene_snapshot.json
+scripts/docs_consistency_snapshot.json
+scripts/dependency_snapshot.json

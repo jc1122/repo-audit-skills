@@ -12,10 +12,13 @@ A finding = a `doc_path_missing` (dead path reference), `doc_flag_unknown` (stal
 flag), or stale version pin in living docs.
 
 **Ratchet discipline and identity coarseness** are the same as the security gate.
-Snapshot `scripts/docs_consistency_snapshot.json` (gitignored), baseline
+Snapshot scripts/docs_consistency_snapshot.json (gitignored), baseline
 `scripts/docs_consistency_baseline.json`.
 
 **Freeze policy.** Deliberately-illustrative references (documenting a file the user's
 repo would have, not this one) may be frozen per-finding; everything else is fixed.
 
-<!-- filled at G4-R1: 18 doc_path_missing pre-seed; fixed vs frozen -->
+**Seeding record (SP8 G4-R1).** Pre-seed 18 `doc_path_missing`. All 18 fixed
+mechanically (16 relative SKILL.md refs rewritten repo-root-relative; one runtime
+placeholder rewritten `<work>/setup.cfg`; one illustrative historical dead path
+un-backticked). 0 frozen. Baseline = []; no frozen log.

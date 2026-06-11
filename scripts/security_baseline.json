@@ -1,0 +1,296 @@
+[
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "scripts/check_coverage_gap.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/check_coverage_gap.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/check_coverage_gap.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/check_coverage_gap.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "scripts/check_release.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/check_release.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "scripts/check_skill_fixtures.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/check_skill_fixtures.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "scripts/gate_common.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/gate_common.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "scripts/self_audit.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "scripts/self_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/complexity-audit/scripts/complexity_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/duplication-audit/scripts/duplication_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B607",
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "symbol": "start_process_with_partial_path"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B607",
+    "path": "skills/hotspot-audit/scripts/_audit_git.py",
+    "symbol": "start_process_with_partial_path"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/quality-audit/scripts/quality_audit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B607",
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "symbol": "start_process_with_partial_path"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B607",
+    "path": "skills/repo-hygiene-audit/scripts/_git_utils.py",
+    "symbol": "start_process_with_partial_path"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/security-audit/scripts/_bandit.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/security-audit/scripts/_bandit.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/test-effectiveness-audit/scripts/_evidence.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/test-effectiveness-audit/scripts/_evidence.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/test-effectiveness-audit/scripts/_evidence.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/test-effectiveness-audit/scripts/_pipeline.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/test-effectiveness-audit/scripts/_pipeline.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/test-effectiveness-audit/scripts/_pipeline.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B105",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "hardcoded_password_string"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B105",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "hardcoded_password_string"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B404",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "blacklist"
+  },
+  {
+    "leaf": "security",
+    "metric": "bandit_B603",
+    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+    "symbol": "subprocess_without_shell_equals_true"
+  }
+]

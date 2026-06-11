@@ -8,11 +8,15 @@
     "install-repo-audit-skills": "./bin/install-repo-audit-skills.js"
   },
   "scripts": {
-    "check": "npm run check:vendored && npm run check:fixtures && npm run check:release && npm run check:selfaudit && npm run check:coverage",
+    "check": "npm run check:vendored && npm run check:fixtures && npm run check:release && npm run check:selfaudit && npm run check:security && npm run check:hygiene && npm run check:docs && npm run check:dependency && npm run check:coverage",
     "check:vendored": "python3 scripts/check_vendored_common.py",
     "check:fixtures": "python3 scripts/check_skill_fixtures.py",
     "check:release": "python3 scripts/check_release.py",
     "check:selfaudit": "python3 scripts/check_self_audit.py",
+    "check:security": "python3 scripts/check_security_audit.py",
+    "check:hygiene": "python3 scripts/check_repo_hygiene.py",
+    "check:docs": "python3 scripts/check_docs_consistency.py",
+    "check:dependency": "python3 scripts/check_dependency_audit.py",
     "check:coverage": "python3 scripts/check_coverage_gap.py",
     "pack:dry-run": "npm pack --dry-run"
   },
@@ -34,7 +38,11 @@
     "!**/.coverage",
     "!**/.coverage.*",
     "!**/self_audit_snapshot.json",
-    "!**/coverage_gap_snapshot.json"
+    "!**/coverage_gap_snapshot.json",
+    "!**/security_snapshot.json",
+    "!**/repo_hygiene_snapshot.json",
+    "!**/docs_consistency_snapshot.json",
+    "!**/dependency_snapshot.json"
   ],
   "repository": {
     "type": "git",

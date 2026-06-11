@@ -95,6 +95,15 @@ def check_package(defects: list[str]) -> str:
         "scripts/self_audit_baseline.json",
         "scripts/check_coverage_gap.py",
         "scripts/coverage_gap_baseline.json",
+        "scripts/gate_common.py",
+        "scripts/check_security_audit.py",
+        "scripts/security_baseline.json",
+        "scripts/check_repo_hygiene.py",
+        "scripts/repo_hygiene_baseline.json",
+        "scripts/check_docs_consistency.py",
+        "scripts/docs_consistency_baseline.json",
+        "scripts/check_dependency_audit.py",
+        "scripts/dependency_baseline.json",
         "shared/health_common.py",
     ]:
         if not (ROOT / path).exists():
