@@ -18,18 +18,6 @@
     "symbol": "decide"
   },
   {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "_run_one"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "run_leaves"
-  },
-  {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",

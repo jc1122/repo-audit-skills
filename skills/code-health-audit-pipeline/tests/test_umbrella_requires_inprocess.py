@@ -94,8 +94,14 @@ def test_run_leaves_passes_coverage_json_to_gated_leaf(tmp_path):
     ]
     out = tmp_path / "out"
     findings, leaf_exit = ch.run_leaves(
-        leaves, root=str(tmp_path), source_prefixes=["pkg/"],
-        out_dir=out, overrides={}, coverage_json=str(cov_path),
+        leaves,
+        ch.LeafRunContext(
+            root=str(tmp_path),
+            source_prefixes=["pkg/"],
+            out_dir=out,
+            overrides={},
+            coverage_json=str(cov_path),
+        ),
     )
     # argv-log leaf ran and emitted findings
     assert "argv-log" in leaf_exit

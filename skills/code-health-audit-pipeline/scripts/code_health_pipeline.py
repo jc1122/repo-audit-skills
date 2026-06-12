@@ -9,6 +9,7 @@ import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import NamedTuple
 
 HERE = Path(__file__).resolve().parent
 SKILLS_ROOT = HERE.parents[
@@ -39,6 +40,14 @@ DEFAULT_GATE = {
 }
 
 TOOL_TIMEOUT = 120
+
+
+class LeafRunContext(NamedTuple):
+    root: str
+    source_prefixes: list[str]
+    out_dir: Path
+    overrides: dict[str, str]
+    coverage_json: str | None = None
 
 
 def _dedupe_key(f: dict) -> tuple:
@@ -160,19 +169,22 @@ def _resolve_script(leaf: dict, overrides: dict[str, str]) -> Path:
 
 def _run_one(
     leaf: dict,
-    root: str,
-    source_prefixes: list[str],
-    out_dir: Path,
-    overrides: dict[str, str],
-    coverage_json: str | None = None,
+    context: LeafRunContext,
 ):
-    script = _resolve_script(leaf, overrides)
-    leaf_out = out_dir / leaf["name"]
-    cmd = [sys.executable, str(script), "--root", root, "--out-dir", str(leaf_out)]
-    for pre in source_prefixes:
+    script = _resolve_script(leaf, context.overrides)
+    leaf_out = context.out_dir / leaf["name"]
+    cmd = [
+        sys.executable,
+        str(script),
+        "--root",
+        context.root,
+        "--out-dir",
+        str(leaf_out),
+    ]
+    for pre in context.source_prefixes:
         cmd += ["--source-prefix", pre]
-    if coverage_json and leaf.get("requires", {}).get("coverage_json"):
-        cmd += ["--coverage-json", coverage_json]
+    if context.coverage_json and leaf.get("requires", {}).get("coverage_json"):
+        cmd += ["--coverage-json", context.coverage_json]
     if not script.exists():
         return leaf["name"], 2, []
     try:
@@ -193,22 +205,16 @@ def _run_one(
 
 def run_leaves(
     leaves: list[dict],
-    root: str,
-    source_prefixes: list[str],
-    out_dir: Path,
-    overrides: dict[str, str],
-    coverage_json: str | None = None,
+    context: LeafRunContext,
 ):
-    out_dir = Path(out_dir)
+    out_dir = Path(context.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     leaf_exit: dict[str, int] = {}
     all_findings: list[dict] = []
     with ThreadPoolExecutor(max_workers=max(1, len(leaves))) as pool:
         results = list(
             pool.map(
-                lambda leaf: _run_one(
-                    leaf, root, source_prefixes, out_dir, overrides, coverage_json
-                ),
+                lambda leaf: _run_one(leaf, context),
                 leaves,
             )
         )
@@ -343,11 +349,13 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(args.out_dir)
     findings, leaf_exit = run_leaves(
         runnable_leaves,
-        args.root,
-        args.source_prefixes,
-        out_dir,
-        overrides,
-        coverage_json,
+        LeafRunContext(
+            root=args.root,
+            source_prefixes=args.source_prefixes,
+            out_dir=out_dir,
+            overrides=overrides,
+            coverage_json=coverage_json,
+        ),
     )
     ranked = rank(merge_and_dedupe(findings))
     decision, code = decide(ranked, leaf_exit, gate)

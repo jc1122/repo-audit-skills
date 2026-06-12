@@ -38,8 +38,12 @@ def test_run_leaves_collects_findings_and_exits(tmp_path):
          "languages": ["python"], "findings_file": "empty_findings.json"},
     ]
     out = tmp_path / "out"
-    findings, leaf_exit = ch.run_leaves(leaves, root=str(tmp_path), source_prefixes=["pkg/"],
-                                        out_dir=out, overrides={})
+    findings, leaf_exit = ch.run_leaves(
+        leaves,
+        ch.LeafRunContext(
+            root=str(tmp_path), source_prefixes=["pkg/"], out_dir=out, overrides={}
+        ),
+    )
     assert leaf_exit == {"stub": 1, "empty": 0}
     assert len(findings) == 1
     assert (out / "stub" / "stub_findings.json").exists()
@@ -50,8 +54,12 @@ def test_errored_leaf_recorded(tmp_path):
     leaves = [{"name": "err", "skill": "err", "script": str(FIXTURES / "error_leaf.py"),
                "languages": ["python"], "findings_file": "err_findings.json"}]
     out = tmp_path / "out"
-    findings, leaf_exit = ch.run_leaves(leaves, root=str(tmp_path), source_prefixes=[],
-                                        out_dir=out, overrides={})
+    findings, leaf_exit = ch.run_leaves(
+        leaves,
+        ch.LeafRunContext(
+            root=str(tmp_path), source_prefixes=[], out_dir=out, overrides={}
+        ),
+    )
     assert leaf_exit == {"err": 2}
     assert findings == []
 
@@ -60,7 +68,14 @@ def test_override_replaces_script(tmp_path):
     leaves = [{"name": "stub", "skill": "stub", "script": "does/not/exist.py",
                "languages": ["python"], "findings_file": "stub_findings.json"}]
     out = tmp_path / "out"
-    findings, leaf_exit = ch.run_leaves(leaves, root=str(tmp_path), source_prefixes=[],
-                                        out_dir=out, overrides={"stub": str(FIXTURES / "stub_leaf.py")})
+    findings, leaf_exit = ch.run_leaves(
+        leaves,
+        ch.LeafRunContext(
+            root=str(tmp_path),
+            source_prefixes=[],
+            out_dir=out,
+            overrides={"stub": str(FIXTURES / "stub_leaf.py")},
+        ),
+    )
     assert leaf_exit == {"stub": 1}
     assert len(findings) == 1
