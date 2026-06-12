@@ -201,18 +201,6 @@
     "leaf": "complexity",
     "metric": "function_nloc",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "collect_node_coverage_runs"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "ensure_coverage_tool"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "main"
   },
   {
@@ -250,12 +238,6 @@
     "metric": "function_nloc",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "write_coverage_artifacts"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "write_mutation_artifacts"
   },
   {
     "leaf": "complexity",

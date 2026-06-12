@@ -735,6 +735,83 @@ def prepend_pythonpath(env: dict[str, str], *prefixes: str) -> dict[str, str]:
     return out
 
 
+def _coverage_unavailable(
+    env: dict[str, str],
+    status_note: str,
+) -> tuple[str, dict[str, str], str, str]:
+    return "", env, "unavailable", status_note
+
+
+def _install_coverage_package(
+    root: Path,
+    target_dir: Path,
+    python_exe: str,
+    env: dict[str, str],
+    timeout: int,
+) -> dict[str, Any]:
+    return run_cmd(
+        [
+            python_exe,
+            "-m",
+            "pip",
+            "install",
+            "--disable-pip-version-check",
+            "--target",
+            str(target_dir),
+            "coverage",
+        ],
+        cwd=root,
+        env=env,
+        timeout=max(300, timeout),
+    )
+
+
+def _bootstrap_coverage_target(
+    root: Path,
+    out_dir: Path,
+    python_exe: str,
+    env: dict[str, str],
+    timeout: int,
+) -> tuple[str, dict[str, str], str, str]:
+    tools_dir = out_dir / "_runtime_tools"
+    target_dir = tools_dir / "coverage_site"
+    tools_dir.mkdir(parents=True, exist_ok=True)
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    coverage_env = prepend_pythonpath(env, str(target_dir))
+    probe_target = run_cmd(
+        [python_exe, "-m", "coverage", "--version"],
+        cwd=root,
+        env=coverage_env,
+        timeout=60,
+    )
+    if probe_target["returncode"] != 0:
+        install = _install_coverage_package(root, target_dir, python_exe, env, timeout)
+        if install["returncode"] != 0:
+            return _coverage_unavailable(
+                env,
+                f"failed to install coverage: {install['output'][:300]}",
+            )
+
+    verify = run_cmd(
+        [python_exe, "-m", "coverage", "--version"],
+        cwd=root,
+        env=coverage_env,
+        timeout=60,
+    )
+    if verify["returncode"] == 0:
+        return (
+            python_exe,
+            coverage_env,
+            "target_bootstrap",
+            "coverage installed in runtime PYTHONPATH target",
+        )
+    return _coverage_unavailable(
+        env,
+        f"coverage verification failed: {verify['output'][:300]}",
+    )
+
+
 def ensure_coverage_tool(
     root: Path,
     out_dir: Path,
@@ -760,62 +837,7 @@ def ensure_coverage_tool(
             "coverage tool available from requested interpreter",
         )
 
-    tools_dir = out_dir / "_runtime_tools"
-    target_dir = tools_dir / "coverage_site"
-    tools_dir.mkdir(parents=True, exist_ok=True)
-    target_dir.mkdir(parents=True, exist_ok=True)
-
-    coverage_env = prepend_pythonpath(env, str(target_dir))
-    probe_target = run_cmd(
-        [python_exe, "-m", "coverage", "--version"],
-        cwd=root,
-        env=coverage_env,
-        timeout=60,
-    )
-    if probe_target["returncode"] != 0:
-        install = run_cmd(
-            [
-                python_exe,
-                "-m",
-                "pip",
-                "install",
-                "--disable-pip-version-check",
-                "--target",
-                str(target_dir),
-                "coverage",
-            ],
-            cwd=root,
-            env=env,
-            timeout=max(300, timeout),
-        )
-        if install["returncode"] != 0:
-            return (
-                "",
-                env,
-                "unavailable",
-                f"failed to install coverage: {install['output'][:300]}",
-            )
-
-    verify = run_cmd(
-        [python_exe, "-m", "coverage", "--version"],
-        cwd=root,
-        env=coverage_env,
-        timeout=60,
-    )
-    if verify["returncode"] == 0:
-        return (
-            python_exe,
-            coverage_env,
-            "target_bootstrap",
-            "coverage installed in runtime PYTHONPATH target",
-        )
-
-    return (
-        "",
-        env,
-        "unavailable",
-        f"coverage verification failed: {verify['output'][:300]}",
-    )
+    return _bootstrap_coverage_target(root, out_dir, python_exe, env, timeout)
 
 
 def run_pytest_coverage(
@@ -1241,39 +1263,11 @@ def write_mutation_artifacts(
     If ranked rows include mutation columns, values are propagated.
     Otherwise rows are emitted with availability flags and an explanatory note.
     """
-    rows: list[dict[str, Any]] = []
-    available = 0
-    for t in tests:
-        ranked = ranked_map.get(t.nodeid, {})
-        has_mut_cols = bool(ranked) and any(
-            k in ranked
-            for k in (
-                "mutants_unique_to_api",
-                "mutants_killed_api",
-                "mutants_killed_non_api",
-            )
-        )
-        if has_mut_cols:
-            available += 1
-            note = "mutation signal loaded from ranked_report.csv"
-        elif ranked_map:
-            note = "ranked report present, but test_nodeid has no mutation row"
-        else:
-            note = "ranked report missing; mutation signal unavailable for this run"
-        rows.append(
-            {
-                "test_nodeid": t.nodeid,
-                "file": t.file,
-                "entrypoint": t.entrypoint,
-                "intent": t.intent,
-                "mutation_signal_available": has_mut_cols,
-                "mutants_killed_primary": ranked.get("mutants_killed_api", ""),
-                "mutants_killed_secondary": ranked.get("mutants_killed_non_api", ""),
-                "mutants_unique_primary": ranked.get("mutants_unique_to_api", ""),
-                "source_ranked_csv": str(ranked_path) if ranked_path else "",
-                "status_note": note,
-            }
-        )
+    rows = [
+        _mutation_artifact_row(test, ranked_map, ranked_path)
+        for test in tests
+    ]
+    available = sum(1 for row in rows if row["mutation_signal_available"])
 
     headers = [
         "test_nodeid",
@@ -1289,7 +1283,52 @@ def write_mutation_artifacts(
     ]
     write_csv(out_dir / "mutation_matrix.csv", rows, headers)
 
-    summary = {
+    summary = _mutation_artifact_summary(tests, available, ranked_path)
+    (out_dir / "mutation_summary.json").write_text(
+        json.dumps(summary, indent=2), encoding="utf-8"
+    )
+
+
+def _mutation_artifact_row(
+    test: TestMeta,
+    ranked_map: dict[str, dict[str, str]],
+    ranked_path: Path | None,
+) -> dict[str, Any]:
+    ranked = ranked_map.get(test.nodeid, {})
+    has_mut_cols = bool(ranked) and any(
+        key in ranked
+        for key in (
+            "mutants_unique_to_api",
+            "mutants_killed_api",
+            "mutants_killed_non_api",
+        )
+    )
+    if has_mut_cols:
+        note = "mutation signal loaded from ranked_report.csv"
+    elif ranked_map:
+        note = "ranked report present, but test_nodeid has no mutation row"
+    else:
+        note = "ranked report missing; mutation signal unavailable for this run"
+    return {
+        "test_nodeid": test.nodeid,
+        "file": test.file,
+        "entrypoint": test.entrypoint,
+        "intent": test.intent,
+        "mutation_signal_available": has_mut_cols,
+        "mutants_killed_primary": ranked.get("mutants_killed_api", ""),
+        "mutants_killed_secondary": ranked.get("mutants_killed_non_api", ""),
+        "mutants_unique_primary": ranked.get("mutants_unique_to_api", ""),
+        "source_ranked_csv": str(ranked_path) if ranked_path else "",
+        "status_note": note,
+    }
+
+
+def _mutation_artifact_summary(
+    tests: list[TestMeta],
+    available: int,
+    ranked_path: Path | None,
+) -> dict[str, Any]:
+    return {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "tests_total": len(tests),
         "with_mutation_signal": available,
@@ -1297,9 +1336,6 @@ def write_mutation_artifacts(
         "ranked_csv_provided": bool(ranked_path),
         "ranked_csv_exists": bool(ranked_path and ranked_path.exists()),
     }
-    (out_dir / "mutation_summary.json").write_text(
-        json.dumps(summary, indent=2), encoding="utf-8"
-    )
 
 
 def as_bool(val: Any) -> bool:
@@ -1345,13 +1381,9 @@ def collect_node_coverage_runs(
     options: CoverageArtifactOptions,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     if not nodeids:
-        return {}, {
-            "mode": "not_needed",
-            "status_note": "all nodeids already had coverage token sets",
-            "tests_total": 0,
-            "passed_or_skipped": 0,
-            "failed": 0,
-        }
+        return {}, _node_coverage_summary(
+            "not_needed", "all nodeids already had coverage token sets", (0, 0, 0)
+        )
 
     coverage_python, coverage_env, coverage_mode, coverage_note = ensure_coverage_tool(
         root,
@@ -1361,14 +1393,12 @@ def collect_node_coverage_runs(
         options.timeout,
     )
     if not coverage_python:
-        return {}, {
-            "mode": "unavailable",
-            "status_note": coverage_note,
-            "tests_total": len(nodeids),
-            "passed_or_skipped": 0,
-            "failed": len(nodeids),
-            "coverage_python": "",
-        }
+        return {}, _node_coverage_summary(
+            "unavailable",
+            coverage_note,
+            (len(nodeids), 0, len(nodeids)),
+            coverage_python="",
+        )
 
     with tempfile.TemporaryDirectory(prefix="triage_branch_cov_") as td:
         tmp_dir = Path(td)
@@ -1385,15 +1415,33 @@ def collect_node_coverage_runs(
     passed_or_skipped = sum(
         1 for r in results if r.get("status") in {"passed", "skipped"}
     )
-    summary = {
-        "mode": coverage_mode,
-        "status_note": coverage_note,
-        "tests_total": len(nodeids),
-        "passed_or_skipped": passed_or_skipped,
-        "failed": len(nodeids) - passed_or_skipped,
-        "coverage_python": coverage_python,
-    }
+    summary = _node_coverage_summary(
+        coverage_mode,
+        coverage_note,
+        (len(nodeids), passed_or_skipped, len(nodeids) - passed_or_skipped),
+        coverage_python=coverage_python,
+    )
     return {r["test_nodeid"]: r for r in results}, summary
+
+
+def _node_coverage_summary(
+    mode: str,
+    status_note: str,
+    counts: tuple[int, int, int],
+    *,
+    coverage_python: str | None = None,
+) -> dict[str, Any]:
+    tests_total, passed_or_skipped, failed = counts
+    summary = {
+        "mode": mode,
+        "status_note": status_note,
+        "tests_total": tests_total,
+        "passed_or_skipped": passed_or_skipped,
+        "failed": failed,
+    }
+    if coverage_python is not None:
+        summary["coverage_python"] = coverage_python
+    return summary
 
 
 def write_branch_equiv_artifacts(
