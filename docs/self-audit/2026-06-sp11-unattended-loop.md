@@ -1939,3 +1939,111 @@ Iteration 8 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline `32`, consisting of 25 code-health rows and 7 real
   hotspot churn rows.
+
+## Iteration 9
+
+### Iteration 9 C-0 installed readback and diagnosis
+
+- Installed readback started from repo-A source
+  `84e83ca17226b8e0792163ed14bdb2c4e07bb329`, repo-B source
+  `f6ace4b6290089c15108f90028e637c202bef755`, and repo-P source
+  `83bd5fe59279477a85cc7cb8000c4ffeb7bb1cd8`.
+- Installed versions were all 16 repo-A leaves at `0.5.9`,
+  repo-audit-refactor-optimize at `0.4.3`, perf-benchmark at `0.3.7`, and
+  perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P with
+  `restart_required=false` and `stop_before_discovery=false`.
+- C-0 installed diagnosis counts:
+  - Repo-A: code-health `48`, security/hygiene/docs/dependency `0`, hotspot
+    `188`.
+  - Repo-B: code-health `3`, security/hygiene/docs/dependency `0`, hotspot
+    `4`.
+  - Repo-P: code-health `25`, security/hygiene/docs/dependency `0`, hotspot
+    `7`.
+- C-0 artifacts are under `artifacts/sp11/iteration-09/c0` and
+  `artifacts/sp11/iteration-09/c0-wave`.
+
+### Iteration 9 accepted batches
+
+Repo-A:
+
+- Split test-quality-assurance delta comparison logic into focused totals,
+  ratios, classification, and rubric helpers while preserving the public
+  `compute_delta()` report shape.
+- Focused tests passed: `python3 -m pytest skills/test-quality-assurance/tests
+  -q --color=no` -> 80 passed.
+- Selfaudit ratcheted from `70/70` to `68/68`.
+- Full `npm run check` passed: release, selfaudit, security, hygiene, docs,
+  dependency, coverage `0/0`, and full-pytest `17/17`.
+- Installed validation wave shrank repo-A code-health from `48` to `46`;
+  hotspot remained `188`.
+- Accepted commit:
+  `12e36f67a18f29e0208da5c4a0f287105940f3f2`
+  (`refactor(test-quality): split delta comparisons`).
+
+Repo-B:
+
+- No accepted source change. The installed wave still reports the same three
+  low-MI module findings and four hotspot rows, with no bounded shrink-safe
+  batch found in this visit.
+
+Repo-P:
+
+- No accepted source change. A bounded repo-P benchmark-pipeline split attempt
+  reduced one function-length row but introduced a new module maintainability
+  finding and format drift, so it was discarded rather than ratcheted.
+
+### Iteration 9 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `68/68`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched byte-for-byte across run 1 and
+  run 2. Summary: code-health `46`, security/hygiene/docs/dependency `0`,
+  hotspot `188`.
+- Convergence artifacts are under `artifacts/sp11/iteration-09/convergence`.
+
+### Iteration 9 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.10` at
+  `7195cb21dcdcf8f696fff235367ec6a7d9c8edc9`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulations before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `68/68`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-09/fresh-clone/repo-a-release`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27401531872` completed success for
+  `7195cb21dcdcf8f696fff235367ec6a7d9c8edc9`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-09/ci/repo-a-release`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.10
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.10`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.7`;
+  both nested and top-level perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Report
+  readback for all three repos: `summary.restart_required=false` and
+  `summary.stop_before_discovery=false`.
+- Postinstall artifact roots are under `artifacts/sp11/iteration-09/postinstall`.
+
+Iteration 9 closing baseline counts:
+
+- Repo-A: selfaudit `68`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline remains `32`, consisting of 25 code-health rows and 7
+  real hotspot churn rows.
