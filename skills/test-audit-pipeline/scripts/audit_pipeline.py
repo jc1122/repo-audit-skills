@@ -36,6 +36,7 @@ DEFAULT_TQA_SCRIPT = (
 DEFAULT_TRIAGE_SCRIPT = (
     SKILLS_DIR / "test-redundancy-triage" / "scripts" / "triage_redundancy.py"
 )
+StageReportStatus = dict[str, bool]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -336,37 +337,7 @@ def build_summary(
     return summary
 
 
-def stage_report(
-    *,
-    out_dir: Path,
-    root: Path,
-    stages_run: list[str],
-    tqa_ok: bool,
-    triage_ok: bool,
-    coverage_ok: bool,
-    skip_triage: bool,
-    skip_coverage: bool,
-    tqa_json_path: Path,
-    cov_json_path: Path,
-    triage_dir: Path,
-    parallel_stages: list[str],
-) -> bool:
-    """Generate unified pipeline_report.md and pipeline_summary.json."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-    tqa_data = _read_json(tqa_json_path) or {}
-    cov_summary = _extract_coverage_summary(cov_json_path) if not skip_coverage else {}
-    triage_summary = _extract_triage_summary(triage_dir) if not skip_triage else {}
-
-    # --- Markdown report ---
-    lines: list[str] = []
-    lines.append("# Test Audit Pipeline Report")
-    lines.append("")
-    lines.append(f"**Generated**: {now}")
-    lines.append(f"**Root**: `{root}`")
-    lines.append(f"**Stages run**: {', '.join(stages_run)}")
-    lines.append("")
-
-    # Parallelism section
+def _append_parallelism_section(lines: list[str], parallel_stages: list[str]) -> None:
     lines.append("## Parallelism Opportunities")
     lines.append("")
     if parallel_stages:
@@ -386,7 +357,10 @@ def stage_report(
     )
     lines.append("")
 
-    # TQA section
+
+def _append_tqa_section(
+    lines: list[str], tqa_ok: bool, tqa_data: dict[str, Any]
+) -> None:
     lines.append("## TQA Quality Scores")
     lines.append("")
     if not tqa_ok:
@@ -408,7 +382,13 @@ def stage_report(
         lines.append("*TQA report not found.*")
     lines.append("")
 
-    # Coverage section
+
+def _append_coverage_section(
+    lines: list[str],
+    skip_coverage: bool,
+    coverage_ok: bool,
+    cov_summary: dict[str, Any],
+) -> None:
     lines.append("## Coverage Summary")
     lines.append("")
     if skip_coverage:
@@ -433,7 +413,13 @@ def stage_report(
         lines.append("*No coverage data available.*")
     lines.append("")
 
-    # Triage section
+
+def _append_triage_section(
+    lines: list[str],
+    skip_triage: bool,
+    triage_ok: bool,
+    triage_summary: dict[str, Any],
+) -> None:
     lines.append("## Redundancy Triage Decisions")
     lines.append("")
     if skip_triage:
@@ -447,7 +433,6 @@ def stage_report(
         for dec, count in sorted(decisions.items()):
             lines.append(f"| {dec} | {count} |")
         lines.append("")
-        # List delete/merge candidates
         actionable = [
             c
             for c in triage_summary.get("candidates", [])
@@ -462,11 +447,9 @@ def stage_report(
         lines.append("*No triage decisions found.*")
     lines.append("")
 
-    # Action items
-    lines.append("## Action Items")
-    lines.append("")
+
+def _triage_action_items(triage_summary: dict[str, Any]) -> list[str]:
     action_items: list[str] = []
-    # From triage
     if triage_summary.get("decisions"):
         n_delete = sum(
             v for k, v in triage_summary["decisions"].items() if "DELETE" in k
@@ -478,7 +461,11 @@ def stage_report(
             action_items.append(
                 f"Review and consolidate {n_merge} merge-candidate test(s)"
             )
-    # From TQA
+    return action_items
+
+
+def _tqa_action_items(tqa_data: dict[str, Any]) -> list[str]:
+    action_items: list[str] = []
     if tqa_data:
         findings = tqa_data.get("findings", tqa_data.get("action_items", []))
         if isinstance(findings, list):
@@ -487,6 +474,21 @@ def stage_report(
                     action_items.append(f.get("description", f.get("text", str(f))))
                 elif isinstance(f, str):
                     action_items.append(f)
+    return action_items
+
+
+def _report_action_items(
+    tqa_data: dict[str, Any], triage_summary: dict[str, Any]
+) -> list[str]:
+    return _triage_action_items(triage_summary) + _tqa_action_items(tqa_data)
+
+
+def _append_action_items_section(
+    lines: list[str], tqa_data: dict[str, Any], triage_summary: dict[str, Any]
+) -> None:
+    lines.append("## Action Items")
+    lines.append("")
+    action_items = _report_action_items(tqa_data, triage_summary)
     if action_items:
         for i, item in enumerate(action_items, 1):
             lines.append(f"{i}. {item}")
@@ -494,34 +496,128 @@ def stage_report(
         lines.append("*No action items generated.*")
     lines.append("")
 
-    # Stage status
+
+def _append_stage_status_section(
+    lines: list[str],
+    status: StageReportStatus,
+) -> None:
     lines.append("## Stage Status")
     lines.append("")
     lines.append("| Stage | Status |")
     lines.append("|-------|--------|")
-    if not skip_coverage:
-        lines.append(f"| Coverage | {'✓ OK' if coverage_ok else '✗ FAILED'} |")
-    lines.append(f"| TQA Audit | {'✓ OK' if tqa_ok else '✗ FAILED'} |")
-    if not skip_triage:
-        lines.append(f"| Triage | {'✓ OK' if triage_ok else '✗ FAILED'} |")
+    if not status["skip_coverage"]:
+        coverage_status = "✓ OK" if status["coverage_ok"] else "✗ FAILED"
+        lines.append(f"| Coverage | {coverage_status} |")
+    lines.append(f"| TQA Audit | {'✓ OK' if status['tqa_ok'] else '✗ FAILED'} |")
+    if not status["skip_triage"]:
+        lines.append(f"| Triage | {'✓ OK' if status['triage_ok'] else '✗ FAILED'} |")
     lines.append("")
 
+
+def _make_stage_report_status(
+    tqa_ok: bool,
+    triage_ok: bool,
+    coverage_ok: bool,
+    skip_triage: bool,
+    skip_coverage: bool,
+) -> StageReportStatus:
+    return {
+        "tqa_ok": tqa_ok,
+        "triage_ok": triage_ok,
+        "coverage_ok": coverage_ok,
+        "skip_triage": skip_triage,
+        "skip_coverage": skip_coverage,
+    }
+
+
+def _stage_status_dict(status: StageReportStatus) -> dict[str, str]:
+    return {
+        "coverage": (
+            "ok"
+            if status["coverage_ok"]
+            else ("skipped" if status["skip_coverage"] else "failed")
+        ),
+        "tqa": "ok" if status["tqa_ok"] else "failed",
+        "triage": (
+            "ok"
+            if status["triage_ok"]
+            else ("skipped" if status["skip_triage"] else "failed")
+        ),
+    }
+
+
+def _stage_report_header(now: str, root: Path, stages_run: list[str]) -> list[str]:
+    return [
+        "# Test Audit Pipeline Report",
+        "",
+        f"**Generated**: {now}",
+        f"**Root**: `{root}`",
+        f"**Stages run**: {', '.join(stages_run)}",
+        "",
+    ]
+
+
+def _load_stage_report_inputs(
+    skip_coverage: bool,
+    skip_triage: bool,
+    tqa_json_path: Path,
+    cov_json_path: Path,
+    triage_dir: Path,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    tqa_data = _read_json(tqa_json_path) or {}
+    cov_summary = _extract_coverage_summary(cov_json_path) if not skip_coverage else {}
+    triage_summary = _extract_triage_summary(triage_dir) if not skip_triage else {}
+    return tqa_data, cov_summary, triage_summary
+
+
+def _write_report_markdown(out_dir: Path, lines: list[str]) -> None:
     report_md = out_dir / "pipeline_report.md"
     report_md.write_text("\n".join(lines))
     _log(f"  → Wrote {report_md}")
 
+
+def stage_report(
+    *,
+    out_dir: Path,
+    root: Path,
+    stages_run: list[str],
+    tqa_ok: bool,
+    triage_ok: bool,
+    coverage_ok: bool,
+    skip_triage: bool,
+    skip_coverage: bool,
+    tqa_json_path: Path,
+    cov_json_path: Path,
+    triage_dir: Path,
+    parallel_stages: list[str],
+) -> bool:
+    """Generate unified pipeline_report.md and pipeline_summary.json."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    status = _make_stage_report_status(
+        tqa_ok, triage_ok, coverage_ok, skip_triage, skip_coverage
+    )
+    tqa_data, cov_summary, triage_summary = _load_stage_report_inputs(
+        skip_coverage, skip_triage, tqa_json_path, cov_json_path, triage_dir
+    )
+
+    # --- Markdown report ---
+    lines = _stage_report_header(now, root, stages_run)
+    _append_parallelism_section(lines, parallel_stages)
+    _append_tqa_section(lines, tqa_ok, tqa_data)
+    _append_coverage_section(lines, skip_coverage, coverage_ok, cov_summary)
+    _append_triage_section(lines, skip_triage, triage_ok, triage_summary)
+    _append_action_items_section(lines, tqa_data, triage_summary)
+    _append_stage_status_section(lines, status)
+
+    _write_report_markdown(out_dir, lines)
+
     # --- JSON summary ---
-    stage_status_dict = {
-        "coverage": "ok" if coverage_ok else ("skipped" if skip_coverage else "failed"),
-        "tqa": "ok" if tqa_ok else "failed",
-        "triage": "ok" if triage_ok else ("skipped" if skip_triage else "failed"),
-    }
     summary = build_summary(
         {},  # stage_results — reserved for future extensibility
         [],  # findings — reserved for future extensibility
         root=str(root),
         stages_run=stages_run,
-        stage_status=stage_status_dict,
+        stage_status=_stage_status_dict(status),
         parallel_stages=parallel_stages,
         cov_summary=cov_summary,
         tqa_data=tqa_data,

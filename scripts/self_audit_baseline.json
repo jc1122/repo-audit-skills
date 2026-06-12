@@ -211,12 +211,6 @@
   },
   {
     "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "stage_report"
-  },
-  {
-    "leaf": "complexity",
     "metric": "function_nloc",
     "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
     "symbol": "main"
@@ -226,12 +220,6 @@
     "metric": "function_nloc",
     "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
     "symbol": "parse_args"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "stage_report"
   },
   {
     "leaf": "complexity",
