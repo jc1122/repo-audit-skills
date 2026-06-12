@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.12 - 2026-06-12
+
+- Split test-quality-assurance rubric scoring and summary aggregation into
+  focused helpers while preserving JSON and Markdown output contracts.
+- Ratcheted the self-audit baseline from 64 to 61 normalized identities.
+
 ## 0.5.11 - 2026-06-12
 
 - Split test-quality-assurance Markdown rendering and CLI report assembly into
