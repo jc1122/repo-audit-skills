@@ -199,12 +199,6 @@
   },
   {
     "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "summarize"
-  },
-  {
-    "leaf": "complexity",
     "metric": "maintainability_index",
     "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
     "symbol": "<module>"

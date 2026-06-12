@@ -291,9 +291,11 @@ def collect_test_files(
     return sorted(files)
 
 
-def summarize(file_metrics: list[FileMetrics]) -> dict[str, Any]:
+def _marker_and_classification_counts(
+    file_metrics: list[FileMetrics],
+) -> tuple[Counter[str], Counter[str]]:
     marker_totals: Counter[str] = Counter()
-    classifications = Counter()
+    classifications: Counter[str] = Counter()
 
     for m in file_metrics:
         marker_totals.update(m.markers or {})
@@ -301,38 +303,61 @@ def summarize(file_metrics: list[FileMetrics]) -> dict[str, Any]:
         for key, value in c.items():
             if value:
                 classifications[key] += 1
+    return marker_totals, classifications
 
-    total_private = sum(m.private_method_calls for m in file_metrics)
-    total_public = sum(m.public_call_hints for m in file_metrics)
-    total_raises = sum(m.raises_total for m in file_metrics)
-    raises_match = sum(m.raises_with_match for m in file_metrics)
-    broad_tuple_raises = sum(m.raises_broad_tuple for m in file_metrics)
+
+def _summary_totals(file_metrics: list[FileMetrics]) -> dict[str, int]:
+    totals = {
+        "files": len(file_metrics),
+        "test_functions": 0,
+        "private_method_calls": 0,
+        "public_call_hints": 0,
+        "internal_imports": 0,
+        "raises_total": 0,
+        "raises_with_match": 0,
+        "raises_broad_tuple": 0,
+        "hypothesis_given_calls": 0,
+        "expected_literal_count": 0,
+        "exact_eq_assert_count": 0,
+    }
+    for m in file_metrics:
+        totals["test_functions"] += m.test_functions
+        totals["private_method_calls"] += m.private_method_calls
+        totals["public_call_hints"] += m.public_call_hints
+        totals["internal_imports"] += m.internal_imports
+        totals["raises_total"] += m.raises_total
+        totals["raises_with_match"] += m.raises_with_match
+        totals["raises_broad_tuple"] += m.raises_broad_tuple
+        totals["hypothesis_given_calls"] += m.given_count
+        totals["expected_literal_count"] += m.expected_literal_count
+        totals["exact_eq_assert_count"] += m.exact_eq_assert_count
+    return totals
+
+
+def _summary_ratios(totals: dict[str, int]) -> dict[str, float]:
+    total_private = totals["private_method_calls"]
+    total_public = totals["public_call_hints"]
+    total_raises = totals["raises_total"]
+    raises_match = totals["raises_with_match"]
+    broad_tuple_raises = totals["raises_broad_tuple"]
+    return {
+        "private_to_public_call_ratio": round(
+            total_private / max(total_public, 1), 3
+        ),
+        "raises_with_match_ratio": round(raises_match / max(total_raises, 1), 3),
+        "broad_tuple_raises_ratio": round(
+            broad_tuple_raises / max(total_raises, 1), 3
+        ),
+    }
+
+
+def summarize(file_metrics: list[FileMetrics]) -> dict[str, Any]:
+    marker_totals, classifications = _marker_and_classification_counts(file_metrics)
+    totals = _summary_totals(file_metrics)
 
     return {
-        "totals": {
-            "files": len(file_metrics),
-            "test_functions": sum(m.test_functions for m in file_metrics),
-            "private_method_calls": total_private,
-            "public_call_hints": total_public,
-            "internal_imports": sum(m.internal_imports for m in file_metrics),
-            "raises_total": total_raises,
-            "raises_with_match": raises_match,
-            "raises_broad_tuple": broad_tuple_raises,
-            "hypothesis_given_calls": sum(m.given_count for m in file_metrics),
-            "expected_literal_count": sum(
-                m.expected_literal_count for m in file_metrics
-            ),
-            "exact_eq_assert_count": sum(m.exact_eq_assert_count for m in file_metrics),
-        },
-        "ratios": {
-            "private_to_public_call_ratio": round(
-                total_private / max(total_public, 1), 3
-            ),
-            "raises_with_match_ratio": round(raises_match / max(total_raises, 1), 3),
-            "broad_tuple_raises_ratio": round(
-                broad_tuple_raises / max(total_raises, 1), 3
-            ),
-        },
+        "totals": totals,
+        "ratios": _summary_ratios(totals),
         "classification_counts": dict(classifications),
         "markers": dict(marker_totals),
     }
