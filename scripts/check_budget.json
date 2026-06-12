@@ -1,0 +1,12 @@
+{
+  "vendored": 10,
+  "fixtures": 15,
+  "release": 10,
+  "selfaudit": 20,
+  "security": 15,
+  "hygiene": 10,
+  "docs": 10,
+  "dependency": 10,
+  "coverage": 120,
+  "pytest": 120
+}

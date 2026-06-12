@@ -8,7 +8,7 @@
     "install-repo-audit-skills": "./bin/install-repo-audit-skills.js"
   },
   "scripts": {
-    "check": "npm run check:vendored && npm run check:fixtures && npm run check:release && npm run check:selfaudit && npm run check:security && npm run check:hygiene && npm run check:docs && npm run check:dependency && npm run check:coverage && npm run check:pytest",
+    "check": "python3 scripts/run_checks.py",
     "check:vendored": "python3 scripts/check_vendored_common.py",
     "check:fixtures": "python3 scripts/check_skill_fixtures.py",
     "check:release": "python3 scripts/check_release.py",
