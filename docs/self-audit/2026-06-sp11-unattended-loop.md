@@ -2337,3 +2337,140 @@ Iteration 11 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
   real hotspot churn rows.
+
+## Iteration 12
+
+### Iteration 12 C-0 installed readback and diagnosis
+
+- Source/readback at iteration start:
+  - Repo-A source `0e156ec9f2c61cba47cf50184ca062bf9f0daf65`, with
+    installed repo-A leaves still at release source
+    `dc8d842e632ac6bcf79468a9fc662907173cc401`.
+  - Repo-B source `f6ace4b6290089c15108f90028e637c202bef755`.
+  - Repo-P source `95ab00fadbca55b637fc84e27ce978c4691bb9f6`.
+- Installed versions: all 16 repo-A leaves `0.5.12`;
+  repo-audit-refactor-optimize `0.4.3`; perf-benchmark `0.3.8`;
+  perf-optimization `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P with
+  `restart_required=false` and `stop_before_discovery=false`. Artifact root:
+  `artifacts/sp11/iteration-12/c0`.
+- C-0 wave summaries:
+  - Repo-A: code-health `39`, security/hygiene/docs/dependency `0`,
+    hotspot `201`.
+  - Repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+    hotspot `4`.
+  - Repo-P: code-health `24`, security/hygiene/docs/dependency `0`,
+    hotspot `7`.
+- C-0 wave artifacts are under `artifacts/sp11/iteration-12/c0-wave`.
+
+### Iteration 12 accepted batches
+
+Repo-A:
+
+- Split `infer_public_hints` into initializer discovery, parse, and public-name
+  extraction helpers while preserving inferred hints and dirty-fixture output.
+- Split dead-code-audit ruff execution, JSON parsing, and finding construction
+  out of `_ruff_findings` while preserving dead-code dirty-fixture output.
+- Focused verification passed:
+  - `python3 -m pytest skills/test-quality-assurance/tests -q --color=no` ->
+    80 passed.
+  - `python3 -m pytest skills/dead-code-audit/tests -q --color=no` -> 12
+    passed.
+- Fixed dirty-fixture outputs were byte-identical before and after both
+  batches. Artifact roots:
+  - `artifacts/sp11/iteration-12/prechange/repo-a-test-quality-infer-public-hints`
+  - `artifacts/sp11/iteration-12/postchange/repo-a-test-quality-infer-public-hints`
+  - `artifacts/sp11/iteration-12/prechange/repo-a-dead-code-ruff-findings`
+  - `artifacts/sp11/iteration-12/postchange/repo-a-dead-code-ruff-findings`
+- `npm run check` passed after both batches. The final run reported selfaudit
+  `58/58`, security/hygiene/docs/dependency/coverage `0/0`, and full-pytest
+  `17/17`.
+- Installed validation waves shrank repo-A code-health from `39` to `36`;
+  hotspot remained `201`.
+- Removed identities relative to C-0:
+  - `infer_public_hints` `cyclomatic_complexity`
+  - `_ruff_findings` `cyclomatic_complexity`
+  - `_ruff_findings` `function_nloc`
+- No new validation-wave identities appeared. The dead-code batch also
+  rebaselined one line-pinned duplicate_tokens identity in the same commit:
+  `skills/quality-audit/scripts/quality_audit.py#03765eb179e5` was replaced
+  by `skills/quality-audit/scripts/quality_audit.py#55b17679bf57`; selfaudit
+  count still shrank from `60` to `58` for that batch.
+- Accepted commits:
+  - `253aaa8713fb09bbf7304c1ef688c5050cf249e2`
+    (`refactor(tqa): split public hint inference`).
+  - `06b03c2317ade7ef047868ecf59ce634003bcab3`
+    (`refactor(dead-code): split ruff finding parsing`).
+
+Repo-B:
+
+- No accepted source change. The remaining three code-health rows and four
+  hotspot rows are unchanged.
+
+Repo-P:
+
+- No accepted source change. The remaining 24 code-health rows and seven
+  hotspot rows are unchanged.
+
+### Iteration 12 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `58/58`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched with zero identity deltas across
+  run 1 and run 2. Summary: code-health `36`,
+  security/hygiene/docs/dependency `0`, hotspot `201`.
+- Relative to C-0, the final convergence wave removed three identities and
+  added none. Diff artifact:
+  `artifacts/sp11/iteration-12/convergence/c0-to-run2.removed.tsv`.
+- Convergence artifacts are under `artifacts/sp11/iteration-12/convergence`.
+
+### Iteration 12 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.13` at
+  `65646d77e36cd57bc0cbf61a8cc5ff4bd727c20b`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulation before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `58/58`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-12/fresh-clone/repo-a-v0.5.13`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27413001193` completed success for
+  `65646d77e36cd57bc0cbf61a8cc5ff4bd727c20b`. Log scan found one generic
+  `git init` default-branch hint from checkout, and no runtime deprecation
+  annotations. Log artifact:
+  `artifacts/sp11/iteration-12/ci/repo-a-v0.5.13`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.13
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.13`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.8`;
+  perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Probe
+  stdout for all three repos reported `restart_required=false` and
+  `stop_before_discovery=false`.
+- Postinstall artifact roots are under
+  `artifacts/sp11/iteration-12/postinstall/repo-a-v0.5.13`.
+- Repo-A re-anchor wave at
+  `65646d77e36cd57bc0cbf61a8cc5ff4bd727c20b` reported code-health `36`,
+  security/hygiene/docs/dependency `0`, hotspot `201`.
+
+Iteration 12 closing baseline counts:
+
+- Repo-A: selfaudit `58`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`; current installed wave code-health `36`, hotspot `201`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
+  real hotspot churn rows.
