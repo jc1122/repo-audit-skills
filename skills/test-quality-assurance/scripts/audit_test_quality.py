@@ -536,62 +536,57 @@ def score_rubric(
     }
 
 
-def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
-    """Compare current report against a baseline and produce delta information."""
+def _count_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
     delta: dict[str, Any] = {}
-
-    # Compare totals
-    cur_totals = current.get("summary", {}).get("totals", {})
-    base_totals = baseline.get("summary", {}).get("totals", {})
-    totals_delta: dict[str, Any] = {}
-    for key in cur_totals:
-        cur_val = cur_totals.get(key, 0)
-        base_val = base_totals.get(key, 0)
+    all_keys = sorted(set(current) | set(baseline))
+    for key in all_keys:
+        cur_val = current.get(key, 0)
+        base_val = baseline.get(key, 0)
         if cur_val != base_val:
-            totals_delta[key] = {
+            delta[key] = {
                 "before": base_val,
                 "after": cur_val,
                 "change": cur_val - base_val,
             }
-    delta["totals"] = totals_delta
+    return delta
 
-    # Compare ratios
+
+def _totals_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
+    cur_totals = current.get("summary", {}).get("totals", {})
+    base_totals = baseline.get("summary", {}).get("totals", {})
+    return _count_delta(cur_totals, base_totals)
+
+
+def _ratios_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
     cur_ratios = current.get("summary", {}).get("ratios", {})
     base_ratios = baseline.get("summary", {}).get("ratios", {})
-    ratios_delta: dict[str, Any] = {}
+    delta: dict[str, Any] = {}
     for key in cur_ratios:
         cur_val = cur_ratios.get(key, 0)
         base_val = base_ratios.get(key, 0)
         if cur_val != base_val:
-            ratios_delta[key] = {"before": base_val, "after": cur_val}
-    delta["ratios"] = ratios_delta
+            delta[key] = {"before": base_val, "after": cur_val}
+    return delta
 
-    # Compare classification counts
+
+def _classification_delta(
+    current: dict[str, Any], baseline: dict[str, Any]
+) -> dict[str, Any]:
     cur_classes = current.get("summary", {}).get("classification_counts", {})
     base_classes = baseline.get("summary", {}).get("classification_counts", {})
-    class_delta: dict[str, Any] = {}
-    all_keys = sorted(set(cur_classes) | set(base_classes))
-    for key in all_keys:
-        cur_val = cur_classes.get(key, 0)
-        base_val = base_classes.get(key, 0)
-        if cur_val != base_val:
-            class_delta[key] = {
-                "before": base_val,
-                "after": cur_val,
-                "change": cur_val - base_val,
-            }
-    delta["classification_counts"] = class_delta
+    return _count_delta(cur_classes, base_classes)
 
-    # Compare rubric scores if both have them
+
+def _rubric_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
     cur_rubric = current.get("rubric_scores", {})
     base_rubric = baseline.get("rubric_scores", {})
-    rubric_delta: dict[str, Any] = {}
+    delta: dict[str, Any] = {}
     for key in cur_rubric:
         if key in ("total", "max_total"):
             cur_v = cur_rubric.get(key)
             base_v = base_rubric.get(key)
             if cur_v != base_v:
-                rubric_delta[key] = {
+                delta[key] = {
                     "before": base_v if base_v is not None else "N/A",
                     "after": cur_v,
                 }
@@ -599,12 +594,21 @@ def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str
         cur_score = cur_rubric.get(key, {}).get("score")
         base_score = base_rubric.get(key, {}).get("score")
         if cur_score is not None and base_score is not None and cur_score != base_score:
-            rubric_delta[key] = {
+            delta[key] = {
                 "before": base_score,
                 "after": cur_score,
                 "change": cur_score - base_score,
             }
-    delta["rubric_scores"] = rubric_delta
+    return delta
+
+
+def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str, Any]:
+    """Compare current report against a baseline and produce delta information."""
+    delta: dict[str, Any] = {}
+    delta["totals"] = _totals_delta(current, baseline)
+    delta["ratios"] = _ratios_delta(current, baseline)
+    delta["classification_counts"] = _classification_delta(current, baseline)
+    delta["rubric_scores"] = _rubric_delta(current, baseline)
 
     return delta
 
