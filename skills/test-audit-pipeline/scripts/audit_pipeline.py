@@ -637,79 +637,93 @@ def stage_report(
 # ---------------------------------------------------------------------------
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments."""
-    p = argparse.ArgumentParser(
-        description="Unified test-audit pipeline: coverage → TQA + triage → report",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    p.add_argument("--root", required=True, type=Path, help="Repository root path")
-    p.add_argument("--python", default=sys.executable, help="Python interpreter to use")
-    p.add_argument(
+def _add_suite_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
         "--suite", action="append", default=[], help="Test suite file/dir (repeatable)"
     )
-    p.add_argument(
+    parser.add_argument(
         "--comparator-suite",
         action="append",
         default=[],
         help="Comparator suite (repeatable)",
     )
-    p.add_argument(
+    parser.add_argument(
         "--source-prefix",
         default=None,
         help="Source prefix for coverage (e.g. src/pkg/)",
     )
-    p.add_argument(
+    parser.add_argument(
         "--internal-import-pattern",
         action="append",
         default=[],
         help="Regex for internal imports (TQA)",
     )
-    p.add_argument(
+    parser.add_argument(
         "--public-hint",
         action="append",
         default=[],
         help="Public API hint string (TQA)",
     )
-    p.add_argument(
+
+
+def _add_execution_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
         "--out-dir", required=True, type=Path, help="Output directory for all reports"
     )
-    p.add_argument(
+    parser.add_argument(
         "--env",
         action="append",
         default=[],
         help="Environment variable KEY=VALUE (repeatable)",
     )
-    p.add_argument(
+    parser.add_argument(
         "--tqa-baseline", default=None, help="Path to previous TQA JSON for comparison"
     )
-    p.add_argument(
+    parser.add_argument(
         "--skip-triage", action="store_true", help="Skip redundancy triage stage"
     )
-    p.add_argument(
+    parser.add_argument(
         "--skip-coverage", action="store_true", help="Skip coverage collection stage"
     )
-    p.add_argument(
+    parser.add_argument(
         "--test-marker",
         default="not benchmark and not slow",
         help="Pytest marker expression for coverage",
     )
-    p.add_argument(
+    parser.add_argument(
         "--max-workers", type=int, default=4, help="Max workers for triage parallelism"
     )
-    p.add_argument(
+    parser.add_argument(
         "--tqa-script",
         type=Path,
         default=None,
         help="Override path to audit_test_quality.py",
     )
-    p.add_argument(
+    parser.add_argument(
         "--triage-script",
         type=Path,
         default=None,
         help="Override path to triage_redundancy.py",
     )
-    return p.parse_args(argv)
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Unified test-audit pipeline: coverage → TQA + triage → report",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--root", required=True, type=Path, help="Repository root path")
+    parser.add_argument(
+        "--python", default=sys.executable, help="Python interpreter to use"
+    )
+    _add_suite_args(parser)
+    _add_execution_args(parser)
+    return parser
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse command-line arguments."""
+    return _build_parser().parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:

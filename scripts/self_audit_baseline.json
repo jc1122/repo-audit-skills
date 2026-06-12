@@ -217,12 +217,6 @@
   },
   {
     "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "parse_args"
-  },
-  {
-    "leaf": "complexity",
     "metric": "parameter_count",
     "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
     "symbol": "build_summary"
