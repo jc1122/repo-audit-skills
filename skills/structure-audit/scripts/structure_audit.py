@@ -11,6 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
+from _scc import strongly_connected_components as _strongly_connected_components  # noqa: E402
 
 LEAF = "structure"
 
@@ -108,54 +109,6 @@ def build_graph(root: Path, files: list[Path]):
             if dst and dst != src:
                 edges[src].add(dst)
     return module_file, {m: sorted(s) for m, s in edges.items()}
-
-
-def _strongly_connected_components(nodes, edges):
-    index_counter = [0]
-    stack: list[str] = []
-    index: dict[str, int] = {}
-    lowlink: dict[str, int] = {}
-    on_stack: dict[str, bool] = {}
-    result: list[list[str]] = []
-    for root_node in nodes:
-        if root_node in index:
-            continue
-        work = [(root_node, 0)]
-        while work:
-            node, pi = work[-1]
-            if pi == 0:
-                index[node] = index_counter[0]
-                lowlink[node] = index_counter[0]
-                index_counter[0] += 1
-                stack.append(node)
-                on_stack[node] = True
-            recurse = False
-            succs = edges.get(node, [])
-            for i in range(pi, len(succs)):
-                w = succs[i]
-                if w not in index:
-                    work[-1] = (node, i + 1)
-                    work.append((w, 0))
-                    recurse = True
-                    break
-                if on_stack.get(w):
-                    lowlink[node] = min(lowlink[node], index[w])
-            if recurse:
-                continue
-            if lowlink[node] == index[node]:
-                comp = []
-                while True:
-                    w = stack.pop()
-                    on_stack[w] = False
-                    comp.append(w)
-                    if w == node:
-                        break
-                result.append(sorted(comp))
-            work.pop()
-            if work:
-                parent = work[-1][0]
-                lowlink[parent] = min(lowlink[parent], lowlink[node])
-    return result
 
 
 def _layer_of(module: str, layers: list[str]) -> int | None:

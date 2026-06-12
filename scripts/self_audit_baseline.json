@@ -153,12 +153,6 @@
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
     "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "_strongly_connected_components"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
     "symbol": "analyze_tree"
   },
   {
