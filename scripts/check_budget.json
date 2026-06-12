@@ -7,6 +7,6 @@
   "hygiene": 10,
   "docs": 10,
   "dependency": 10,
-  "coverage": 120,
-  "pytest": 120
+  "coverage": 270,
+  "pytest": 260
 }
