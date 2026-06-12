@@ -152,18 +152,6 @@
   {
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "analyze_tree"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/structure-audit/scripts/structure_audit.py",
-    "symbol": "analyze_tree"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
     "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
     "symbol": "main"
   },

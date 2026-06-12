@@ -26,6 +26,9 @@ class ToolError(RuntimeError):
     pass
 
 
+_FanFindingSpec = tuple[str, int, str, str, str]
+
+
 def _iter_python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
     files = sorted(p for p in root.rglob("*.py") if p.is_file())
     if not source_prefixes:
@@ -121,6 +124,167 @@ def _layer_of(module: str, layers: list[str]) -> int | None:
     return best_idx
 
 
+def _cycle_findings(
+    module_file: dict[str, str],
+    edges: dict[str, list[str]],
+    nodes: list[str],
+) -> list[hc.Finding]:
+    findings: list[hc.Finding] = []
+    for comp in _strongly_connected_components(nodes, edges):
+        is_cycle = len(comp) > 1 or (
+            len(comp) == 1 and comp[0] in edges.get(comp[0], [])
+        )
+        if is_cycle:
+            findings.append(_cycle_finding(module_file, sorted(comp)))
+    return findings
+
+
+def _cycle_finding(module_file: dict[str, str], members: list[str]) -> hc.Finding:
+    first = members[0]
+    return hc.Finding(
+        leaf=LEAF,
+        signal="RESTRUCTURE",
+        severity="high",
+        path=module_file[first],
+        line_start=1,
+        line_end=1,
+        symbol="cycle:" + "|".join(members),
+        metric_name="import_cycle_size",
+        metric_value=float(len(members)),
+        metric_threshold=1.0,
+        evidence_tool="ast",
+        evidence_raw="import cycle: " + " -> ".join(members),
+        confidence="high",
+        suggested_action="Break the import cycle among: " + ", ".join(members),
+    )
+
+
+def _fan_findings(
+    module_file: dict[str, str],
+    edges: dict[str, list[str]],
+    nodes: list[str],
+    thresholds: dict,
+) -> list[hc.Finding]:
+    in_degree = {m: 0 for m in nodes}
+    for src in nodes:
+        for dst in edges.get(src, []):
+            in_degree[dst] = in_degree.get(dst, 0) + 1
+
+    findings: list[hc.Finding] = []
+    for module in nodes:
+        out_deg = len(edges.get(module, []))
+        if out_deg > thresholds["max_fan_out"]:
+            findings.append(_fan_out_finding(module_file, module, out_deg, thresholds))
+        if in_degree.get(module, 0) > thresholds["max_fan_in"]:
+            findings.append(
+                _fan_in_finding(module_file, module, in_degree[module], thresholds)
+            )
+    return findings
+
+
+def _fan_out_finding(
+    module_file: dict[str, str], module: str, out_deg: int, thresholds: dict
+) -> hc.Finding:
+    return _fan_finding(
+        module_file,
+        module,
+        thresholds,
+        (
+            "fan_out",
+            out_deg,
+            "max_fan_out",
+            f"{module} imports {out_deg} internal modules",
+            f"Reduce coupling: {module} imports {out_deg} modules",
+        ),
+    )
+
+
+def _fan_in_finding(
+    module_file: dict[str, str], module: str, in_deg: int, thresholds: dict
+) -> hc.Finding:
+    return _fan_finding(
+        module_file,
+        module,
+        thresholds,
+        (
+            "fan_in",
+            in_deg,
+            "max_fan_in",
+            f"{module} is imported by {in_deg} modules",
+            f"Split god-module: {module} is imported by {in_deg} modules",
+        ),
+    )
+
+
+def _fan_finding(
+    module_file: dict[str, str],
+    module: str,
+    thresholds: dict,
+    spec: _FanFindingSpec,
+) -> hc.Finding:
+    metric_name, value, threshold_key, evidence_raw, suggested_action = spec
+    return hc.Finding(
+        leaf=LEAF,
+        signal="RESTRUCTURE",
+        severity="medium",
+        path=module_file[module],
+        line_start=1,
+        line_end=1,
+        symbol=module,
+        metric_name=metric_name,
+        metric_value=float(value),
+        metric_threshold=float(thresholds[threshold_key]),
+        evidence_tool="ast",
+        evidence_raw=evidence_raw,
+        confidence="high",
+        suggested_action=suggested_action,
+    )
+
+
+def _layer_findings(
+    module_file: dict[str, str],
+    edges: dict[str, list[str]],
+    nodes: list[str],
+    layers: list[str],
+) -> list[hc.Finding]:
+    findings: list[hc.Finding] = []
+    for src in nodes:
+        src_layer = _layer_of(src, layers)
+        if src_layer is None:
+            continue
+        for dst in edges.get(src, []):
+            dst_layer = _layer_of(dst, layers)
+            if dst_layer is None or src_layer <= dst_layer:
+                continue
+            findings.append(
+                _layer_violation_finding(
+                    module_file, src, dst, src_layer, dst_layer
+                )
+            )
+    return findings
+
+
+def _layer_violation_finding(
+    module_file: dict[str, str], src: str, dst: str, src_layer: int, dst_layer: int
+) -> hc.Finding:
+    return hc.Finding(
+        leaf=LEAF,
+        signal="RESTRUCTURE",
+        severity="high",
+        path=module_file[src],
+        line_start=1,
+        line_end=1,
+        symbol=f"{src}->{dst}",
+        metric_name="layer_violation",
+        metric_value=float(src_layer - dst_layer),
+        metric_threshold=0.0,
+        evidence_tool="ast",
+        evidence_raw=f"{src} (layer {src_layer}) imports {dst} (layer {dst_layer})",
+        confidence="high",
+        suggested_action=f"Layering violation: {src} must not import {dst}",
+    )
+
+
 def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
     root = Path(root)
     files = _iter_python_files(root, list(source_prefixes or []))
@@ -129,119 +293,11 @@ def analyze_tree(root, source_prefixes, thresholds) -> list[hc.Finding]:
     module_file, edges = build_graph(root, files)
     nodes = sorted(module_file)
     findings: list[hc.Finding] = []
-
-    # Cycles
-    for comp in _strongly_connected_components(nodes, edges):
-        is_cycle = len(comp) > 1 or (
-            len(comp) == 1 and comp[0] in edges.get(comp[0], [])
-        )
-        if not is_cycle:
-            continue
-        members = sorted(comp)
-        first = members[0]
-        findings.append(
-            hc.Finding(
-                leaf=LEAF,
-                signal="RESTRUCTURE",
-                severity="high",
-                path=module_file[first],
-                line_start=1,
-                line_end=1,
-                symbol="cycle:" + "|".join(members),
-                metric_name="import_cycle_size",
-                metric_value=float(len(members)),
-                metric_threshold=1.0,
-                evidence_tool="ast",
-                evidence_raw="import cycle: " + " -> ".join(members),
-                confidence="high",
-                suggested_action="Break the import cycle among: " + ", ".join(members),
-            )
-        )
-
-    # Fan-in / fan-out
-    in_degree = {m: 0 for m in nodes}
-    for src in nodes:
-        for dst in edges.get(src, []):
-            in_degree[dst] = in_degree.get(dst, 0) + 1
-    for m in nodes:
-        out_deg = len(edges.get(m, []))
-        if out_deg > thresholds["max_fan_out"]:
-            findings.append(
-                hc.Finding(
-                    leaf=LEAF,
-                    signal="RESTRUCTURE",
-                    severity="medium",
-                    path=module_file[m],
-                    line_start=1,
-                    line_end=1,
-                    symbol=m,
-                    metric_name="fan_out",
-                    metric_value=float(out_deg),
-                    metric_threshold=float(thresholds["max_fan_out"]),
-                    evidence_tool="ast",
-                    evidence_raw=f"{m} imports {out_deg} internal modules",
-                    confidence="high",
-                    suggested_action=f"Reduce coupling: {m} imports {out_deg} modules",
-                )
-            )
-        if in_degree.get(m, 0) > thresholds["max_fan_in"]:
-            findings.append(
-                hc.Finding(
-                    leaf=LEAF,
-                    signal="RESTRUCTURE",
-                    severity="medium",
-                    path=module_file[m],
-                    line_start=1,
-                    line_end=1,
-                    symbol=m,
-                    metric_name="fan_in",
-                    metric_value=float(in_degree[m]),
-                    metric_threshold=float(thresholds["max_fan_in"]),
-                    evidence_tool="ast",
-                    evidence_raw=f"{m} is imported by {in_degree[m]} modules",
-                    confidence="high",
-                    suggested_action=(
-                        f"Split god-module: {m} is imported by {in_degree[m]} modules"
-                    ),
-                )
-            )
-
-    # Layering
+    findings.extend(_cycle_findings(module_file, edges, nodes))
+    findings.extend(_fan_findings(module_file, edges, nodes, thresholds))
     layers = thresholds.get("layers") or []
     if layers:
-        for src in nodes:
-            src_layer = _layer_of(src, layers)
-            if src_layer is None:
-                continue
-            for dst in edges.get(src, []):
-                dst_layer = _layer_of(dst, layers)
-                if dst_layer is None:
-                    continue
-                if src_layer > dst_layer:  # lower layer importing higher layer
-                    findings.append(
-                        hc.Finding(
-                            leaf=LEAF,
-                            signal="RESTRUCTURE",
-                            severity="high",
-                            path=module_file[src],
-                            line_start=1,
-                            line_end=1,
-                            symbol=f"{src}->{dst}",
-                            metric_name="layer_violation",
-                            metric_value=float(src_layer - dst_layer),
-                            metric_threshold=0.0,
-                            evidence_tool="ast",
-                            evidence_raw=(
-                                f"{src} (layer {src_layer}) imports "
-                                f"{dst} (layer {dst_layer})"
-                            ),
-                            confidence="high",
-                            suggested_action=(
-                                f"Layering violation: {src} must not import {dst}"
-                            ),
-                        )
-                    )
-
+        findings.extend(_layer_findings(module_file, edges, nodes, layers))
     return hc.sort_findings(findings)
 
 
