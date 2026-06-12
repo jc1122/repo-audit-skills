@@ -1,0 +1,121 @@
+[
+  {
+    "suite": "skills/code-health-audit-pipeline/tests",
+    "returncode": 0,
+    "tail": [
+      "34 passed in 6.41s"
+    ]
+  },
+  {
+    "suite": "skills/complexity-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "13 passed in 2.83s"
+    ]
+  },
+  {
+    "suite": "skills/coverage-gap-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "13 passed in 1.45s"
+    ]
+  },
+  {
+    "suite": "skills/dead-code-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "12 passed in 2.78s"
+    ]
+  },
+  {
+    "suite": "skills/dependency-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "47 passed in 0.52s"
+    ]
+  },
+  {
+    "suite": "skills/docs-consistency-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "36 passed in 0.87s"
+    ]
+  },
+  {
+    "suite": "skills/duplication-audit/tests",
+    "returncode": 1,
+    "tail": [
+      "6 failed, 2 passed in 1.47s"
+    ]
+  },
+  {
+    "suite": "skills/hotspot-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "38 passed in 4.08s"
+    ]
+  },
+  {
+    "suite": "skills/quality-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "15 passed in 12.86s"
+    ]
+  },
+  {
+    "suite": "skills/repo-hygiene-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "18 passed in 0.88s"
+    ]
+  },
+  {
+    "suite": "skills/security-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "15 passed in 3.39s"
+    ]
+  },
+  {
+    "suite": "skills/structure-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "19 passed in 1.26s"
+    ]
+  },
+  {
+    "suite": "skills/test-audit-pipeline/tests",
+    "returncode": 0,
+    "tail": [
+      "60 passed in 1.00s"
+    ]
+  },
+  {
+    "suite": "skills/test-effectiveness-audit/tests",
+    "returncode": 0,
+    "tail": [
+      "49 passed in 5.95s"
+    ]
+  },
+  {
+    "suite": "skills/test-quality-assurance/tests",
+    "returncode": 0,
+    "tail": [
+      "80 passed in 1.97s"
+    ]
+  },
+  {
+    "suite": "skills/test-redundancy-triage/tests",
+    "returncode": 0,
+    "tail": [
+      "208 passed in 107.49s (0:01:47)"
+    ]
+  },
+  {
+    "suite": "tests",
+    "returncode": 0,
+    "tail": [
+      "63 passed in 4.72s"
+    ]
+  }
+]

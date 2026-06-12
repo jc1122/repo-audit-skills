@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import os
 import sys
 from pathlib import Path
@@ -28,89 +29,66 @@ def test_suite_dirs_discovers_root_and_skill_tests(tmp_path, monkeypatch):
     ]
 
 
-def test_run_suite_executes_in_isolated_cwd(tmp_path):
+def test_run_suite_executes_and_returns_structured_result(tmp_path, monkeypatch):
+    """run_suite runs pytest in the suite parent cwd and returns expected dict."""
     mod = _load()
+    monkeypatch.setattr(mod, "ROOT", tmp_path)
+
     suite = tmp_path / "tests"
     suite.mkdir()
     (suite / "test_ok.py").write_text(
-        "from pathlib import Path\n\n"
-        "def test_cwd_is_suite_parent():\n"
-        "    assert Path.cwd().name == 'suite-root'\n",
+        "def test_passes():\n    assert True\n",
         encoding="utf-8",
     )
-    cwd = tmp_path / "suite-root"
-    cwd.mkdir()
-    suite.rename(cwd / "tests")
 
-    class Queue:
-        def __init__(self):
-            self.items = []
-
-        def put(self, item):
-            self.items.append(item)
-
-    queue = Queue()
-    old_cwd = os.getcwd()
-    old_path = list(sys.path)
-    try:
-        mod._run_suite(str(cwd / "tests"), str(cwd), queue)
-    finally:
-        os.chdir(old_cwd)
-        sys.path[:] = old_path
-
-    code, stdout, stderr = queue.items[0]
-    assert code == 0
-    assert "1 passed" in stdout
-    assert stderr == ""
+    result = mod.run_suite(suite)
+    assert result["suite"] == "tests"
+    assert result["returncode"] == 0
+    assert "1 passed" in " ".join(result["tail"])
 
 
 def test_main_writes_snapshot_and_reports_failures(tmp_path, monkeypatch, capsys):
     mod = _load()
-    suites = [tmp_path / "tests", tmp_path / "skills" / "broken" / "tests"]
-    for suite in suites:
-        suite.mkdir(parents=True)
     monkeypatch.setattr(mod, "ROOT", tmp_path)
-    monkeypatch.setattr(mod, "SNAPSHOT", tmp_path / "full_pytest_snapshot.json")
-    monkeypatch.setattr(mod, "suite_dirs", lambda: suites)
+    snapshot_path = tmp_path / "full_pytest_snapshot.json"
+    monkeypatch.setattr(mod, "SNAPSHOT", snapshot_path)
 
-    class FakeQueue:
-        def __init__(self):
-            self.item = None
+    recorded = [
+        {"suite": "skills/broken/tests", "returncode": 1, "tail": ["2 failed"]},
+        {"suite": "tests", "returncode": 0, "tail": ["1 passed"]},
+    ]
 
-        def put(self, item):
-            self.item = item
+    def fake_suite_dirs():
+        return [tmp_path / "tests", tmp_path / "skills" / "broken" / "tests"]
 
-        def get(self):
-            return self.item
+    def fake_run_suite(suite):
+        rel = str(suite.relative_to(tmp_path))
+        for r in recorded:
+            if r["suite"] == rel:
+                return r
+        return {"suite": rel, "returncode": 1, "tail": ["unknown"]}
 
-        def empty(self):
-            return self.item is None
-
-    class FakeProcess:
-        def __init__(self, target, args):
-            self.args = args
-            self.exitcode = None
-
-        def start(self):
-            suite = self.args[0]
-            queue = self.args[2]
-            if "broken" in suite:
-                queue.put((1, "FAILED\n2 failed\n", ""))
-            else:
-                queue.put((0, "1 passed\n", ""))
-            self.exitcode = 0
-
-        def join(self):
-            return None
-
-    class FakeContext:
-        Queue = FakeQueue
-        Process = FakeProcess
-
-    monkeypatch.setattr(mod.multiprocessing, "get_context", lambda name: FakeContext)
+    monkeypatch.setattr(mod, "suite_dirs", fake_suite_dirs)
+    monkeypatch.setattr(mod, "run_suite", fake_run_suite)
 
     assert mod.main() == 1
     out = capsys.readouterr().out
     assert "full-pytest: 1/2 suites green" in out
     assert "FAIL skills/broken/tests" in out
-    assert "2 failed" in mod.SNAPSHOT.read_text(encoding="utf-8")
+    assert "2 failed" in snapshot_path.read_text(encoding="utf-8")
+
+    # Verify snapshot order is sorted (broken < tests alphabetically)
+    written = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    assert [r["suite"] for r in written] == ["skills/broken/tests", "tests"]
+
+
+def test_snapshot_order_is_sorted_not_completion_order(tmp_path, monkeypatch):
+    """Results must be ordered by suite path so reruns are byte-identical."""
+    import scripts.check_full_pytest as gate
+
+    recorded = [
+        {"suite": "skills/b/tests", "returncode": 0, "tail": ["1 passed"]},
+        {"suite": "skills/a/tests", "returncode": 0, "tail": ["1 passed"]},
+    ]
+    ordered = gate.sort_results(recorded)
+    assert [r["suite"] for r in ordered] == ["skills/a/tests", "skills/b/tests"]
