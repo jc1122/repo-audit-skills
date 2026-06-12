@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.5 - 2026-06-12
+
+- Split test-audit-pipeline report rendering and parser construction into
+  focused helpers.
+- Ratcheted the self-audit baseline from 84 to 81 normalized identities.
+- Recorded SP11 iteration 4 convergence evidence for repo-A and repo-P.
+
 ## 0.5.4 - 2026-06-11
 
 - Split test-redundancy-triage coverage collection and coverage-artifact

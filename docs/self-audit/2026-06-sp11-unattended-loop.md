@@ -1050,3 +1050,113 @@ Post-release reinstall/readback:
   artifacts/sp11/iteration-03/postinstall/repo-a,
   artifacts/sp11/iteration-03/postinstall/repo-b, and
   artifacts/sp11/iteration-03/postinstall/repo-p.
+
+## Iteration 4
+
+### C-0 installed-skill diagnosis
+
+- Installed versions used for this iteration: repo-A leaves `0.5.4`,
+  repo-audit-refactor-optimize `0.4.3`, perf-benchmark `0.3.2`, and
+  perf-optimization `0.2.1`.
+- Source SHAs at iteration start: repo-A `0a4a42c`, repo-B `f6ace4b`,
+  repo-P `87c052b`.
+- Bootstrap probes for repo-A, repo-B, and repo-P exited 0 with
+  `restart_required=false` and `stop_before_discovery=false`.
+- C-0 wave summaries:
+  - repo-A: code-health `61`, security/hygiene/docs/dependency `0`,
+    hotspot `128`.
+  - repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+    hotspot `4` for baseline `7`.
+  - repo-P: code-health `35`, security/hygiene/docs/dependency `0`,
+    hotspot `4` for baseline `39`.
+- C-0 artifacts are under `artifacts/sp11/iteration-04/c0` and
+  `artifacts/sp11/iteration-04/c0-wave`.
+
+### B2 repo-A structural batches
+
+Accepted batch 1:
+
+- Worktree: `/tmp/sp11-attempt-iter4-repo-a-batch1`.
+- Split `stage_report` in
+  `skills/test-audit-pipeline/scripts/audit_pipeline.py` into focused Markdown
+  section helpers while preserving the report text.
+- Removed stale `stage_report` `cyclomatic_complexity` and `function_nloc`
+  identities from `scripts/self_audit_baseline.json`.
+- Committed on repo-A main as `ad82306`
+  (`refactor(test-audit): split stage report rendering`).
+
+Accepted batch 2:
+
+- Worktree: `/tmp/sp11-attempt-iter4-repo-a-batch2`.
+- Split `parse_args` parser construction in
+  `skills/test-audit-pipeline/scripts/audit_pipeline.py` into argument-group
+  helpers while preserving CLI options.
+- Removed the stale `parse_args` `function_nloc` identity from
+  `scripts/self_audit_baseline.json`.
+- Committed on repo-A main as `279c979`
+  (`refactor(test-audit): split parser construction`).
+
+Verification:
+
+- Focused `python3 -m pytest skills/test-audit-pipeline/tests -q --color=no`
+  passed after both batches.
+- Repo-A `npm run check` passed after both batches; final source count is
+  selfaudit `81/81`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17` suites green.
+
+### B3 repo-B structural visit
+
+- Attempted worktree: `/tmp/sp11-attempt-iter4-repo-b-batch1`.
+- Tried splitting `_skill_probe.py` skill scanning into separate helper
+  modules. The attempt grew complexity findings from 3 to 5 by relocating
+  maintainability-index rows into new modules.
+- Per C-3/C-4 the attempt was discarded and no repo-B source change was
+  accepted.
+- Repo-B verification after discard: `python3 -m pytest -q --color=no`
+  -> 106 passed; `python3 scripts/check_wave_baseline.py` -> status pass,
+  count `7`, baseline `7`.
+
+### B4 repo-P structural batches
+
+Accepted batch 1:
+
+- Worktree: `/tmp/sp11-attempt-iter4-repo-p-batch1`.
+- Split repo-P `write_markdown_report` into focused section renderers.
+- Removed stale `write_markdown_report` `cyclomatic_complexity` and
+  `function_nloc` identities, ratcheting repo-P wave baseline `39 -> 37`.
+- Committed on repo-P main as `24c36d4`
+  (`refactor(reporting): split markdown report sections`).
+
+Accepted batch 2:
+
+- Worktree: `/tmp/sp11-attempt-iter4-repo-p-batch2`.
+- Split repo-P `write_json_summary` into helpers for base payload, wall-time
+  percentiles, memory peaks, and perf record summaries.
+- Removed stale `write_json_summary` `cyclomatic_complexity` and
+  `function_nloc` identities, ratcheting repo-P wave baseline `37 -> 35`.
+- Committed on repo-P main as `ff8ba11`
+  (`refactor(reporting): split json summary assembly`).
+
+Verification:
+
+- Focused `python3 -m pytest tests/test_pipeline_scoring_reporting.py -q
+  --color=no` passed after both batches.
+- Final repo-P source checks: `/home/jakub/.local/bin/ruff check . --config
+  pyproject.toml`, `/home/jakub/.local/bin/ruff format --check . --config
+  pyproject.toml`, `python3 -m pytest -q --color=no`, and
+  `python3 scripts/check_wave_baseline.py` all passed. Final wave baseline is
+  `35/35`.
+
+### Iteration 4 convergence
+
+- Repo-A convergence run 1: `npm run check` exited 0 with selfaudit `81/81`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`
+  suites green. Installed wave summary: code-health `58`, security `0`,
+  hygiene/docs/dependency `0`, hotspot `129`.
+- Repo-A convergence run 2 matched run 1; `cmp` returned 0 for
+  `wave_findings.json` and `wave_summary.json`.
+- Repo-P convergence runs 1 and 2: ruff check/format passed, `python3 -m
+  pytest -q --color=no` -> 155 passed, and wave baseline -> status pass,
+  count `35`, baseline `35`. `cmp` returned 0 for `wave_findings.json` and
+  `wave_summary.json`.
+- Convergence artifacts are under `artifacts/sp11/iteration-04/convergence`.
