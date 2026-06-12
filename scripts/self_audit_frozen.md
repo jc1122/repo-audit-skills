@@ -198,9 +198,8 @@ suites expanded 8 → 11. The two justified freezes (`self_audit.py`,
 - `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: complexity/parameter_count :: stage_triage :: tool function threads independent runtime inputs (python/script/root/suites/source_prefix/max_workers/env); irreducible arity
 - `skills/test-audit-pipeline/scripts/audit_pipeline.py` :: duplication/duplicate_tokens :: skills/test-audit-pipeline/scripts/audit_pipeline.py:714-741 :: line-range churn from kwargs dedup; not a pre-existing clone (ratchet absorbed)
 
-### audit_test_quality.py (12)
+### audit_test_quality.py (11)
 - `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: compute_delta :: cohesive delta-computation logic; extraction relocates branches without net reduction
-- `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: infer_public_hints :: cohesive AST-walking logic; extraction relocates conditional branches without net reduction
 - `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: main :: cohesive orchestration pipeline (file discovery → analysis → report); extraction relocates stages without net reduction
 - `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: render_markdown :: cohesive markdown rendering; extraction relocates render sections without net reduction
 - `skills/test-quality-assurance/scripts/audit_test_quality.py` :: complexity/cyclomatic_complexity :: score_rubric :: cohesive rubric-scoring logic; extraction relocates score branches without net reduction

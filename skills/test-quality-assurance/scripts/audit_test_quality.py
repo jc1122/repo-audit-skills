@@ -103,6 +103,51 @@ def _extract_all_strings(node: ast.AST) -> list[str]:
     return strings
 
 
+def _candidate_init_files(root: Path) -> list[Path]:
+    return sorted(root.glob("src/**/__init__.py")) + sorted(root.glob("*/__init__.py"))
+
+
+def _parse_python_file(path: Path) -> ast.Module | None:
+    try:
+        return ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    except (SyntaxError, ValueError, OSError, UnicodeDecodeError):
+        return None
+
+
+def _public_name_hint(name: str) -> set[str]:
+    if name.startswith("_"):
+        return set()
+    return {f"{name}("}
+
+
+def _public_hints_from_assign(node: ast.Assign) -> set[str]:
+    if not any(
+        isinstance(target, ast.Name) and target.id == "__all__"
+        for target in node.targets
+    ):
+        return set()
+    return {
+        f"{exported}("
+        for exported in _extract_all_strings(node.value)
+        if exported and not exported.startswith("_")
+    }
+
+
+def _public_hints_from_init_node(node: ast.stmt) -> set[str]:
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        return _public_name_hint(node.name)
+    if isinstance(node, ast.Assign):
+        return _public_hints_from_assign(node)
+    return set()
+
+
+def _public_hints_from_init_tree(tree: ast.Module) -> set[str]:
+    hints: set[str] = set()
+    for node in tree.body:
+        hints.update(_public_hints_from_init_node(node))
+    return hints
+
+
 def infer_public_hints(root: Path) -> list[str]:
     """Infer likely public call hints from __init__.py exports.
 
@@ -110,29 +155,13 @@ def infer_public_hints(root: Path) -> list[str]:
     initializers and use discovered public names as `name(` hints.
     """
     hints: set[str] = set()
-    init_files = sorted(root.glob("src/**/__init__.py")) + sorted(
-        root.glob("*/__init__.py")
-    )
-    for init_file in init_files:
+    for init_file in _candidate_init_files(root):
         if ".venv" in init_file.parts:
             continue
-        try:
-            tree = ast.parse(
-                init_file.read_text(encoding="utf-8"), filename=str(init_file)
-            )
-        except (SyntaxError, ValueError, OSError, UnicodeDecodeError):
+        tree = _parse_python_file(init_file)
+        if tree is None:
             continue
-
-        for node in tree.body:
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                if not node.name.startswith("_"):
-                    hints.add(f"{node.name}(")
-            elif isinstance(node, ast.Assign):
-                for target in node.targets:
-                    if isinstance(target, ast.Name) and target.id == "__all__":
-                        for exported in _extract_all_strings(node.value):
-                            if exported and not exported.startswith("_"):
-                                hints.add(f"{exported}(")
+        hints.update(_public_hints_from_init_tree(tree))
     return sorted(hints)
 
 
