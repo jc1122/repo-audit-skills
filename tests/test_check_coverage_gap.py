@@ -46,3 +46,11 @@ def test_injection_mode_in_process(tmp_path, capsys):
     assert rc == 1
     assert payload["status"] == "fail"
     assert payload["new_findings"]
+
+
+def test_per_suite_coverage_files_are_combined(tmp_path, monkeypatch):
+    """Each suite gets its own COVERAGE_FILE; combine produces one report."""
+    import scripts.check_coverage_gap as gate
+
+    env = gate.suite_env(out_dir=tmp_path, suite="skills/quality-audit/tests")
+    assert env["COVERAGE_FILE"].endswith(".coverage.skills_quality-audit_tests")

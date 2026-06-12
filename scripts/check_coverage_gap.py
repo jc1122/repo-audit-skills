@@ -51,35 +51,61 @@ def _prefixes() -> list[str]:
     return pres
 
 
+def suite_env(out_dir: Path, suite: str) -> dict[str, str]:
+    slug = suite.replace("/", "_")
+    return dict(os.environ, COVERAGE_FILE=str(out_dir / f".coverage.{slug}"))
+
+
+def _run_one_suite(suite: str) -> tuple[str, int]:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            suite,
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--cov",
+            "--cov-report=",
+            f"--cov-config={RCFILE}",
+        ],
+        cwd=ROOT,
+        env=suite_env(OUT, suite),
+        text=True,
+        capture_output=True,
+        timeout=SUITE_TIMEOUT,
+        check=False,
+    )
+    return suite, proc.returncode
+
+
 def run_suites_with_coverage() -> tuple[Path, dict[str, int]]:
     OUT.mkdir(parents=True, exist_ok=True)
     for stale in OUT.glob(".coverage*"):
         stale.unlink()
+    from concurrent.futures import ThreadPoolExecutor
+
+    workers = max(2, (os.cpu_count() or 2) - 1)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        results = dict(pool.map(_run_one_suite, SUITES))
     env = dict(os.environ, COVERAGE_FILE=str(OUT / ".coverage"))
-    results: dict[str, int] = {}
-    for suite in SUITES:
-        proc = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "pytest",
-                suite,
-                "-q",
-                "-p",
-                "no:cacheprovider",
-                "--cov",
-                "--cov-append",
-                "--cov-report=",
-                f"--cov-config={RCFILE}",
-            ],
-            cwd=ROOT,
-            env=env,
-            text=True,
-            capture_output=True,
-            timeout=SUITE_TIMEOUT,
-            check=False,
-        )
-        results[suite] = proc.returncode
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "coverage",
+            "combine",
+            "--keep",
+            *sorted(str(p) for p in OUT.glob(".coverage.*")),
+        ],
+        cwd=ROOT,
+        env=env,
+        text=True,
+        capture_output=True,
+        timeout=120,
+        check=False,
+    )
     coverage_json = OUT / "coverage.json"
     subprocess.run(
         [
