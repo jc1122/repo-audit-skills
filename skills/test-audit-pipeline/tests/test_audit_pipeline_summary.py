@@ -867,6 +867,45 @@ def test_main_skip_coverage_run(tmp_path, monkeypatch):
     assert (out_dir / "pipeline_summary.json").exists()
 
 
+def test_main_parallel_stages_run_once(tmp_path, monkeypatch):
+    """main runs the parallel TQA and triage stages exactly once."""
+    out_dir = tmp_path / "out"
+    out_dir.mkdir()
+    calls: list[str] = []
+
+    monkeypatch.setattr(ap, "DEFAULT_TQA_SCRIPT", FIXTURES / "tqa_report.json")
+    monkeypatch.setattr(ap, "DEFAULT_TRIAGE_SCRIPT", FIXTURES / "coverage.json")
+
+    def fake_stage_tqa(**kwargs):
+        calls.append("tqa")
+        return True, out_dir / "tqa_report.json", out_dir / "tqa_report.md"
+
+    def fake_stage_triage(**kwargs):
+        calls.append("triage")
+        return True, out_dir / "triage"
+
+    def fake_stage_report(**kwargs):
+        calls.append("report")
+        assert kwargs["parallel_stages"] == ["TQA audit", "Redundancy triage"]
+        return True
+
+    monkeypatch.setattr(ap, "stage_tqa", fake_stage_tqa)
+    monkeypatch.setattr(ap, "stage_triage", fake_stage_triage)
+    monkeypatch.setattr(ap, "stage_report", fake_stage_report)
+
+    rc = ap.main([
+        "--root", str(tmp_path),
+        "--out-dir", str(out_dir),
+        "--skip-coverage",
+        "--suite", "tests/test_example.py",
+    ])
+
+    assert rc == 0
+    assert calls.count("tqa") == 1
+    assert calls.count("triage") == 1
+    assert calls.count("report") == 1
+
+
 # ---------------------------------------------------------------------------
 # Golden — canonical build_summary/stage_report output for synthetic inputs
 # ---------------------------------------------------------------------------

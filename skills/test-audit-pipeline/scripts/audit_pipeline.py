@@ -822,33 +822,6 @@ def main(argv: list[str] | None = None) -> int:
         if run_triage:
             stages_run.append("triage")
             triage_ok, triage_dir = stage_triage(**_tri_kw)
-    _tri_kw = dict(
-        python=args.python,
-        triage_script=triage_script,
-        root=root,
-        suites=args.suite,
-        comparator_suites=args.comparator_suite,
-        source_prefix=args.source_prefix,
-        out_dir=out_dir,
-        max_workers=args.max_workers,
-        env_pairs=args.env,
-        env=env,
-    )
-
-    if run_tqa and run_triage:
-        parallel_stages = ["TQA audit", "Redundancy triage"]
-        with ThreadPoolExecutor(max_workers=2) as pool:
-            fut_tqa: Future[tuple[bool, Path, Path]] = pool.submit(stage_tqa, **_tqa_kw)
-            fut_triage: Future[tuple[bool, Path]] = pool.submit(stage_triage, **_tri_kw)
-            tqa_ok, tqa_json_path, tqa_md_path = fut_tqa.result()
-            triage_ok, triage_dir = fut_triage.result()
-    else:
-        if run_tqa:
-            stages_run.append("tqa")
-            tqa_ok, tqa_json_path, tqa_md_path = stage_tqa(**_tqa_kw)
-        if run_triage:
-            stages_run.append("triage")
-            triage_ok, triage_dir = stage_triage(**_tri_kw)
 
     if run_tqa:
         stages_run.append("tqa")

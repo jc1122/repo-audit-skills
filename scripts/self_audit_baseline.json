@@ -246,12 +246,6 @@
     "symbol": "stage_triage"
   },
   {
-    "leaf": "duplication",
-    "metric": "duplicate_tokens",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "skills/test-audit-pipeline/scripts/audit_pipeline.py#175c67f07a6b"
-  },
-  {
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
     "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
