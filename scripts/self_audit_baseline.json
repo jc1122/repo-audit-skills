@@ -132,18 +132,6 @@
     "symbol": "skills/repo-hygiene-audit/scripts/_git_utils.py#eb662e6faa61"
   },
   {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/quality-audit/scripts/quality_audit.py",
-    "symbol": "_ruff_lint"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/quality-audit/scripts/quality_audit.py",
-    "symbol": "_type_findings"
-  },
-  {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/repo-hygiene-audit/scripts/_thresholds.py",

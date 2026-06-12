@@ -70,6 +70,38 @@ def _format_config_declared(root: Path) -> bool:
     return "[tool.ruff" in text or "[tool.black" in text
 
 
+def _ruff_findings_from_items(
+    items: list[dict], root: Path, owned: set[str]
+) -> list[hc.Finding]:
+    findings: list[hc.Finding] = []
+    for item in items:
+        code = item.get("code") or "RUFF"
+        if code in owned:
+            continue
+        loc = item.get("location") or {}
+        row, col = int(loc.get("row", 1)), int(loc.get("column", 1))
+        end_row = int((item.get("end_location") or {}).get("row", row))
+        findings.append(
+            hc.Finding(
+                leaf=LEAF,
+                signal="LINT",
+                severity="medium",
+                path=_rel(item.get("filename", ""), root),
+                line_start=row,
+                line_end=end_row,
+                symbol=f"{code}@{row}:{col}",
+                metric_name=code,
+                metric_value=0.0,
+                metric_threshold=0.0,
+                evidence_tool="ruff",
+                evidence_raw=item.get("message", ""),
+                confidence="high",
+                suggested_action=item.get("message", f"Fix {code}"),
+            )
+        )
+    return findings
+
+
 def _ruff_lint(root: Path, rel_files: list[str], config: dict) -> list[hc.Finding]:
     cmd = [
         "ruff",
@@ -103,33 +135,7 @@ def _ruff_lint(root: Path, rel_files: list[str], config: dict) -> list[hc.Findin
             f"ruff produced unparseable output: {proc.stderr.strip()}"
         ) from exc
     owned = set(config["ruff_ignore"].split(","))
-    findings: list[hc.Finding] = []
-    for item in items:
-        code = item.get("code") or "RUFF"
-        if code in owned:
-            continue
-        loc = item.get("location") or {}
-        row, col = int(loc.get("row", 1)), int(loc.get("column", 1))
-        end_row = int((item.get("end_location") or {}).get("row", row))
-        findings.append(
-            hc.Finding(
-                leaf=LEAF,
-                signal="LINT",
-                severity="medium",
-                path=_rel(item.get("filename", ""), root),
-                line_start=row,
-                line_end=end_row,
-                symbol=f"{code}@{row}:{col}",
-                metric_name=code,
-                metric_value=0.0,
-                metric_threshold=0.0,
-                evidence_tool="ruff",
-                evidence_raw=item.get("message", ""),
-                confidence="high",
-                suggested_action=item.get("message", f"Fix {code}"),
-            )
-        )
-    return findings
+    return _ruff_findings_from_items(items, root, owned)
 
 
 def _ruff_format(root: Path, rel_files: list[str]) -> list[hc.Finding]:
@@ -174,37 +180,26 @@ def _ruff_format(root: Path, rel_files: list[str]) -> list[hc.Finding]:
     return findings
 
 
-def _type_findings(root: Path, rel_files: list[str], config: dict) -> list[hc.Finding]:
-    checker = config.get("type_checker", "mypy")
-    with tempfile.TemporaryDirectory() as cache:
-        if checker == "ty":
-            cmd = ["ty", "check", *rel_files]
-        else:
-            cmd = [
-                "mypy",
-                "--no-error-summary",
-                "--no-color-output",
-                "--ignore-missing-imports",
-                "--no-incremental",
-                "--cache-dir",
-                cache,
-                *rel_files,
-            ]
-        try:
-            proc = subprocess.run(
-                cmd,
-                cwd=str(root),
-                text=True,
-                capture_output=True,
-                check=False,
-                timeout=TOOL_TIMEOUT,
-            )
-        except FileNotFoundError as exc:
-            raise ToolError(f"{checker} is not installed") from exc
-        except subprocess.TimeoutExpired as exc:
-            raise ToolError(f"{checker} timed out after {TOOL_TIMEOUT}s") from exc
+def _type_command(rel_files: list[str], checker: str, cache: str) -> list[str]:
+    if checker == "ty":
+        return ["ty", "check", *rel_files]
+    return [
+        "mypy",
+        "--no-error-summary",
+        "--no-color-output",
+        "--ignore-missing-imports",
+        "--no-incremental",
+        "--cache-dir",
+        cache,
+        *rel_files,
+    ]
+
+
+def _type_findings_from_output(
+    output: str, root: Path, checker: str
+) -> list[hc.Finding]:
     findings: list[hc.Finding] = []
-    for line in (proc.stdout + proc.stderr).splitlines():
+    for line in output.splitlines():
         m = _TYPE_RE.match(line.strip())
         if not m:
             continue
@@ -229,6 +224,26 @@ def _type_findings(root: Path, rel_files: list[str], config: dict) -> list[hc.Fi
             )
         )
     return findings
+
+
+def _type_findings(root: Path, rel_files: list[str], config: dict) -> list[hc.Finding]:
+    checker = config.get("type_checker", "mypy")
+    with tempfile.TemporaryDirectory() as cache:
+        cmd = _type_command(rel_files, checker, cache)
+        try:
+            proc = subprocess.run(
+                cmd,
+                cwd=str(root),
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=TOOL_TIMEOUT,
+            )
+        except FileNotFoundError as exc:
+            raise ToolError(f"{checker} is not installed") from exc
+        except subprocess.TimeoutExpired as exc:
+            raise ToolError(f"{checker} timed out after {TOOL_TIMEOUT}s") from exc
+    return _type_findings_from_output(proc.stdout + proc.stderr, root, checker)
 
 
 def analyze_tree(root, source_prefixes, config) -> list[hc.Finding]:
