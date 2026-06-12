@@ -2474,3 +2474,125 @@ Iteration 12 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
   real hotspot churn rows.
+
+## Iteration 13
+
+Installed versions at C-0:
+
+- Repo-A leaves: `0.5.13`.
+- repo-audit-refactor-optimize: `0.4.3`.
+- perf-benchmark: `0.3.8`.
+- perf-optimization: `0.2.1`.
+- Installed readback artifact: `installed-versions-and-shas.txt` in the
+  iteration-13 C-0 artifact directory.
+
+C-0 bootstrap and wave:
+
+- Bootstrap probes for repo-A, repo-B, and repo-P all exited 0 with
+  `restart_required=false` and `stop_before_discovery=false`.
+- C-0 wave summaries:
+  - Repo-A: code-health `36`, security/hygiene/docs/dependency `0`,
+    hotspot `201`.
+  - Repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+    hotspot `4`.
+  - Repo-P: code-health `24`, security/hygiene/docs/dependency `0`,
+    hotspot `7`.
+- C-0 wave artifacts are under `artifacts/sp11/iteration-13/c0-wave`.
+
+### Iteration 13 accepted batches
+
+Repo-A:
+
+- Split structure-audit's iterative Tarjan SCC search out of
+  `structure_audit.py` into `skills/structure-audit/scripts/_scc.py`.
+- Added focused SCC coverage in `skills/structure-audit/tests/test_scc.py`.
+- Preserved dirty-fixture CLI output byte-for-byte before and after the split.
+  Pre/post hashes matched for `structure_findings.json`,
+  `structure_report.md`, and stdout.
+- Scoped mutation gate passed for the extracted SCC module:
+  `test-effectiveness-audit` reported no findings for the temporary
+  SCC harness package. Artifact:
+  `/tmp/sp11-iter13-scc-mutation`.
+- Focused structure-audit tests passed: `16 passed`.
+- Full repo-A `npm run check` passed after merge with selfaudit `57/57`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`.
+- Installed validation waves shrank repo-A code-health from `36` to `35`;
+  hotspot remained `201` with the iteration-start anchor.
+- Removed identity relative to C-0:
+  - `_strongly_connected_components` `cyclomatic_complexity`.
+- No new validation-wave identities appeared.
+- Accepted commit:
+  - `8534da3e3ee2a4a2b214b7320f7f6d6d19b852dc`
+    (`refactor(structure): split tarjan scc search`).
+
+Repo-B:
+
+- No accepted source change. The remaining three code-health rows and four
+  hotspot rows are unchanged.
+
+Repo-P:
+
+- No accepted source change. The remaining 24 code-health rows and seven
+  hotspot rows are unchanged.
+
+### Iteration 13 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `57/57`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched with zero identity deltas across
+  run 1 and run 2. Summary: code-health `35`,
+  security/hygiene/docs/dependency `0`, hotspot `201`.
+- Relative to C-0, the final convergence wave removed one identity and added
+  none. Diff artifact:
+  `artifacts/sp11/iteration-13/convergence/c0-to-run2.removed.tsv`.
+- Convergence artifacts are under `artifacts/sp11/iteration-13/convergence`.
+
+### Iteration 13 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.14` at
+  `9a143ecaa6c0bc7b363069f4f6ad0e6a57c619c5`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulation before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `57/57`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-13/fresh-clone/repo-a-v0.5.14`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27416907958` completed success for
+  `9a143ecaa6c0bc7b363069f4f6ad0e6a57c619c5`. Log scan found one generic
+  `git init` default-branch hint from checkout, and no runtime deprecation
+  annotations. Log artifact:
+  `artifacts/sp11/iteration-13/ci/repo-a-v0.5.14`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.14
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.14`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.8`;
+  perf-optimization at `0.2.1`.
+- Source/install parity for `skills/structure-audit/scripts/_scc.py`,
+  `skills/structure-audit/scripts/structure_audit.py`, and
+  `skills/structure-audit/tests/test_scc.py` matched by SHA-256.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Probe
+  stdout for all three repos reported `restart_required=false` and
+  `stop_before_discovery=false`.
+- Postinstall artifacts are under `artifacts/sp11/iteration-13/postinstall`.
+
+Iteration 13 closing baseline counts:
+
+- Repo-A: selfaudit `57`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`; current installed wave code-health `35`, hotspot `201`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
+  real hotspot churn rows.
