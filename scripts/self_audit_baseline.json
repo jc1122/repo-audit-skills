@@ -84,18 +84,6 @@
     "symbol": "skills/structure-audit/scripts/structure_audit.py#820085a028b8"
   },
   {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "_ruff_findings"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "_ruff_findings"
-  },
-  {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
@@ -111,13 +99,13 @@
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py#03765eb179e5"
+    "symbol": "skills/quality-audit/scripts/quality_audit.py#3cb82d1b10e3"
   },
   {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
-    "symbol": "skills/quality-audit/scripts/quality_audit.py#3cb82d1b10e3"
+    "symbol": "skills/quality-audit/scripts/quality_audit.py#55b17679bf57"
   },
   {
     "leaf": "duplication",

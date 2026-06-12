@@ -100,7 +100,7 @@ freeze remains). See the "SP4 Phase 2" round log.
 - `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:119-129 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:136-149 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:33-63 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:83-104 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
+- `skills/dead-code-audit/scripts/dead_code_audit.py` :: duplication/duplicate_tokens :: skills/quality-audit/scripts/quality_audit.py:83-98 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/coverage-gap-audit/scripts/coverage_gap_audit.py:128-142 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/coverage-gap-audit/scripts/coverage_gap_audit.py:183-188 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: duplication/duplicate_tokens :: skills/coverage-gap-audit/scripts/coverage_gap_audit.py:188-196 :: cross-leaf CLI/parse idiom; dedup needs forbidden cross-skill imports (see R2 evidence)
@@ -131,16 +131,14 @@ freeze remains). See the "SP4 Phase 2" round log.
 - `scripts/check_coverage_gap.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool
 - `skills/docs-consistency-audit/scripts/docs_consistency_audit.py` :: complexity/maintainability_index :: <module> :: whole-module metric on an intentionally single-file standalone tool (SP7 A4; MI 23.5, all per-function findings cleared in-branch)
 
-### E. cyclomatic_complexity (5)
+### E. cyclomatic_complexity (4)
 - `skills/code-health-audit-pipeline/scripts/code_health_pipeline.py` :: complexity/cyclomatic_complexity :: decide :: cohesive tool logic (leaf-result aggregation / tool-output parsing); extraction relocates branches without net reduction and churns clone detection
 - `skills/complexity-audit/scripts/complexity_audit.py` :: complexity/cyclomatic_complexity :: _radon_mi_findings :: cohesive tool logic (leaf-result aggregation / tool-output parsing); extraction relocates branches without net reduction and churns clone detection
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: complexity/cyclomatic_complexity :: _ruff_findings :: cohesive tool logic (leaf-result aggregation / tool-output parsing); extraction relocates branches without net reduction and churns clone detection
 - `skills/structure-audit/scripts/structure_audit.py` :: complexity/cyclomatic_complexity :: _strongly_connected_components :: Tarjan's strongly-connected-components algorithm; cyclomatic complexity is inherent and irreducible without obscuring it
 - `skills/structure-audit/scripts/structure_audit.py` :: complexity/cyclomatic_complexity :: analyze_tree :: cohesive tool logic (leaf-result aggregation / tool-output parsing); extraction relocates branches without net reduction and churns clone detection
 
-### F. function_nloc (5)
+### F. function_nloc (4)
 - `skills/complexity-audit/scripts/complexity_audit.py` :: complexity/function_nloc :: _lizard_findings :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
-- `skills/dead-code-audit/scripts/dead_code_audit.py` :: complexity/function_nloc :: _ruff_findings :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
 - `skills/quality-audit/scripts/quality_audit.py` :: complexity/function_nloc :: _ruff_lint :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
 - `skills/quality-audit/scripts/quality_audit.py` :: complexity/function_nloc :: _type_findings :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection
 - `skills/structure-audit/scripts/structure_audit.py` :: complexity/function_nloc :: analyze_tree :: linear tool-output-parsing pipeline (subprocess -> parse each match -> emit Finding); splitting yields tiny single-use helpers that relocate not reduce length and churn clone detection

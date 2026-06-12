@@ -142,8 +142,7 @@ def _test_referenced(
     return hits
 
 
-def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
-    rel_files = [p.relative_to(root).as_posix() for p in files]
+def _run_ruff(root: Path, rel_files: list[str]) -> subprocess.CompletedProcess[str]:
     cmd = [
         "ruff",
         "check",
@@ -167,40 +166,53 @@ def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
         raise ToolError("ruff is not installed") from exc
     except subprocess.TimeoutExpired as exc:
         raise ToolError(f"ruff timed out after {TOOL_TIMEOUT}s") from exc
+    return proc
+
+
+def _parse_ruff_items(proc: subprocess.CompletedProcess[str]) -> list[dict]:
     try:
-        items = json.loads(proc.stdout or "[]")
+        return json.loads(proc.stdout or "[]")
     except json.JSONDecodeError as exc:
         raise ToolError(
             f"ruff produced unparseable output: {proc.stderr.strip()}"
         ) from exc
+
+
+def _ruff_finding_from_item(item: dict, root: Path) -> hc.Finding | None:
+    code = item.get("code") or ""
+    if code not in OWNED_RUFF_CODES:
+        return None
+    loc = item.get("location") or {}
+    row = int(loc.get("row", 1))
+    col = int(loc.get("column", 1))
+    end_row = int((item.get("end_location") or {}).get("row", row))
+    path = _rel(item.get("filename", ""), root)
+    return hc.Finding(
+        leaf=LEAF,
+        signal="DELETE",
+        severity="medium",
+        path=path,
+        line_start=row,
+        line_end=end_row,
+        symbol=f"{code}@{row}:{col}",
+        metric_name=code,
+        metric_value=0.0,
+        metric_threshold=0.0,
+        evidence_tool="ruff",
+        evidence_raw=item.get("message", ""),
+        confidence="high",
+        suggested_action=item.get("message", f"Remove {code} occurrence"),
+    )
+
+
+def _ruff_findings(root: Path, files: list[Path]) -> list[hc.Finding]:
+    rel_files = [p.relative_to(root).as_posix() for p in files]
+    items = _parse_ruff_items(_run_ruff(root, rel_files))
     findings: list[hc.Finding] = []
     for item in items:
-        code = item.get("code") or ""
-        if code not in OWNED_RUFF_CODES:
-            continue
-        loc = item.get("location") or {}
-        row = int(loc.get("row", 1))
-        col = int(loc.get("column", 1))
-        end_row = int((item.get("end_location") or {}).get("row", row))
-        path = _rel(item.get("filename", ""), root)
-        findings.append(
-            hc.Finding(
-                leaf=LEAF,
-                signal="DELETE",
-                severity="medium",
-                path=path,
-                line_start=row,
-                line_end=end_row,
-                symbol=f"{code}@{row}:{col}",
-                metric_name=code,
-                metric_value=0.0,
-                metric_threshold=0.0,
-                evidence_tool="ruff",
-                evidence_raw=item.get("message", ""),
-                confidence="high",
-                suggested_action=item.get("message", f"Remove {code} occurrence"),
-            )
-        )
+        finding = _ruff_finding_from_item(item, root)
+        if finding is not None:
+            findings.append(finding)
     return findings
 
 
