@@ -3368,3 +3368,31 @@ Iteration 18 closing baseline counts:
 - Repo-B: current installed wave code-health `3`, hotspot `4`.
 - Repo-P: current installed wave code-health `24`, hotspot `7`.
 - Comparable structural total: `45`.
+
+## Terminal record (2026-06-12)
+
+SP11 ended BLOCKED-by-operator-order after the iteration 18 closeout: the
+human instructed the orchestrator to finish iteration 18 and not start
+iteration 19. No C-8 condition fired; this is an authority halt, not a gate
+failure. All work shipped to that point is fully closed:
+
+- main `61176a1952c5d4cf7d8db01d8a6e17956fadfe14` matching origin/main.
+- Final closeout CI run `27440307824` succeeded for that SHA.
+- Repo-A released and reinstalled at v0.5.19; installed readback green
+  (all 16 leaves at 0.5.19); bootstrap probes green on all three repos
+  with `restart_required=false` and `stop_before_discovery=false`.
+- Final versions: repo-A v0.5.19, repo-B v0.4.3, repo-P v0.3.8.
+
+Residue at terminal:
+
+- Repo-A: selfaudit baseline 40 rows; installed wave code-health 18,
+  hotspot 204 (anchor-pinned); security/hygiene/docs/dependency/coverage 0.
+- Repo-B: wave code-health 3, hotspot 4.
+- Repo-P: wave code-health 24, hotspot 7.
+- Comparable structural total: 45.
+
+DoD rows not met: repo-A selfaudit baseline is not `[]`; repo-B and repo-P
+wave baselines are not `[]`. The B5 close-out package (stale-skill purge,
+final report ship, repo-A 0.6.0) was intentionally not executed under the
+stop order; it is superseded by SP12 work package W7. Successor run:
+`docs/superpowers/plans/2026-06-12-sp12-convergent-parallel-loop.md`.
