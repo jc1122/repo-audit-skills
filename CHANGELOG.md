@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.20 - 2026-06-13
+
+- Release preparation for W0 behavior-change release.
+- Version metadata bumped from 0.5.19 to 0.5.20 across package.json and all 16
+  skill SKILL.md frontmatter entries.
+
 ## 0.5.19 - 2026-06-12
 
 - Split test-redundancy-triage coverage bootstrap, mutation artifacts, and
