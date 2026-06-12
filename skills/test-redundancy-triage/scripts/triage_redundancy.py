@@ -825,20 +825,19 @@ def run_pytest_coverage(
 def run_single_test_coverage(
     root: Path,
     nodeid: str,
-    *,
-    coverage_python: str,
-    env: dict[str, str],
-    timeout: int,
-    tmp_dir: Path,
-    source_prefix: str = "",
+    context: SingleCoverageRunContext,
 ) -> dict[str, Any]:
     safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", nodeid)
-    cov_data = tmp_dir / f"{safe}.coverage"
-    cov_json = tmp_dir / f"{safe}.json"
-    context = CoverageCommandContext(coverage_python, env, timeout)
-    run = run_pytest_coverage(root, cov_data, cov_json, [nodeid], context)
+    cov_data = context.tmp_dir / f"{safe}.coverage"
+    cov_json = context.tmp_dir / f"{safe}.json"
+    command_context = CoverageCommandContext(
+        context.coverage_python, context.env, context.timeout
+    )
+    run = run_pytest_coverage(root, cov_data, cov_json, [nodeid], command_context)
 
-    line_tokens, branch_tokens = parse_coverage_json(cov_json, root, source_prefix)
+    line_tokens, branch_tokens = parse_coverage_json(
+        cov_json, root, context.source_prefix
+    )
     status = infer_test_status(run["returncode"], run["output"])
 
     return {
@@ -856,12 +855,7 @@ def run_single_test_coverage(
 def collect_suite_coverage_union(
     root: Path,
     suite_files: list[str],
-    *,
-    coverage_python: str,
-    env: dict[str, str],
-    timeout: int,
-    tmp_dir: Path,
-    source_prefix: str = "",
+    context: SingleCoverageRunContext,
 ) -> dict[str, Any]:
     if not suite_files:
         return {
@@ -872,12 +866,16 @@ def collect_suite_coverage_union(
             "error": "",
         }
 
-    cov_data = tmp_dir / "comparator.coverage"
-    cov_json = tmp_dir / "comparator.json"
-    context = CoverageCommandContext(coverage_python, env, timeout)
-    run = run_pytest_coverage(root, cov_data, cov_json, suite_files, context)
+    cov_data = context.tmp_dir / "comparator.coverage"
+    cov_json = context.tmp_dir / "comparator.json"
+    command_context = CoverageCommandContext(
+        context.coverage_python, context.env, context.timeout
+    )
+    run = run_pytest_coverage(root, cov_data, cov_json, suite_files, command_context)
 
-    line_tokens, branch_tokens = parse_coverage_json(cov_json, root, source_prefix)
+    line_tokens, branch_tokens = parse_coverage_json(
+        cov_json, root, context.source_prefix
+    )
     return {
         "status": "ok" if run["returncode"] == 0 else "failed",
         "runtime_ms": round(run["runtime_ms"], 3),
@@ -897,11 +895,7 @@ def collect_single_test_coverage_results(
                 run_single_test_coverage,
                 root,
                 nodeid,
-                coverage_python=context.coverage_python,
-                env=context.env,
-                timeout=context.timeout,
-                tmp_dir=context.tmp_dir,
-                source_prefix=context.source_prefix,
+                context,
             )
             for nodeid in nodeids
         ]
@@ -1051,19 +1045,6 @@ def write_coverage_artifacts(
     nodeids = [t.nodeid for t in tests]
     with tempfile.TemporaryDirectory(prefix="triage_cov_") as td:
         tmp_dir = Path(td)
-        comparator = collect_suite_coverage_union(
-            root,
-            comparator_suite_files,
-            coverage_python=coverage_python,
-            env=coverage_env,
-            timeout=options.timeout,
-            tmp_dir=tmp_dir,
-            source_prefix=options.source_prefix,
-        )
-        comparator_union: set[str] = set()
-        if comparator["status"] == "ok":
-            comparator_union = comparator["line_tokens"] | comparator["branch_tokens"]
-
         context = SingleCoverageRunContext(
             coverage_python,
             coverage_env,
@@ -1072,6 +1053,15 @@ def write_coverage_artifacts(
             options.max_workers,
             options.source_prefix,
         )
+        comparator = collect_suite_coverage_union(
+            root,
+            comparator_suite_files,
+            context,
+        )
+        comparator_union: set[str] = set()
+        if comparator["status"] == "ok":
+            comparator_union = comparator["line_tokens"] | comparator["branch_tokens"]
+
         results = collect_single_test_coverage_results(root, nodeids, context)
 
     by_nodeid = {r["test_nodeid"]: r for r in results if r.get("test_nodeid")}

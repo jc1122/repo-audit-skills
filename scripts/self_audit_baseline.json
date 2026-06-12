@@ -279,19 +279,7 @@
     "leaf": "complexity",
     "metric": "parameter_count",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "collect_suite_coverage_union"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "run_mutation_probe_kills"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "run_single_test_coverage"
   },
   {
     "leaf": "complexity",
