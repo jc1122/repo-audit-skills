@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.11 - 2026-06-12
+
+- Split test-quality-assurance Markdown rendering and CLI report assembly into
+  focused helpers while preserving JSON and Markdown output contracts.
+- Ratcheted the self-audit baseline from 68 to 64 normalized identities.
+
 ## 0.5.10 - 2026-06-12
 
 - Split test-quality-assurance delta comparison logic into focused helpers
