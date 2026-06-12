@@ -37,6 +37,8 @@ DEFAULT_TRIAGE_SCRIPT = (
     SKILLS_DIR / "test-redundancy-triage" / "scripts" / "triage_redundancy.py"
 )
 StageReportStatus = dict[str, bool]
+StageReportData = tuple[dict[str, Any], dict[str, Any], dict[str, Any], str]
+StageReportRequest = dict[str, Any]
 
 
 class StageRuntime(NamedTuple):
@@ -66,6 +68,7 @@ class TriageConfig(NamedTuple):
     source_prefix: str | None
     max_workers: int
     env_pairs: list[str]
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -288,56 +291,65 @@ def _extract_triage_summary(triage_dir: Path) -> dict[str, Any]:
     return summary
 
 
+_SUMMARY_OPTION_KEYS = {
+    "root",
+    "stages_run",
+    "stage_status",
+    "parallel_stages",
+    "cov_summary",
+    "tqa_data",
+    "triage_summary",
+    "now",
+}
+
+
+def _reject_unknown_options(owner: str, raw: dict[str, Any], allowed: set[str]) -> None:
+    unknown = sorted(set(raw) - allowed)
+    if unknown:
+        raise TypeError(f"{owner} got unexpected keyword argument '{unknown[0]}'")
+
+
+def _summary_timestamp(now: str | None) -> str:
+    return now or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def _summary_tqa_payload(tqa_data: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "rubric_scores": tqa_data.get("rubric_scores", tqa_data.get("scores", {})),
+        "overall_score": tqa_data.get("overall_score", tqa_data.get("grade")),
+        "findings_count": len(
+            tqa_data.get("findings", tqa_data.get("action_items", []))
+        ),
+    }
+
+
 def build_summary(
     stage_results: dict,
     findings: list,
-    *,
-    root: str = "",
-    stages_run: list[str] | None = None,
-    stage_status: dict[str, str] | None = None,
-    parallel_stages: list[str] | None = None,
-    cov_summary: dict[str, Any] | None = None,
-    tqa_data: dict[str, Any] | None = None,
-    triage_summary: dict[str, Any] | None = None,
-    now: str | None = None,
+    **kwargs: Any,
 ) -> dict[str, Any]:
     """Build the canonical pipeline summary dict (pure, no side effects).
 
     Timestamps and wall-clock values live under ``"meta"`` so the canonical
-    body is deterministic.
+    body is deterministic. ``stage_results`` and ``findings`` remain accepted
+    for the public call contract and future extensibility.
     """
-    if stages_run is None:
-        stages_run = []
-    if stage_status is None:
-        stage_status = {}
-    if parallel_stages is None:
-        parallel_stages = []
-    if cov_summary is None:
-        cov_summary = {}
-    if tqa_data is None:
-        tqa_data = {}
-    if triage_summary is None:
-        triage_summary = {}
-    if now is None:
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-
+    _ = stage_results, findings
+    _reject_unknown_options("build_summary", kwargs, _SUMMARY_OPTION_KEYS)
+    cov_summary = kwargs.get("cov_summary") or {}
+    tqa_data = kwargs.get("tqa_data") or {}
+    triage_summary = kwargs.get("triage_summary") or {}
     summary: dict[str, Any] = {
-        "meta": {"generated_at": now},
-        "root": root,
-        "stages_run": stages_run,
-        "stage_status": stage_status,
-        "parallel_stages": parallel_stages,
+        "meta": {"generated_at": _summary_timestamp(kwargs.get("now"))},
+        "root": kwargs.get("root", ""),
+        "stages_run": kwargs.get("stages_run") or [],
+        "stage_status": kwargs.get("stage_status") or {},
+        "parallel_stages": kwargs.get("parallel_stages") or [],
     }
     if cov_summary:
         summary["coverage"] = cov_summary
     if tqa_data:
-        summary["tqa"] = {
-            "rubric_scores": tqa_data.get("rubric_scores", tqa_data.get("scores", {})),
-            "overall_score": tqa_data.get("overall_score", tqa_data.get("grade")),
-            "findings_count": len(
-                tqa_data.get("findings", tqa_data.get("action_items", []))
-            ),
-        }
+        summary["tqa"] = _summary_tqa_payload(tqa_data)
     if triage_summary.get("decisions"):
         summary["triage"] = {
             "decisions": triage_summary["decisions"],
@@ -585,59 +597,92 @@ def _write_report_markdown(out_dir: Path, lines: list[str]) -> None:
     _log(f"  → Wrote {report_md}")
 
 
-def stage_report(
-    *,
-    out_dir: Path,
-    root: Path,
-    stages_run: list[str],
-    tqa_ok: bool,
-    triage_ok: bool,
-    coverage_ok: bool,
-    skip_triage: bool,
-    skip_coverage: bool,
-    tqa_json_path: Path,
-    cov_json_path: Path,
-    triage_dir: Path,
-    parallel_stages: list[str],
-) -> bool:
-    """Generate unified pipeline_report.md and pipeline_summary.json."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-    status = _make_stage_report_status(
-        tqa_ok, triage_ok, coverage_ok, skip_triage, skip_coverage
-    )
-    tqa_data, cov_summary, triage_summary = _load_stage_report_inputs(
-        skip_coverage, skip_triage, tqa_json_path, cov_json_path, triage_dir
-    )
+_STAGE_REPORT_KEYS = {
+    "out_dir",
+    "root",
+    "stages_run",
+    "tqa_ok",
+    "triage_ok",
+    "coverage_ok",
+    "skip_triage",
+    "skip_coverage",
+    "tqa_json_path",
+    "cov_json_path",
+    "triage_dir",
+    "parallel_stages",
+}
 
-    # --- Markdown report ---
-    lines = _stage_report_header(now, root, stages_run)
-    _append_parallelism_section(lines, parallel_stages)
-    _append_tqa_section(lines, tqa_ok, tqa_data)
-    _append_coverage_section(lines, skip_coverage, coverage_ok, cov_summary)
-    _append_triage_section(lines, skip_triage, triage_ok, triage_summary)
-    _append_action_items_section(lines, tqa_data, triage_summary)
-    _append_stage_status_section(lines, status)
 
-    _write_report_markdown(out_dir, lines)
+def _stage_report_request(raw: dict[str, Any]) -> StageReportRequest:
+    _reject_unknown_options("stage_report", raw, _STAGE_REPORT_KEYS)
+    missing = [key for key in _STAGE_REPORT_KEYS if key not in raw]
+    if missing:
+        raise TypeError(
+            f"stage_report missing required keyword argument '{missing[0]}'"
+        )
+    return raw
 
-    # --- JSON summary ---
+
+def _write_report_summary(
+    request: StageReportRequest,
+    status: StageReportStatus,
+    data: StageReportData,
+) -> None:
+    tqa_data, cov_summary, triage_summary, now = data
     summary = build_summary(
         {},  # stage_results — reserved for future extensibility
         [],  # findings — reserved for future extensibility
-        root=str(root),
-        stages_run=stages_run,
+        root=str(request["root"]),
+        stages_run=request["stages_run"],
         stage_status=_stage_status_dict(status),
-        parallel_stages=parallel_stages,
+        parallel_stages=request["parallel_stages"],
         cov_summary=cov_summary,
         tqa_data=tqa_data,
         triage_summary=triage_summary,
         now=now,
     )
-
-    summary_json = out_dir / "pipeline_summary.json"
+    summary_json = request["out_dir"] / "pipeline_summary.json"
     summary_json.write_text(json.dumps(summary, indent=2))
     _log(f"  → Wrote {summary_json}")
 
+
+def stage_report(**kwargs: Any) -> bool:
+    """Generate unified pipeline_report.md and pipeline_summary.json."""
+    request = _stage_report_request(kwargs)
+
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    status = _make_stage_report_status(
+        request["tqa_ok"],
+        request["triage_ok"],
+        request["coverage_ok"],
+        request["skip_triage"],
+        request["skip_coverage"],
+    )
+    tqa_data, cov_summary, triage_summary = _load_stage_report_inputs(
+        request["skip_coverage"],
+        request["skip_triage"],
+        request["tqa_json_path"],
+        request["cov_json_path"],
+        request["triage_dir"],
+    )
+
+    # --- Markdown report ---
+    lines = _stage_report_header(now, request["root"], request["stages_run"])
+    _append_parallelism_section(lines, request["parallel_stages"])
+    _append_tqa_section(lines, request["tqa_ok"], tqa_data)
+    _append_coverage_section(
+        lines, request["skip_coverage"], request["coverage_ok"], cov_summary
+    )
+    _append_triage_section(
+        lines, request["skip_triage"], request["triage_ok"], triage_summary
+    )
+    _append_action_items_section(lines, tqa_data, triage_summary)
+    _append_stage_status_section(lines, status)
+
+    _write_report_markdown(request["out_dir"], lines)
+    _write_report_summary(
+        request, status, (tqa_data, cov_summary, triage_summary, now)
+    )
     return True
 
 
