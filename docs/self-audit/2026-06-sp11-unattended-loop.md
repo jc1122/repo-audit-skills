@@ -2047,3 +2047,168 @@ Iteration 9 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline remains `32`, consisting of 25 code-health rows and 7
   real hotspot churn rows.
+
+## Iteration 10
+
+### Iteration 10 C-0 installed readback and diagnosis
+
+- Installed readback started from repo-A source
+  `5a76807dd69840dba1c0f4a6960350bd9451985b`, repo-B source
+  `f6ace4b6290089c15108f90028e637c202bef755`, and repo-P source
+  `83bd5fe59279477a85cc7cb8000c4ffeb7bb1cd8`.
+- Installed versions were all 16 repo-A leaves at `0.5.10`,
+  repo-audit-refactor-optimize at `0.4.3`, perf-benchmark at `0.3.7`, and
+  perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P with
+  `restart_required=false` and `stop_before_discovery=false`.
+- C-0 installed diagnosis counts:
+  - Repo-A: code-health `46`, security/hygiene/docs/dependency `0`, hotspot
+    `195`.
+  - Repo-B: code-health `3`, security/hygiene/docs/dependency `0`, hotspot
+    `4`.
+  - Repo-P: code-health `25`, security/hygiene/docs/dependency `0`, hotspot
+    `7`.
+- C-0 artifacts are under `artifacts/sp11/iteration-10/c0` and
+  `artifacts/sp11/iteration-10/c0-wave`.
+
+### Iteration 10 accepted batches
+
+Repo-A:
+
+- Split test-quality-assurance Markdown rendering into focused summary, marker,
+  flags, rubric, and delta-section helpers while preserving the public
+  `render_markdown(report)` output contract.
+- Split test-quality-assurance CLI report assembly into focused pattern
+  compilation, public-hint resolution, report building, delta loading, and
+  output-writing helpers while preserving JSON, Markdown, warning, and exit-code
+  behavior.
+- Focused tests passed after each batch: `python3 -m pytest
+  skills/test-quality-assurance/tests -q --color=no` -> 80 passed.
+- Fixed-fixture output was byte-identical before/after for both JSON and
+  Markdown reports under
+  `artifacts/sp11/iteration-10/prechange/repo-a-test-quality` and
+  `artifacts/sp11/iteration-10/postchange/repo-a-test-quality`.
+- Selfaudit ratcheted from `68/68` to `64/64`.
+- Full `npm run check` passed after the final repo-A batch: release, selfaudit,
+  security, hygiene, docs, dependency, coverage `0/0`, and full-pytest `17/17`.
+- Installed validation wave shrank repo-A code-health from `46` to `42`;
+  hotspot remained `195`.
+- Accepted commits:
+  - `f383bac09076acfcf3e790f8f71cc3e7e9d43a0b`
+    (`refactor(test-quality): split markdown rendering`).
+  - `d5e63c5f550bc8451f6884d0950ac27c3a69a4cd`
+    (`refactor(test-quality): split CLI report assembly`).
+
+Repo-B:
+
+- No accepted source change. The remaining three module-MI rows in private
+  bootstrap helpers remain deferred structural work, and the four hotspot rows
+  remain unchanged.
+
+Repo-P:
+
+- Split `scripts/perf_benchmark/ledger.py::compare` into ledger-entry loading,
+  dimension-tier extraction, tier-drop, and regression-list helpers while
+  preserving the `vs_last`, `vs_best`, and warning contracts.
+- Focused tests passed: `python3 -m pytest tests/test_ledger.py -q --color=no`
+  -> 18 passed.
+- Full repo-P gates passed: ruff check and format, 155 tests, and wave baseline
+  `31/31`.
+- Installed validation wave shrank repo-P code-health from `25` to `24`;
+  hotspot remained `7`.
+- Accepted commit:
+  `88927dd51e9f40b07d49057d8e7efe53aec09229`
+  (`refactor(perf): split ledger regression comparison`).
+
+### Iteration 10 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `64/64`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched byte-for-byte across run 1 and
+  run 2. Summary: code-health `42`, security/hygiene/docs/dependency `0`,
+  hotspot `195`.
+- Repo-P convergence runs 1 and 2: ruff check and format, 155 tests, and wave
+  baseline `31/31` passed in both runs.
+- Repo-P installed convergence waves matched byte-for-byte across run 1 and
+  run 2. Summary: code-health `24`, security/hygiene/docs/dependency `0`,
+  hotspot `7`.
+- Convergence artifacts are under `artifacts/sp11/iteration-10/convergence`.
+
+### Iteration 10 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.11` at
+  `baea4d3c7b8e750ab0f953222da4176e7fdc78e7`.
+- Repo-P shipped `v0.3.8` at
+  `bb42eaa00806189660500979b6e9b128193a2414`.
+- Repo-B had no accepted source change and did not ship a new release.
+
+Fresh-clone simulations before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `64/64`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-10/fresh-clone/repo-a-release`.
+- Repo-P release fresh clone: ruff check and format, 155 tests, and wave
+  baseline `31/31` exited 0. Artifact root:
+  `artifacts/sp11/iteration-10/fresh-clone/repo-p-release`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27405886532` completed success for
+  `baea4d3c7b8e750ab0f953222da4176e7fdc78e7`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-10/ci/repo-a-release`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.11
+- Repo-P release CI run `27405886544` completed success for
+  `bb42eaa00806189660500979b6e9b128193a2414`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-10/ci/repo-p-release`.
+- Repo-P release:
+  https://github.com/jc1122/perf-benchmark-skill/releases/tag/v0.3.8
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`, then synced repo-P into the installed
+  perf-benchmark and perf-optimization skill directories.
+- Installed readback passed: all 16 repo-A leaves at `0.5.11`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.8`;
+  both nested and top-level perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Report
+  readback for all three repos: `summary.restart_required=false` and
+  `summary.stop_before_discovery=false`.
+- Postinstall artifact roots are under `artifacts/sp11/iteration-10/postinstall`.
+
+Repo-P C-6 hotspot re-anchor:
+
+- Advanced repo-P hotspot anchor to the `v0.3.8` release commit and reran the
+  wave gate.
+- Re-anchor produced no new or stale normalized identities. Repo-P baseline
+  remained `31/31`, consisting of 24 code-health rows and 7 real hotspot churn
+  rows.
+- Repo-P re-anchor commit:
+  `95ab00fadbca55b637fc84e27ce978c4691bb9f6`
+  (`ratchet(wave): reanchor iteration ten hotspot window`).
+- Repo-P re-anchor fresh clone passed: ruff check and format, 155 tests, and
+  wave baseline `31/31`. Artifact root:
+  `artifacts/sp11/iteration-10/fresh-clone/repo-p-reanchor`.
+- Repo-P re-anchor CI run `27406338200` completed success for
+  `95ab00fadbca55b637fc84e27ce978c4691bb9f6`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-10/ci/repo-p-reanchor`.
+- Synced the repo-P re-anchor follow-up back into the installed perf skills.
+  Final installed readback records repo-P source
+  `95ab00fadbca55b637fc84e27ce978c4691bb9f6`; the installed bootstrap probes
+  remained green under `artifacts/sp11/iteration-10/postinstall-after-reanchor`.
+
+Iteration 10 closing baseline counts:
+
+- Repo-A: selfaudit `64`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline `31`, consisting of 24 code-health rows and 7 real
+  hotspot churn rows.
