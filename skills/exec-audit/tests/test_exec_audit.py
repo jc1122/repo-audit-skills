@@ -40,7 +40,7 @@ def _run_cli(*args: str) -> sp.CompletedProcess[str]:
 
 
 def _read_findings(out_dir: Path) -> list[dict]:
-    fp = out_dir / "exec_findings.json"
+    fp = out_dir / "exec-audit_findings.json"
     if not fp.exists():
         return []
     return json.loads(fp.read_text())
@@ -196,7 +196,7 @@ def test_clean_python_project_stdout_ok(tmp_path):
     result = _run_cli("--root", str(repo), "--out-dir", str(out_dir))
     status = json.loads(result.stdout.strip())
     assert status["status"] == "ok"
-    assert status["leaf"] == "exec"
+    assert status["leaf"] == "exec-audit"
 
 
 def test_junit_file_not_found_exits_two(tmp_path):
@@ -212,3 +212,29 @@ def test_junit_file_not_found_exits_two(tmp_path):
     assert result.returncode == 2
     status = json.loads(result.stdout.strip())
     assert status["status"] == "error"
+
+
+def test_output_contract_leaf_and_filename(tmp_path):
+    """Regression: output file is exec-audit_findings.json, every finding has leaf='exec-audit'."""
+    repo = _make_dup_npm_repo(tmp_path)
+    out_dir = tmp_path / "out"
+    result = _run_cli("--root", str(repo), "--out-dir", str(out_dir))
+    assert result.returncode == 1
+
+    # Old filename must not exist
+    old_path = out_dir / "exec_findings.json"
+    assert not old_path.exists(), (
+        f"old filename {old_path} must not exist after rename to exec-audit"
+    )
+
+    # New filename must exist
+    new_path = out_dir / "exec-audit_findings.json"
+    assert new_path.exists(), f"{new_path} must exist"
+
+    data = json.loads(new_path.read_text(encoding="utf-8"))
+    assert len(data) >= 1, "expected at least one finding"
+
+    for f in data:
+        assert f["leaf"] == "exec-audit", (
+            f"every finding must have leaf='exec-audit', got {f['leaf']!r}"
+        )

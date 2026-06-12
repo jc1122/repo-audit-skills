@@ -21,7 +21,7 @@ if str(_SHARED) not in sys.path:
     sys.path.insert(0, str(_SHARED))
 import health_common as hc  # noqa: E402
 
-LEAF = "exec"
+LEAF = "exec-audit"
 
 DEFAULT_THRESHOLDS: dict[str, object] = {
     "slow_test_threshold_s": 1.0,
@@ -444,7 +444,7 @@ def main(argv: list[str] | None = None) -> int:
         return hc.EXIT_ERROR
 
     data = hc.write_findings(findings, out_dir, LEAF)
-    (out_dir / "exec_report.md").write_text(
+    (out_dir / "exec-audit_report.md").write_text(
         _render_report(findings), encoding="utf-8"
     )
     print(json.dumps({"status": "ok", "findings": len(data), "leaf": LEAF}))
