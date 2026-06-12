@@ -213,12 +213,6 @@
     "leaf": "complexity",
     "metric": "function_nloc",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "run_mutation_probe_kills"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "run_strict_delete_gate"
   },
   {

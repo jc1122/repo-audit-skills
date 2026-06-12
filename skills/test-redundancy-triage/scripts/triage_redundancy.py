@@ -2109,123 +2109,152 @@ def stage_probe_file_overlay(
     return True, ""
 
 
+def _mutation_probe_result(
+    status: str,
+    *,
+    counts: tuple[int, int, int],
+    details: list[dict[str, Any]],
+    error: str = "",
+) -> dict[str, Any]:
+    kills, total_probes, applied_probes = counts
+    return {
+        "status": status,
+        "kills": kills,
+        "total_probes": total_probes,
+        "applied_probes": applied_probes,
+        "failed_to_apply": max(0, total_probes - applied_probes),
+        "details": details,
+        "error": error,
+    }
+
+
+def _mutation_probe_apply_failure(
+    probe: MutationProbe, error: str
+) -> tuple[dict[str, Any], bool, bool]:
+    return (
+        {
+            "probe_id": probe.probe_id,
+            "killed": False,
+            "applied": False,
+            "runtime_ms": 0.0,
+            "error": error,
+        },
+        False,
+        False,
+    )
+
+
+def _mutation_probe_run_detail(
+    probe: MutationProbe, run: dict[str, Any]
+) -> tuple[dict[str, Any], bool, bool]:
+    killed = run["returncode"] != 0
+    return (
+        {
+            "probe_id": probe.probe_id,
+            "killed": killed,
+            "applied": True,
+            "runtime_ms": round(run["runtime_ms"], 3),
+            "error": "" if killed else run["output"][:300],
+        },
+        True,
+        killed,
+    )
+
+
+def _run_mutation_probe(
+    probe: MutationProbe,
+    deselects: list[str],
+    context: MutationProbeRunContext,
+) -> tuple[dict[str, Any], bool, bool]:
+    with tempfile.TemporaryDirectory(prefix=f"triage_probe_{probe.probe_id}_") as td:
+        overlay_root = Path(td)
+        staged, stage_error = stage_probe_file_overlay(
+            context.root, overlay_root, probe
+        )
+        if not staged:
+            return _mutation_probe_apply_failure(probe, stage_error)
+
+        applied, error = apply_mutation_probe(overlay_root, probe)
+        if not applied:
+            return _mutation_probe_apply_failure(probe, error)
+
+        overlay_context = SuiteRunContext(
+            context.root,
+            context.python_exe,
+            build_overlay_env(context.root, context.env, overlay_root),
+            context.timeout,
+            context.use_xdist,
+        )
+        run = run_suite_multi(context.suite_files, deselects, overlay_context)
+        return _mutation_probe_run_detail(probe, run)
+
+
+def _collect_mutation_probe_runs(
+    deselects: list[str],
+    context: MutationProbeRunContext,
+) -> tuple[list[dict[str, Any]], int, int]:
+    details: list[dict[str, Any]] = []
+    kills = 0
+    applied_count = 0
+    for probe in context.probes:
+        detail, applied, killed = _run_mutation_probe(probe, deselects, context)
+        details.append(detail)
+        applied_count += int(applied)
+        kills += int(killed)
+    return details, kills, applied_count
+
+
+def _mutation_probe_final_result(
+    kills: int,
+    applied_count: int,
+    probes: list[MutationProbe],
+    details: list[dict[str, Any]],
+) -> dict[str, Any]:
+    total = len(probes)
+    failed_ids = ", ".join(
+        d["probe_id"] for d in details if not d.get("applied", False)
+    )
+    if applied_count == 0:
+        return _mutation_probe_result(
+            "no_probes_applied",
+            counts=(0, total, 0),
+            details=details,
+            error=f"all {total} probe(s) failed to apply "
+            f"({failed_ids}); mutation gate is not exercised",
+        )
+
+    if applied_count < total:
+        return _mutation_probe_result(
+            "partial_probes_applied",
+            counts=(kills, total, applied_count),
+            details=details,
+            error=(
+                f"{total - applied_count}/{total} probe(s) failed to apply "
+                f"({failed_ids}); strict mutation gate requires all selected "
+                "probes to apply"
+            ),
+        )
+
+    return _mutation_probe_result(
+        "ok",
+        counts=(kills, total, applied_count),
+        details=details,
+    )
+
+
 def run_mutation_probe_kills(
     deselects: list[str],
     context: MutationProbeRunContext,
 ) -> dict[str, Any]:
     if not context.probes:
-        return {
-            "status": "skipped",
-            "kills": 0,
-            "total_probes": 0,
-            "applied_probes": 0,
-            "failed_to_apply": 0,
-            "details": [],
-            "error": "",
-        }
+        return _mutation_probe_result(
+            "skipped",
+            counts=(0, 0, 0),
+            details=[],
+        )
 
-    details: list[dict[str, Any]] = []
-    kills = 0
-    applied_count = 0
-    for probe in context.probes:
-        with tempfile.TemporaryDirectory(
-            prefix=f"triage_probe_{probe.probe_id}_"
-        ) as td:
-            overlay_root = Path(td)
-            staged, stage_error = stage_probe_file_overlay(
-                context.root, overlay_root, probe
-            )
-            if not staged:
-                details.append(
-                    {
-                        "probe_id": probe.probe_id,
-                        "killed": False,
-                        "applied": False,
-                        "runtime_ms": 0.0,
-                        "error": stage_error,
-                    }
-                )
-                continue
-            applied, error = apply_mutation_probe(overlay_root, probe)
-            if not applied:
-                details.append(
-                    {
-                        "probe_id": probe.probe_id,
-                        "killed": False,
-                        "applied": False,
-                        "runtime_ms": 0.0,
-                        "error": error,
-                    }
-                )
-                continue
-
-            applied_count += 1
-            overlay_env = build_overlay_env(context.root, context.env, overlay_root)
-            overlay_context = SuiteRunContext(
-                context.root,
-                context.python_exe,
-                overlay_env,
-                context.timeout,
-                context.use_xdist,
-            )
-            run = run_suite_multi(
-                context.suite_files,
-                deselects,
-                overlay_context,
-            )
-            killed = run["returncode"] != 0
-            kills += int(killed)
-            details.append(
-                {
-                    "probe_id": probe.probe_id,
-                    "killed": killed,
-                    "applied": True,
-                    "runtime_ms": round(run["runtime_ms"], 3),
-                    "error": "" if killed else run["output"][:300],
-                }
-            )
-
-    failed_count = max(0, len(context.probes) - applied_count)
-    failed_ids = ", ".join(
-        d["probe_id"] for d in details if not d.get("applied", False)
-    )
-
-    if applied_count == 0:
-        return {
-            "status": "no_probes_applied",
-            "kills": 0,
-            "total_probes": len(context.probes),
-            "applied_probes": 0,
-            "failed_to_apply": len(context.probes),
-            "details": details,
-            "error": f"all {len(context.probes)} probe(s) failed to apply "
-            f"({failed_ids}); mutation gate is not exercised",
-        }
-
-    if applied_count < len(context.probes):
-        return {
-            "status": "partial_probes_applied",
-            "kills": kills,
-            "total_probes": len(context.probes),
-            "applied_probes": applied_count,
-            "failed_to_apply": failed_count,
-            "details": details,
-            "error": (
-                f"{failed_count}/{len(context.probes)} probe(s) failed to apply "
-                f"({failed_ids}); strict mutation gate requires all selected "
-                "probes to apply"
-            ),
-        }
-
-    return {
-        "status": "ok",
-        "kills": kills,
-        "total_probes": len(context.probes),
-        "applied_probes": applied_count,
-        "failed_to_apply": 0,
-        "details": details,
-        "error": "",
-    }
+    details, kills, applied_count = _collect_mutation_probe_runs(deselects, context)
+    return _mutation_probe_final_result(kills, applied_count, context.probes, details)
 
 
 def run_strict_delete_gate(
