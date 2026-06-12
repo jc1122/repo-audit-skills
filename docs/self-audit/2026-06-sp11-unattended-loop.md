@@ -1421,3 +1421,195 @@ Iteration 5 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline `35`, consisting of 29 code-health rows and 6 real
   hotspot churn rows.
+
+## Iteration 6
+
+### C-0 installed-skill diagnosis
+
+- Installed versions used for this iteration: repo-A leaves `0.5.6`,
+  repo-audit-refactor-optimize `0.4.3`, perf-benchmark `0.3.4`, and
+  perf-optimization `0.2.1`.
+- Source SHAs at iteration start: repo-A `6d0e305`, repo-B `f6ace4b`,
+  repo-P `b6203cc`.
+- Bootstrap probes for repo-A, repo-B, and repo-P exited 0 with
+  `restart_required=false` and `stop_before_discovery=false`.
+- C-0 wave summaries:
+  - repo-A: code-health `55`, security/hygiene/docs/dependency `0`,
+    hotspot `161` for total `216`.
+  - repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+    hotspot `4` for baseline `7`.
+  - repo-P: code-health `29`, security/hygiene/docs/dependency `0`,
+    hotspot `6` for baseline `35`.
+- C-0 artifacts are under `artifacts/sp11/iteration-06/c0` and
+  `artifacts/sp11/iteration-06/c0-wave`.
+
+### B2 repo-A structural batches
+
+Accepted batch 1:
+
+- Worktree: `/tmp/sp11-attempt-iter6-repo-a-batch1`.
+- Grouped code-health pipeline leaf-run inputs into `LeafRunContext`.
+- Removed stale `_run_one` and `run_leaves` parameter-count identities from
+  `scripts/self_audit_baseline.json`.
+- Committed on repo-A main as `802cf88`
+  (`refactor(code-health): group leaf run context`).
+
+Accepted batch 2:
+
+- Worktree: `/tmp/sp11-attempt-iter6-repo-a-batch2`.
+- Split code-health decision-gate stats and predicate logic into helper
+  functions while preserving the decision contract.
+- Added focused gating tests for type-error and high-severity threshold cases.
+- Removed the stale `decide` cyclomatic-complexity identity from
+  `scripts/self_audit_baseline.json`.
+- Committed on repo-A main as `075db6f`
+  (`refactor(code-health): split decision gate stats`).
+
+Verification:
+
+- Focused `python3 -m pytest skills/code-health-audit-pipeline/tests -q
+  --color=no` passed after both batches; final focused count was 34 passed.
+- Repo-A `npm run check` passed after both batches; final source count is
+  selfaudit `74/74`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17` suites green.
+- Repo-A selfaudit ratcheted from `77` to `74`.
+
+### B3 repo-B structural visit
+
+- Repo-B source was unchanged in iteration 6.
+- Verification: `python3 -m pytest -q --color=no` -> 106 passed;
+  `python3 scripts/check_wave_baseline.py` -> status pass, count `7`,
+  baseline `7`.
+- Non-mutating estimates for `_lane_resolve.py` and `_skill_probe.py` did not
+  show a shrink-safe path. Naive splits would leave several extracted modules
+  below the maintainability threshold and likely increase or preserve finding
+  count, so no repo-B batch was accepted.
+
+### B4 repo-P structural batches
+
+Accepted batch 1:
+
+- Worktree: `/tmp/sp11-attempt-iter6-repo-p-batch1`.
+- Split perf-optimization candidate finding validation into required-key,
+  string-field, and number-field helpers while preserving malformed-finding
+  error messages.
+- Removed the stale `_validate_finding` cyclomatic-complexity identity,
+  ratcheting repo-P wave baseline `35 -> 34`.
+- Committed on repo-P main as `e79dc42`
+  (`refactor(perf-optimization): split candidate validation`).
+
+Accepted batch 2:
+
+- Worktree: `/tmp/sp11-attempt-iter6-repo-p-batch2`.
+- Split perf-optimization ledger reading into entry loading and regression
+  comparison helpers while preserving the `(vs_last, warnings)` contract.
+- Removed the stale `_read_ledger` cyclomatic-complexity identity, ratcheting
+  repo-P wave baseline `34 -> 33`.
+- Committed on repo-P main as `8b56e65`
+  (`refactor(perf-optimization): split ledger validation`).
+
+Verification:
+
+- Focused perf-optimization tests passed after both batches; final full repo-P
+  source checks were ruff check, ruff format, `python3 -m pytest -q
+  --color=no` -> 155 passed, and `python3 scripts/check_wave_baseline.py`
+  -> status pass, count `33`, baseline `33`.
+
+### Iteration 6 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` exited 0 with selfaudit
+  `74/74`, security/hygiene/docs/dependency/coverage `0/0`, and full-pytest
+  `17/17` suites green. Installed wave summary: code-health `52`,
+  security/hygiene/docs/dependency `0`, hotspot `161`.
+- Repo-A convergence run 2 matched run 1; `cmp` returned 0 for
+  `wave_findings.json` and `wave_summary.json`.
+- Repo-P convergence runs 1 and 2: ruff check/format passed, `python3 -m
+  pytest -q --color=no` -> 155 passed, and wave baseline -> status pass,
+  count `33`, baseline `33`. Installed wave summary: code-health `27`,
+  security/hygiene/docs/dependency `0`, hotspot `6`.
+- Repo-P convergence run 2 matched run 1; `cmp` returned 0 for
+  `wave_findings.json` and `wave_summary.json`.
+- Convergence artifacts are under `artifacts/sp11/iteration-06/convergence`.
+
+### Iteration 6 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A changed source in iteration 6 and shipped `v0.5.7` at
+  `109ada20a325dce2632e6b3ced420f64384bcfc3`.
+- Repo-P changed source in iteration 6 and shipped `v0.3.5` at
+  `4caf842c4717bdb6936b11b0e1e18a46e555f3ed`; nested perf-optimization
+  remains at `0.2.1`.
+- Repo-B had no accepted source change in iteration 6 and did not ship a new
+  release.
+
+Fresh-clone simulations before push:
+
+- Repo-A fresh clone: `npm ci` followed by `npm run check` exited 0. Final
+  counts were selfaudit `74/74`, security/hygiene/docs/dependency/coverage
+  `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-06/fresh-clone/repo-a`.
+- Repo-P release fresh clone: ruff check and format passed, pytest reported
+  155 passed, and wave baseline passed at `33/33`. Artifact root:
+  `artifacts/sp11/iteration-06/fresh-clone/repo-p`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27393856282` completed success for
+  `109ada20a325dce2632e6b3ced420f64384bcfc3`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-06/ci/repo-a-release`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.7
+- Repo-P release CI run `27393855982` completed success for
+  `4caf842c4717bdb6936b11b0e1e18a46e555f3ed`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-06/ci/repo-p-release`.
+- Repo-P release:
+  https://github.com/jc1122/perf-benchmark-skill/releases/tag/v0.3.5
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`, then synced repo-P into the installed
+  perf-benchmark and perf-optimization skill directories.
+- Installed readback passed: all 16 repo-A leaves at `0.5.7`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.5`;
+  both nested and top-level perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Report
+  readback for all three repos: `summary.restart_required=false` and
+  `summary.stop_before_discovery=false`.
+- Postinstall artifact roots are under `artifacts/sp11/iteration-06/postinstall`.
+
+Repo-P C-6 hotspot re-anchor:
+
+- After reinstall, repo-P advanced its hotspot anchor to the `v0.3.5` release
+  commit and reran the wave gate.
+- Re-anchor surfaced the release bookkeeping pair
+  `scripts/wave_anchor.txt<->scripts/wave_frozen.md`. Added that pair to
+  repo-P hotspot config so the hotspot leaf counts it under
+  `declared_coupling`.
+- Re-running the wave after the counted policy update produced no new or stale
+  normalized identities; repo-P baseline remained `33/33`.
+- Repo-P re-anchor commit: `86ad6cecbfeb393be4f61684af163a691584ffe2`
+  (`chore(perf): reanchor iteration six wave`).
+- Repo-P re-anchor fresh clone passed: ruff check and format, 155 tests, and
+  wave baseline `33/33`. Artifact root:
+  `artifacts/sp11/iteration-06/fresh-clone/repo-p-reanchor`.
+- Repo-P re-anchor CI run `27394211541` completed success for
+  `86ad6cecbfeb393be4f61684af163a691584ffe2`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-06/ci/repo-p-reanchor`.
+- Synced the repo-P re-anchor follow-up back into the installed perf skills.
+  Final installed readback records repo-P source
+  `86ad6cecbfeb393be4f61684af163a691584ffe2`; the repo-P bootstrap probe
+  remained green under
+  `artifacts/sp11/iteration-06/postinstall/repo-p-after-reanchor`.
+
+Iteration 6 closing baseline counts:
+
+- Repo-A: selfaudit `74`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline `33`, consisting of 27 code-health rows and 6 real
+  hotspot churn rows.
