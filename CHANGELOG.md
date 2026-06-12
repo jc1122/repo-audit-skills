@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.15 - 2026-06-12
+
+- Split structure-audit `analyze_tree` finding assembly into focused helpers
+  while preserving byte-identical dirty-fixture CLI output.
+- Added direct finding-builder tests and ratcheted the self-audit baseline from
+  57 to 55 normalized identities.
+
 ## 0.5.14 - 2026-06-12
 
 - Split structure-audit's iterative Tarjan SCC search into a focused helper
