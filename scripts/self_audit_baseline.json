@@ -201,12 +201,6 @@
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
     "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "main"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
     "symbol": "score_rubric"
   },
   {
@@ -214,12 +208,6 @@
     "metric": "cyclomatic_complexity",
     "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
     "symbol": "summarize"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "main"
   },
   {
     "leaf": "complexity",

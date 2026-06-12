@@ -899,87 +899,109 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> int:
-    args = parse_args()
-    root = Path(args.root).resolve()
-
-    test_dirs = _split_csv_values(args.tests_dir) or ["tests"]
-    test_globs = _split_csv_values(args.test_glob) or list(DEFAULT_TEST_GLOBS)
-
-    internal_patterns = _split_csv_values(args.internal_import_pattern)
-    if not internal_patterns:
-        internal_patterns = list(DEFAULT_INTERNAL_IMPORT_PATTERNS)
-    internal_import_res: list[re.Pattern[str]] = []
-    for pattern in internal_patterns:
+def _compile_internal_patterns(
+    patterns: list[str],
+) -> list[re.Pattern[str]] | None:
+    compiled: list[re.Pattern[str]] = []
+    for pattern in patterns:
         try:
-            internal_import_res.append(re.compile(pattern))
+            compiled.append(re.compile(pattern))
         except re.error as exc:
             print(
                 f"error: invalid --internal-import-pattern regex {pattern!r}: {exc}",
                 file=sys.stderr,
                 flush=True,
             )
-            return 1
+            return None
+    return compiled
 
+
+def _resolve_public_hints(
+    root: Path, args: argparse.Namespace
+) -> tuple[list[str], bool]:
     public_hints = _split_csv_values(args.public_hint)
-    auto_inferred = False
-    if not args.no_auto_public_hints:
-        inferred_hints = infer_public_hints(root)
-        if inferred_hints:
-            auto_inferred = True
-            public_hints = sorted(set(public_hints + inferred_hints))
+    if args.no_auto_public_hints:
+        return public_hints, False
+    inferred_hints = infer_public_hints(root)
+    if not inferred_hints:
+        return public_hints, False
+    return sorted(set(public_hints + inferred_hints)), True
 
-    exact_eq_pattern = args.exact_eq_pattern or EXACT_EQ_ASSERT_RE.pattern
+
+def _compile_exact_eq_pattern(pattern: str) -> re.Pattern[str] | None:
     try:
-        exact_eq_re = re.compile(exact_eq_pattern, re.MULTILINE)
+        return re.compile(pattern, re.MULTILINE)
     except re.error as exc:
         print(
-            f"error: invalid --exact-eq-pattern regex {exact_eq_pattern!r}: {exc}",
+            f"error: invalid --exact-eq-pattern regex {pattern!r}: {exc}",
             file=sys.stderr,
             flush=True,
         )
-        return 1
+        return None
 
-    files = collect_test_files(root, test_dirs, test_globs)
+
+@dataclass(frozen=True)
+class _ReportBuildInput:
+    root: Path
+    test_dirs: list[str]
+    test_globs: list[str]
+    internal_patterns: list[str]
+    internal_import_res: list[re.Pattern[str]]
+    public_hints: list[str]
+    auto_inferred: bool
+    exact_eq_pattern: str
+    exact_eq_re: re.Pattern[str]
+
+
+def _build_report(inputs: _ReportBuildInput) -> dict[str, Any]:
+    files = collect_test_files(inputs.root, inputs.test_dirs, inputs.test_globs)
     metrics = [
-        analyze_file(path, internal_import_res, public_hints, exact_eq_re)
+        analyze_file(
+            path,
+            inputs.internal_import_res,
+            inputs.public_hints,
+            inputs.exact_eq_re,
+        )
         for path in files
     ]
-    report = {
-        "root": str(root),
+    return {
+        "root": str(inputs.root),
         "config": {
-            "test_dirs": test_dirs,
-            "test_globs": test_globs,
-            "internal_import_patterns": internal_patterns,
-            "public_hints": public_hints,
-            "auto_inferred_public_hints": auto_inferred,
-            "exact_eq_pattern": exact_eq_pattern,
+            "test_dirs": inputs.test_dirs,
+            "test_globs": inputs.test_globs,
+            "internal_import_patterns": inputs.internal_patterns,
+            "public_hints": inputs.public_hints,
+            "auto_inferred_public_hints": inputs.auto_inferred,
+            "exact_eq_pattern": inputs.exact_eq_pattern,
         },
         "summary": summarize(metrics),
         "files": [m.to_dict() for m in metrics],
     }
 
-    # Rubric scoring
+
+def _add_rubric_scores(report: dict[str, Any], cov_json_path: str) -> None:
     report["rubric_scores"] = score_rubric(
         report["summary"],
         report["config"],
-        cov_json_path=args.cov_json,
+        cov_json_path=cov_json_path,
     )
 
-    # Delta reporting
-    if args.baseline_json:
-        try:
-            baseline_data = json.loads(
-                Path(args.baseline_json).read_text(encoding="utf-8")
-            )
-            report["delta"] = compute_delta(report, baseline_data)
-        except (json.JSONDecodeError, FileNotFoundError) as exc:
-            print(
-                f"warning: could not load baseline JSON {args.baseline_json}: {exc}",
-                file=sys.stderr,
-                flush=True,
-            )
 
+def _add_delta_report(report: dict[str, Any], baseline_json: str) -> None:
+    if not baseline_json:
+        return
+    try:
+        baseline_data = json.loads(Path(baseline_json).read_text(encoding="utf-8"))
+        report["delta"] = compute_delta(report, baseline_data)
+    except (json.JSONDecodeError, FileNotFoundError) as exc:
+        print(
+            f"warning: could not load baseline JSON {baseline_json}: {exc}",
+            file=sys.stderr,
+            flush=True,
+        )
+
+
+def _write_report_outputs(report: dict[str, Any], args: argparse.Namespace) -> None:
     if args.json_out:
         out = Path(args.json_out)
         out.parent.mkdir(parents=True, exist_ok=True)
@@ -993,6 +1015,39 @@ def main() -> int:
     else:
         print(md)
 
+
+def main() -> int:
+    args = parse_args()
+    root = Path(args.root).resolve()
+    test_dirs = _split_csv_values(args.tests_dir) or ["tests"]
+    test_globs = _split_csv_values(args.test_glob) or list(DEFAULT_TEST_GLOBS)
+    internal_patterns = _split_csv_values(args.internal_import_pattern)
+    if not internal_patterns:
+        internal_patterns = list(DEFAULT_INTERNAL_IMPORT_PATTERNS)
+    internal_import_res = _compile_internal_patterns(internal_patterns)
+    if internal_import_res is None:
+        return 1
+    public_hints, auto_inferred = _resolve_public_hints(root, args)
+    exact_eq_pattern = args.exact_eq_pattern or EXACT_EQ_ASSERT_RE.pattern
+    exact_eq_re = _compile_exact_eq_pattern(exact_eq_pattern)
+    if exact_eq_re is None:
+        return 1
+    report = _build_report(
+        _ReportBuildInput(
+            root=root,
+            test_dirs=test_dirs,
+            test_globs=test_globs,
+            internal_patterns=internal_patterns,
+            internal_import_res=internal_import_res,
+            public_hints=public_hints,
+            auto_inferred=auto_inferred,
+            exact_eq_pattern=exact_eq_pattern,
+            exact_eq_re=exact_eq_re,
+        )
+    )
+    _add_rubric_scores(report, args.cov_json)
+    _add_delta_report(report, args.baseline_json)
+    _write_report_outputs(report, args)
     return 0
 
 
