@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.8 - 2026-06-12
+
+- Grouped test-audit-pipeline report summary inputs behind compatibility
+  wrappers while preserving existing public call shapes.
+- Ratcheted the self-audit baseline from 74 to 71 normalized identities.
+
 ## 0.5.7 - 2026-06-12
 
 - Grouped code-health leaf execution inputs behind a focused run context.
