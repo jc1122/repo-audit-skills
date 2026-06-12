@@ -225,25 +225,7 @@
     "leaf": "complexity",
     "metric": "parameter_count",
     "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "stage_coverage"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
     "symbol": "stage_report"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "stage_tqa"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
-    "symbol": "stage_triage"
   },
   {
     "leaf": "complexity",

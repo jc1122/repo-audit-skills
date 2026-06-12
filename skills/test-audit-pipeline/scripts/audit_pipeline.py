@@ -23,7 +23,7 @@ import sys
 from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 # ---------------------------------------------------------------------------
 # Script discovery
@@ -37,6 +37,35 @@ DEFAULT_TRIAGE_SCRIPT = (
     SKILLS_DIR / "test-redundancy-triage" / "scripts" / "triage_redundancy.py"
 )
 StageReportStatus = dict[str, bool]
+
+
+class StageRuntime(NamedTuple):
+    python: str
+    root: Path
+    out_dir: Path
+    env: dict[str, str]
+
+
+class CoverageConfig(NamedTuple):
+    source_prefix: str | None
+    test_marker: str
+
+
+class TqaConfig(NamedTuple):
+    script: Path
+    cov_json: Path | None
+    internal_import_patterns: list[str]
+    public_hints: list[str]
+    baseline: str | None
+
+
+class TriageConfig(NamedTuple):
+    script: Path
+    suites: list[str]
+    comparator_suites: list[str]
+    source_prefix: str | None
+    max_workers: int
+    env_pairs: list[str]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -92,24 +121,19 @@ def _read_json(path: Path) -> dict[str, Any] | None:
 
 
 def stage_coverage(
-    *,
-    python: str,
-    root: Path,
-    source_prefix: str | None,
-    out_dir: Path,
-    test_marker: str,
-    env: dict[str, str],
+    runtime: StageRuntime,
+    config: CoverageConfig,
 ) -> tuple[bool, Path]:
     """Collect branch coverage with pytest-cov. Returns (success, json_path)."""
-    cov_json = out_dir / "coverage.json"
-    cov_source = source_prefix if source_prefix else str(root)
+    cov_json = runtime.out_dir / "coverage.json"
+    cov_source = config.source_prefix if config.source_prefix else str(runtime.root)
 
     cmd = [
-        python,
+        runtime.python,
         "-m",
         "pytest",
         "-m",
-        test_marker,
+        config.test_marker,
         "-n",
         "0",
         f"--cov={cov_source}",
@@ -117,7 +141,7 @@ def stage_coverage(
         f"--cov-report=json:{cov_json}",
         "-q",
     ]
-    result = _run_stage(cmd, env=env, cwd=root, label="coverage")
+    result = _run_stage(cmd, env=runtime.env, cwd=runtime.root, label="coverage")
     if result.returncode != 0:
         _log(f"  ✗ Coverage collection failed (exit {result.returncode})")
         if result.stderr:
@@ -133,41 +157,33 @@ def stage_coverage(
 
 
 def stage_tqa(
-    *,
-    python: str,
-    tqa_script: Path,
-    root: Path,
-    out_dir: Path,
-    cov_json: Path | None,
-    internal_import_patterns: list[str],
-    public_hints: list[str],
-    tqa_baseline: str | None,
-    env: dict[str, str],
+    runtime: StageRuntime,
+    config: TqaConfig,
 ) -> tuple[bool, Path, Path]:
     """Run the TQA audit script. Returns (success, json_path, md_path)."""
-    json_out = out_dir / "tqa_report.json"
-    md_out = out_dir / "tqa_report.md"
+    json_out = runtime.out_dir / "tqa_report.json"
+    md_out = runtime.out_dir / "tqa_report.md"
 
     cmd = [
-        python,
-        str(tqa_script),
+        runtime.python,
+        str(config.script),
         "--root",
-        str(root),
+        str(runtime.root),
         "--json-out",
         str(json_out),
         "--md-out",
         str(md_out),
     ]
-    for pat in internal_import_patterns:
+    for pat in config.internal_import_patterns:
         cmd += ["--internal-import-pattern", pat]
-    for hint in public_hints:
+    for hint in config.public_hints:
         cmd += ["--public-hint", hint]
-    if cov_json and cov_json.exists():
-        cmd += ["--cov-json", str(cov_json)]
-    if tqa_baseline:
-        cmd += ["--baseline-json", tqa_baseline]
+    if config.cov_json and config.cov_json.exists():
+        cmd += ["--cov-json", str(config.cov_json)]
+    if config.baseline:
+        cmd += ["--baseline-json", config.baseline]
 
-    result = _run_stage(cmd, env=env, cwd=root, label="TQA audit")
+    result = _run_stage(cmd, env=runtime.env, cwd=runtime.root, label="TQA audit")
     if result.returncode != 0:
         _log(f"  ✗ TQA audit failed (exit {result.returncode})")
         if result.stderr:
@@ -183,44 +199,37 @@ def stage_tqa(
 
 
 def stage_triage(
-    *,
-    python: str,
-    triage_script: Path,
-    root: Path,
-    suites: list[str],
-    comparator_suites: list[str],
-    source_prefix: str | None,
-    out_dir: Path,
-    max_workers: int,
-    env_pairs: list[str],
-    env: dict[str, str],
+    runtime: StageRuntime,
+    config: TriageConfig,
 ) -> tuple[bool, Path]:
     """Run the redundancy triage script. Returns (success, triage_dir)."""
-    triage_dir = out_dir / "triage"
+    triage_dir = runtime.out_dir / "triage"
     triage_dir.mkdir(parents=True, exist_ok=True)
 
     cmd = [
-        python,
-        str(triage_script),
+        runtime.python,
+        str(config.script),
         "--root",
-        str(root),
+        str(runtime.root),
         "--python",
-        python,
+        runtime.python,
         "--out-dir",
         str(triage_dir),
         "--max-workers",
-        str(max_workers),
+        str(config.max_workers),
     ]
-    for s in suites:
+    for s in config.suites:
         cmd += ["--suite", s]
-    for cs in comparator_suites:
+    for cs in config.comparator_suites:
         cmd += ["--comparator-suite", cs]
-    if source_prefix:
-        cmd += ["--source-prefix", source_prefix]
-    for pair in env_pairs:
+    if config.source_prefix:
+        cmd += ["--source-prefix", config.source_prefix]
+    for pair in config.env_pairs:
         cmd += ["--env", pair]
 
-    result = _run_stage(cmd, env=env, cwd=root, label="Redundancy triage")
+    result = _run_stage(
+        cmd, env=runtime.env, cwd=runtime.root, label="Redundancy triage"
+    )
     if result.returncode != 0:
         _log(f"  ✗ Redundancy triage failed (exit {result.returncode})")
         if result.stderr:
@@ -746,6 +755,12 @@ def main(argv: list[str] | None = None) -> int:
 
     env = _build_env(os.environ.copy(), args.env)
     any_failure = False
+    runtime = StageRuntime(
+        python=args.python,
+        root=root,
+        out_dir=out_dir,
+        env=env,
+    )
 
     # ------------------------------------------------------------------
     # Stage 1: Coverage
@@ -758,12 +773,11 @@ def main(argv: list[str] | None = None) -> int:
         _log("Stage 1/3: Collecting coverage...")
         stages_run.append("coverage")
         coverage_ok, cov_json = stage_coverage(
-            python=args.python,
-            root=root,
-            source_prefix=args.source_prefix,
-            out_dir=out_dir,
-            test_marker=args.test_marker,
-            env=env,
+            runtime,
+            CoverageConfig(
+                source_prefix=args.source_prefix,
+                test_marker=args.test_marker,
+            ),
         )
         if not coverage_ok:
             any_failure = True
@@ -785,27 +799,25 @@ def main(argv: list[str] | None = None) -> int:
     run_triage = not args.skip_triage and len(args.suite) > 0
 
     _tqa_kw = dict(
-        python=args.python,
-        tqa_script=tqa_script,
-        root=root,
-        out_dir=out_dir,
-        cov_json=cov_json if not args.skip_coverage else None,
-        internal_import_patterns=args.internal_import_pattern,
-        public_hints=args.public_hint,
-        tqa_baseline=args.tqa_baseline,
-        env=env,
+        runtime=runtime,
+        config=TqaConfig(
+            script=tqa_script,
+            cov_json=cov_json if not args.skip_coverage else None,
+            internal_import_patterns=args.internal_import_pattern,
+            public_hints=args.public_hint,
+            baseline=args.tqa_baseline,
+        ),
     )
     _tri_kw = dict(
-        python=args.python,
-        triage_script=triage_script,
-        root=root,
-        suites=args.suite,
-        comparator_suites=args.comparator_suite,
-        source_prefix=args.source_prefix,
-        out_dir=out_dir,
-        max_workers=args.max_workers,
-        env_pairs=args.env,
-        env=env,
+        runtime=runtime,
+        config=TriageConfig(
+            script=triage_script,
+            suites=args.suite,
+            comparator_suites=args.comparator_suite,
+            source_prefix=args.source_prefix,
+            max_workers=args.max_workers,
+            env_pairs=args.env,
+        ),
     )
 
     if run_tqa and run_triage:
