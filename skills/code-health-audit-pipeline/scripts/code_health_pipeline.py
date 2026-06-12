@@ -50,6 +50,13 @@ class LeafRunContext(NamedTuple):
     coverage_json: str | None = None
 
 
+class DecisionStats(NamedTuple):
+    errored: list[str]
+    has_cycle: bool
+    type_errors: int
+    high_severity: int
+
+
 def _dedupe_key(f: dict) -> tuple:
     return (
         f.get("path"),
@@ -86,22 +93,30 @@ def rank(findings: list[dict]) -> list[dict]:
     return sorted(findings, key=lambda f: (-score(f), _sort_key(f)))
 
 
+def _decision_stats(findings: list[dict], leaf_exit: dict[str, int]) -> DecisionStats:
+    return DecisionStats(
+        errored=[n for n, code in leaf_exit.items() if code == 2],
+        has_cycle=any(
+            f.get("metric", {}).get("name") == "import_cycle_size" for f in findings
+        ),
+        type_errors=sum(1 for f in findings if f.get("signal") == "TYPE"),
+        high_severity=sum(1 for f in findings if f.get("severity") == "high"),
+    )
+
+
+def _is_gated(stats: DecisionStats, gate: dict) -> bool:
+    return bool(
+        (gate["gate_on_leaf_error"] and stats.errored)
+        or (gate["gate_on_import_cycle"] and stats.has_cycle)
+        or stats.type_errors > gate["max_type_errors"]
+        or stats.high_severity > gate["max_high_severity"]
+    )
+
+
 def decide(
     findings: list[dict], leaf_exit: dict[str, int], gate: dict
 ) -> tuple[str, int]:
-    errored = [n for n, code in leaf_exit.items() if code == 2]
-    has_cycle = any(
-        f.get("metric", {}).get("name") == "import_cycle_size" for f in findings
-    )
-    type_errors = sum(1 for f in findings if f.get("signal") == "TYPE")
-    high = sum(1 for f in findings if f.get("severity") == "high")
-    gated = (
-        (gate["gate_on_leaf_error"] and errored)
-        or (gate["gate_on_import_cycle"] and has_cycle)
-        or type_errors > gate["max_type_errors"]
-        or high > gate["max_high_severity"]
-    )
-    if gated:
+    if _is_gated(_decision_stats(findings, leaf_exit), gate):
         return "GATE", 2
     if findings:
         return "ADVISE", 1

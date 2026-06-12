@@ -12,12 +12,6 @@
     "symbol": "skills/complexity-audit/scripts/health_common.py#635d9c1b9352"
   },
   {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
-    "symbol": "decide"
-  },
-  {
     "leaf": "duplication",
     "metric": "duplicate_tokens",
     "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",

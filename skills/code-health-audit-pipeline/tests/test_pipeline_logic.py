@@ -41,5 +41,19 @@ def test_decide_gate_on_import_cycle():
     assert (decision, code) == ("GATE", 2)
 
 
+def test_decide_gate_on_type_error_threshold():
+    f = finding(signal="TYPE", severity="medium")
+    gate = {**ch.DEFAULT_GATE, "max_type_errors": 0}
+    decision, code = ch.decide([f], {"quality": 1}, gate)
+    assert (decision, code) == ("GATE", 2)
+
+
+def test_decide_gate_on_high_severity_threshold():
+    f = finding(signal="DECOMPOSE", severity="high")
+    gate = {**ch.DEFAULT_GATE, "max_high_severity": 0}
+    decision, code = ch.decide([f], {"complexity": 1}, gate)
+    assert (decision, code) == ("GATE", 2)
+
+
 def test_test_signal_has_effort_weight():
     assert ch.EFFORT["TEST"] == 3
