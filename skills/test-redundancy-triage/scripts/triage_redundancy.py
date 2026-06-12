@@ -104,6 +104,50 @@ class CoverageArtifactRequest:
     options: CoverageArtifactOptions
 
 
+@dataclass(frozen=True)
+class BranchEquivRequest:
+    root: Path
+    out_dir: Path
+    tests: list[TestMeta]
+    by_cluster: dict[tuple[str, str], list[TestMeta]]
+    rows: list[dict[str, Any]]
+    coverage_map: dict[str, dict[str, Any]]
+    python_exe: str
+    env: dict[str, str]
+    timeout: int
+    max_workers: int
+    source_prefix: str = ""
+
+
+@dataclass(frozen=True)
+class MutationProbeRunContext:
+    root: Path
+    python_exe: str
+    env: dict[str, str]
+    suite_files: list[str]
+    timeout: int
+    use_xdist: bool
+    probes: list[MutationProbe]
+
+
+@dataclass(frozen=True)
+class StrictDeleteGateContext:
+    root: Path
+    out_dir: Path
+    python_exe: str
+    env: dict[str, str]
+    suite_files: list[str]
+    post_suite_files: list[str]
+    timeout: int
+    use_xdist: bool
+    repeats: int
+    batch_size: int
+    max_batches: int
+    probes_source: list[MutationProbe]
+    mutation_probe_count: int
+    mutation_max_drop: int
+
+
 DESELECT_SUITE_PASS_KEY = "deselect_suite_" + "pass"
 
 
@@ -1353,19 +1397,20 @@ def collect_node_coverage_runs(
 
 
 def write_branch_equiv_artifacts(
-    root: Path,
-    out_dir: Path,
-    tests: list[TestMeta],
-    by_cluster: dict[tuple[str, str], list[TestMeta]],
-    rows: list[dict[str, Any]],
-    coverage_map: dict[str, dict[str, Any]],
-    *,
-    python_exe: str,
-    env: dict[str, str],
-    timeout: int,
-    max_workers: int,
-    source_prefix: str = "",
+    request: BranchEquivRequest,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    root = request.root
+    out_dir = request.out_dir
+    tests = request.tests
+    by_cluster = request.by_cluster
+    rows = request.rows
+    coverage_map = request.coverage_map
+    python_exe = request.python_exe
+    env = request.env
+    timeout = request.timeout
+    max_workers = request.max_workers
+    source_prefix = request.source_prefix
+
     csv_path = out_dir / "branch_equiv_report.csv"
     json_path = out_dir / "branch_equiv_summary.json"
     md_path = out_dir / "branch_equiv_report.md"
@@ -2017,17 +2062,10 @@ def stage_probe_file_overlay(
 
 
 def run_mutation_probe_kills(
-    root: Path,
-    python_exe: str,
-    env: dict[str, str],
-    suite_files: list[str],
     deselects: list[str],
-    timeout: int,
-    *,
-    use_xdist: bool,
-    probes: list[MutationProbe],
+    context: MutationProbeRunContext,
 ) -> dict[str, Any]:
-    if not probes:
+    if not context.probes:
         return {
             "status": "skipped",
             "kills": 0,
@@ -2041,12 +2079,14 @@ def run_mutation_probe_kills(
     details: list[dict[str, Any]] = []
     kills = 0
     applied_count = 0
-    for probe in probes:
+    for probe in context.probes:
         with tempfile.TemporaryDirectory(
             prefix=f"triage_probe_{probe.probe_id}_"
         ) as td:
             overlay_root = Path(td)
-            staged, stage_error = stage_probe_file_overlay(root, overlay_root, probe)
+            staged, stage_error = stage_probe_file_overlay(
+                context.root, overlay_root, probe
+            )
             if not staged:
                 details.append(
                     {
@@ -2072,12 +2112,16 @@ def run_mutation_probe_kills(
                 continue
 
             applied_count += 1
-            overlay_env = build_overlay_env(root, env, overlay_root)
+            overlay_env = build_overlay_env(context.root, context.env, overlay_root)
             overlay_context = SuiteRunContext(
-                root, python_exe, overlay_env, timeout, use_xdist
+                context.root,
+                context.python_exe,
+                overlay_env,
+                context.timeout,
+                context.use_xdist,
             )
             run = run_suite_multi(
-                suite_files,
+                context.suite_files,
                 deselects,
                 overlay_context,
             )
@@ -2093,7 +2137,7 @@ def run_mutation_probe_kills(
                 }
             )
 
-    failed_count = max(0, len(probes) - applied_count)
+    failed_count = max(0, len(context.probes) - applied_count)
     failed_ids = ", ".join(
         d["probe_id"] for d in details if not d.get("applied", False)
     )
@@ -2102,24 +2146,24 @@ def run_mutation_probe_kills(
         return {
             "status": "no_probes_applied",
             "kills": 0,
-            "total_probes": len(probes),
+            "total_probes": len(context.probes),
             "applied_probes": 0,
-            "failed_to_apply": len(probes),
+            "failed_to_apply": len(context.probes),
             "details": details,
-            "error": f"all {len(probes)} probe(s) failed to apply ({failed_ids}); "
-            "mutation gate is not exercised",
+            "error": f"all {len(context.probes)} probe(s) failed to apply "
+            f"({failed_ids}); mutation gate is not exercised",
         }
 
-    if applied_count < len(probes):
+    if applied_count < len(context.probes):
         return {
             "status": "partial_probes_applied",
             "kills": kills,
-            "total_probes": len(probes),
+            "total_probes": len(context.probes),
             "applied_probes": applied_count,
             "failed_to_apply": failed_count,
             "details": details,
             "error": (
-                f"{failed_count}/{len(probes)} probe(s) failed to apply "
+                f"{failed_count}/{len(context.probes)} probe(s) failed to apply "
                 f"({failed_ids}); strict mutation gate requires all selected "
                 "probes to apply"
             ),
@@ -2128,7 +2172,7 @@ def run_mutation_probe_kills(
     return {
         "status": "ok",
         "kills": kills,
-        "total_probes": len(probes),
+        "total_probes": len(context.probes),
         "applied_probes": applied_count,
         "failed_to_apply": 0,
         "details": details,
@@ -2137,23 +2181,22 @@ def run_mutation_probe_kills(
 
 
 def run_strict_delete_gate(
-    root: Path,
-    out_dir: Path,
-    python_exe: str,
-    env: dict[str, str],
-    suite_files: list[str],
-    post_suite_files: list[str],
-    timeout: int,
-    *,
-    use_xdist: bool,
     rows: list[dict[str, Any]],
-    repeats: int,
-    batch_size: int,
-    max_batches: int,
-    probes_source: list[MutationProbe],
-    mutation_probe_count: int,
-    mutation_max_drop: int,
+    context: StrictDeleteGateContext,
 ) -> dict[str, Any]:
+    root = context.root
+    out_dir = context.out_dir
+    python_exe = context.python_exe
+    env = context.env
+    suite_files = context.suite_files
+    post_suite_files = context.post_suite_files
+    timeout = context.timeout
+    use_xdist = context.use_xdist
+    repeats = context.repeats
+    batch_size = context.batch_size
+    max_batches = context.max_batches
+    mutation_max_drop = context.mutation_max_drop
+
     delete_rows = [
         r
         for r in rows
@@ -2209,16 +2252,19 @@ def run_strict_delete_gate(
         )
         return {"node_status": node_status, "node_note": node_note, "summary": summary}
 
-    probes = probes_source[: max(0, mutation_probe_count)]
-    baseline_probe = run_mutation_probe_kills(
+    probes = context.probes_source[: max(0, context.mutation_probe_count)]
+    mutation_context = MutationProbeRunContext(
         root,
         python_exe,
         env,
         post_suite_files,
+        timeout,
+        use_xdist,
+        probes,
+    )
+    baseline_probe = run_mutation_probe_kills(
         deselects=[],
-        timeout=timeout,
-        use_xdist=use_xdist,
-        probes=probes,
+        context=mutation_context,
     )
     baseline_probe_status = str(baseline_probe.get("status", "unknown"))
     baseline_probe_ok = baseline_probe_status == "ok"
@@ -2296,14 +2342,8 @@ def run_strict_delete_gate(
                 mutation_failed_apply = str(baseline_probe.get("failed_to_apply", ""))
             else:
                 batch_probe = run_mutation_probe_kills(
-                    root,
-                    python_exe,
-                    env,
-                    post_suite_files,
                     deselects=pending,
-                    timeout=timeout,
-                    use_xdist=use_xdist,
-                    probes=probes,
+                    context=mutation_context,
                 )
                 mutation_batch_status = str(batch_probe.get("status", "unknown"))
                 mutation_applied = str(batch_probe.get("applied_probes", ""))
@@ -2870,22 +2910,25 @@ def main() -> int:
         enforce_cluster_anchor(rows)
 
         if args.strict_delete_gate:
-            strict_gate_result = run_strict_delete_gate(
-                root,
-                out_dir,
-                python_exe,
-                env,
-                suite_files,
-                strict_post_suite_files,
-                args.timeout_seconds,
+            strict_context = StrictDeleteGateContext(
+                root=root,
+                out_dir=out_dir,
+                python_exe=python_exe,
+                env=env,
+                suite_files=suite_files,
+                post_suite_files=strict_post_suite_files,
+                timeout=args.timeout_seconds,
                 use_xdist=use_xdist,
-                rows=rows,
                 repeats=max(1, args.strict_repeats),
                 batch_size=max(1, args.strict_batch_size),
                 max_batches=max(0, args.strict_max_batches),
                 probes_source=probes_source,
                 mutation_probe_count=max(0, args.strict_mutation_probes),
                 mutation_max_drop=max(0, args.strict_mutation_max_drop),
+            )
+            strict_gate_result = run_strict_delete_gate(
+                rows=rows,
+                context=strict_context,
             )
             node_status = strict_gate_result.get("node_status", {})
             node_note = strict_gate_result.get("node_note", {})
@@ -2920,19 +2963,20 @@ def main() -> int:
                 r["strict_gate_status"] = "disabled"
                 r["strict_gate_note"] = ""
 
-    branch_map, branch_summary = write_branch_equiv_artifacts(
-        root,
-        out_dir,
-        tests,
-        by_cluster,
-        rows,
-        coverage_map,
+    branch_request = BranchEquivRequest(
+        root=root,
+        out_dir=out_dir,
+        tests=tests,
+        by_cluster=by_cluster,
+        rows=rows,
+        coverage_map=coverage_map,
         python_exe=python_exe,
         env=env,
         timeout=args.timeout_seconds,
         max_workers=args.max_workers,
         source_prefix=args.source_prefix,
     )
+    branch_map, branch_summary = write_branch_equiv_artifacts(branch_request)
     for r in rows:
         nodeid = str(r.get("test_nodeid", ""))
         branch = branch_map.get(nodeid, {})

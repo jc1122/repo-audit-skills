@@ -464,11 +464,17 @@ def test_write_branch_equiv_artifacts_no_pairs(tmp_path: Path):
     rows: list[dict[str, Any]] = []
     cov_map: dict[str, dict[str, Any]] = {}
 
-    branch_map, summary = triage.write_branch_equiv_artifacts(
-        tmp_path, out_dir, tests, by_cluster, rows, cov_map,
+    request = triage.BranchEquivRequest(
+        root=tmp_path,
+        out_dir=out_dir,
+        tests=tests,
+        by_cluster=by_cluster,
+        rows=rows,
+        coverage_map=cov_map,
         python_exe=sys.executable, env=os.environ.copy(),
         timeout=30, max_workers=1,
     )
+    branch_map, summary = triage.write_branch_equiv_artifacts(request)
     assert summary.get("coverage_mode", "") == "no_pairs"
     assert (out_dir / "branch_equiv_report.csv").exists()
     assert (out_dir / "branch_equiv_summary.json").exists()

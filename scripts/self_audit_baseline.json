@@ -274,23 +274,5 @@
     "metric": "maintainability_index",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "<module>"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "run_mutation_probe_kills"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "run_strict_delete_gate"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "write_branch_equiv_artifacts"
   }
 ]
