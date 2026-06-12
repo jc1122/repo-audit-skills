@@ -362,6 +362,124 @@ def parse_coverage_json(cov_json_path: str) -> dict[str, float]:
         return {}
 
 
+def _score_entry(score: int, rationale: str) -> dict[str, Any]:
+    return {"score": score, "max": 3, "rationale": rationale}
+
+
+def _score_contract_coverage(totals: dict[str, Any]) -> dict[str, Any]:
+    if totals["public_call_hints"] > 0 and totals["raises_with_match"] > 0:
+        return _score_entry(3, "Public call hints and precise raises detected")
+    if totals["public_call_hints"] > 0:
+        return _score_entry(2, "Public call hints detected but no precise raises")
+    if totals["test_functions"] > 0:
+        return _score_entry(1, "Tests exist but no public call hints")
+    return _score_entry(0, "No test functions detected")
+
+
+def _score_behavior_first(
+    totals: dict[str, Any], ratios: dict[str, Any]
+) -> dict[str, Any]:
+    priv_pub_ratio = ratios["private_to_public_call_ratio"]
+    if priv_pub_ratio < 0.3 and totals["public_call_hints"] > 0:
+        return _score_entry(
+            3, f"Low private/public ratio ({priv_pub_ratio}) with public hints"
+        )
+    if priv_pub_ratio < 0.5:
+        return _score_entry(2, f"Moderate private/public ratio ({priv_pub_ratio})")
+    if priv_pub_ratio < 1.0:
+        return _score_entry(1, f"High private/public ratio ({priv_pub_ratio})")
+    return _score_entry(0, f"Very high private/public ratio ({priv_pub_ratio})")
+
+
+def _score_white_box(
+    totals: dict[str, Any], classes: dict[str, Any], priv_pub_ratio: float
+) -> dict[str, Any]:
+    has_white_box = classes.get("white_box_candidate", 0) > 0
+    has_internals = totals["internal_imports"] > 0 or totals["private_method_calls"] > 0
+    if has_white_box and has_internals and priv_pub_ratio < 0.5:
+        return _score_entry(
+            3, "White-box tests present with controlled internal coupling"
+        )
+    if priv_pub_ratio < 1.0:
+        return _score_entry(2, "Private/public ratio under control")
+    if has_white_box:
+        return _score_entry(1, "White-box tests present but high internal coupling")
+    return _score_entry(0, "No white-box classification signal")
+
+
+def _score_determinism(totals: dict[str, Any]) -> dict[str, Any]:
+    if totals["hypothesis_given_calls"] > 0:
+        return _score_entry(3, "Hypothesis property tests detected (seed discipline)")
+    return _score_entry(2, "Default (static analysis cannot fully assess)")
+
+
+def _score_assertion_quality(
+    totals: dict[str, Any], ratios: dict[str, Any]
+) -> dict[str, Any]:
+    match_ratio = ratios["raises_with_match_ratio"]
+    if (
+        match_ratio == 1.0
+        and totals["exact_eq_assert_count"] > 0
+        and totals["raises_total"] > 0
+    ):
+        return _score_entry(
+            3, "All raises use match and exact-equality asserts present"
+        )
+    if match_ratio >= 0.5:
+        return _score_entry(2, f"Raises match ratio {match_ratio} >= 0.5")
+    if totals["raises_total"] > 0:
+        return _score_entry(1, f"Raises present but low match ratio ({match_ratio})")
+    return _score_entry(0, "No pytest.raises calls detected")
+
+
+def _score_pyramid_scope(
+    totals: dict[str, Any], classes: dict[str, Any]
+) -> dict[str, Any]:
+    n_files = totals["files"]
+    has_both = (
+        classes.get("white_box_candidate", 0) > 0
+        and classes.get("black_box_candidate", 0) > 0
+    )
+    if n_files >= 4 and has_both:
+        return _score_entry(
+            3, f"{n_files} files with both white-box and black-box candidates"
+        )
+    if n_files >= 3:
+        return _score_entry(2, f"{n_files} files (layering signal)")
+    if n_files >= 2:
+        return _score_entry(1, f"{n_files} files (minimal layering)")
+    return _score_entry(0, f"Only {n_files} file(s)")
+
+
+def _score_coverage_mutation(cov_json_path: str) -> dict[str, Any]:
+    if not cov_json_path:
+        return _score_entry(1, "unknown (no coverage data provided)")
+    cov_data = parse_coverage_json(cov_json_path)
+    stmt_pct = cov_data.get("statement_pct", 0.0)
+    branch_pct = cov_data.get("branch_pct", 0.0)
+    if stmt_pct >= 85 and branch_pct >= 75:
+        return _score_entry(
+            3, f"Statement {stmt_pct:.1f}% >= 85% and branch {branch_pct:.1f}% >= 75%"
+        )
+    if stmt_pct >= 85:
+        return _score_entry(
+            2, f"Statement {stmt_pct:.1f}% >= 85% (branch {branch_pct:.1f}% < 75%)"
+        )
+    return _score_entry(1, f"Statement {stmt_pct:.1f}% < 85%")
+
+
+def _score_non_functional(
+    totals: dict[str, Any], markers: dict[str, Any]
+) -> dict[str, Any]:
+    n_files = totals["files"]
+    benchmark_count = markers.get("benchmark", 0)
+    if n_files < 2:
+        return _score_entry(0, "Too few test files for non-functional signal")
+    if benchmark_count > 0:
+        return _score_entry(2, f"{benchmark_count} benchmark markers detected")
+    return _score_entry(1, "No benchmark markers detected")
+
+
 def score_rubric(
     summary: dict[str, Any],
     config: dict[str, Any],
@@ -380,153 +498,17 @@ def score_rubric(
 
     scores: dict[str, dict[str, Any]] = {}
 
-    # 1. Contract Coverage
-    if totals["public_call_hints"] > 0 and totals["raises_with_match"] > 0:
-        cc_score, cc_rationale = 3, "Public call hints and precise raises detected"
-    elif totals["public_call_hints"] > 0:
-        cc_score, cc_rationale = 2, "Public call hints detected but no precise raises"
-    elif totals["test_functions"] > 0:
-        cc_score, cc_rationale = 1, "Tests exist but no public call hints"
-    else:
-        cc_score, cc_rationale = 0, "No test functions detected"
-    scores["Contract Coverage"] = {
-        "score": cc_score,
-        "max": 3,
-        "rationale": cc_rationale,
-    }
-
-    # 2. Behavior-First Focus
+    scores["Contract Coverage"] = _score_contract_coverage(totals)
     priv_pub_ratio = ratios["private_to_public_call_ratio"]
-    if priv_pub_ratio < 0.3 and totals["public_call_hints"] > 0:
-        bf_score, bf_rationale = (
-            3,
-            f"Low private/public ratio ({priv_pub_ratio}) with public hints",
-        )
-    elif priv_pub_ratio < 0.5:
-        bf_score, bf_rationale = 2, f"Moderate private/public ratio ({priv_pub_ratio})"
-    elif priv_pub_ratio < 1.0:
-        bf_score, bf_rationale = 1, f"High private/public ratio ({priv_pub_ratio})"
-    else:
-        bf_score, bf_rationale = 0, f"Very high private/public ratio ({priv_pub_ratio})"
-    scores["Behavior-First Focus"] = {
-        "score": bf_score,
-        "max": 3,
-        "rationale": bf_rationale,
-    }
-
-    # 3. White-Box Justification
-    has_white_box = classes.get("white_box_candidate", 0) > 0
-    has_internals = totals["internal_imports"] > 0 or totals["private_method_calls"] > 0
-    if has_white_box and has_internals and priv_pub_ratio < 0.5:
-        wb_score, wb_rationale = (
-            3,
-            "White-box tests present with controlled internal coupling",
-        )
-    elif priv_pub_ratio < 1.0:
-        wb_score, wb_rationale = 2, "Private/public ratio under control"
-    elif has_white_box:
-        wb_score, wb_rationale = 1, "White-box tests present but high internal coupling"
-    else:
-        wb_score, wb_rationale = 0, "No white-box classification signal"
-    scores["White-Box Justification"] = {
-        "score": wb_score,
-        "max": 3,
-        "rationale": wb_rationale,
-    }
-
-    # 4. Determinism/Isolation
-    if totals["hypothesis_given_calls"] > 0:
-        di_score, di_rationale = (
-            3,
-            "Hypothesis property tests detected (seed discipline)",
-        )
-    else:
-        di_score, di_rationale = 2, "Default (static analysis cannot fully assess)"
-    scores["Determinism/Isolation"] = {
-        "score": di_score,
-        "max": 3,
-        "rationale": di_rationale,
-    }
-
-    # 5. Assertion Quality
-    match_ratio = ratios["raises_with_match_ratio"]
-    if (
-        match_ratio == 1.0
-        and totals["exact_eq_assert_count"] > 0
-        and totals["raises_total"] > 0
-    ):
-        aq_score, aq_rationale = (
-            3,
-            "All raises use match and exact-equality asserts present",
-        )
-    elif match_ratio >= 0.5:
-        aq_score, aq_rationale = 2, f"Raises match ratio {match_ratio} >= 0.5"
-    elif totals["raises_total"] > 0:
-        aq_score, aq_rationale = (
-            1,
-            f"Raises present but low match ratio ({match_ratio})",
-        )
-    else:
-        aq_score, aq_rationale = 0, "No pytest.raises calls detected"
-    scores["Assertion Quality"] = {
-        "score": aq_score,
-        "max": 3,
-        "rationale": aq_rationale,
-    }
-
-    # 6. Pyramid/Scope
-    n_files = totals["files"]
-    has_both = (
-        classes.get("white_box_candidate", 0) > 0
-        and classes.get("black_box_candidate", 0) > 0
+    scores["Behavior-First Focus"] = _score_behavior_first(totals, ratios)
+    scores["White-Box Justification"] = _score_white_box(
+        totals, classes, priv_pub_ratio
     )
-    if n_files >= 4 and has_both:
-        ps_score, ps_rationale = (
-            3,
-            f"{n_files} files with both white-box and black-box candidates",
-        )
-    elif n_files >= 3:
-        ps_score, ps_rationale = 2, f"{n_files} files (layering signal)"
-    elif n_files >= 2:
-        ps_score, ps_rationale = 1, f"{n_files} files (minimal layering)"
-    else:
-        ps_score, ps_rationale = 0, f"Only {n_files} file(s)"
-    scores["Pyramid/Scope"] = {"score": ps_score, "max": 3, "rationale": ps_rationale}
-
-    # 7. Coverage/Mutation
-    cm_score = 1
-    cm_rationale = "unknown (no coverage data provided)"
-    if cov_json_path:
-        cov_data = parse_coverage_json(cov_json_path)
-        stmt_pct = cov_data.get("statement_pct", 0.0)
-        branch_pct = cov_data.get("branch_pct", 0.0)
-        if stmt_pct >= 85 and branch_pct >= 75:
-            cm_score = 3
-            cm_rationale = (
-                f"Statement {stmt_pct:.1f}% >= 85% and branch {branch_pct:.1f}% >= 75%"
-            )
-        elif stmt_pct >= 85:
-            cm_score = 2
-            cm_rationale = (
-                f"Statement {stmt_pct:.1f}% >= 85% (branch {branch_pct:.1f}% < 75%)"
-            )
-        else:
-            cm_rationale = f"Statement {stmt_pct:.1f}% < 85%"
-    scores["Coverage/Mutation"] = {
-        "score": cm_score,
-        "max": 3,
-        "rationale": cm_rationale,
-    }
-
-    # 8. Non-Functional
-    benchmark_count = markers.get("benchmark", 0)
-    if n_files < 2:
-        nf_score, nf_rationale = 0, "Too few test files for non-functional signal"
-    elif benchmark_count > 0:
-        nf_score, nf_rationale = 2, f"{benchmark_count} benchmark markers detected"
-    else:
-        nf_score, nf_rationale = 1, "No benchmark markers detected"
-    scores["Non-Functional"] = {"score": nf_score, "max": 3, "rationale": nf_rationale}
+    scores["Determinism/Isolation"] = _score_determinism(totals)
+    scores["Assertion Quality"] = _score_assertion_quality(totals, ratios)
+    scores["Pyramid/Scope"] = _score_pyramid_scope(totals, classes)
+    scores["Coverage/Mutation"] = _score_coverage_mutation(cov_json_path)
+    scores["Non-Functional"] = _score_non_functional(totals, markers)
 
     total = sum(d["score"] for d in scores.values())
     return {
