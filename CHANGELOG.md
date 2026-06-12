@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.7 - 2026-06-12
+
+- Grouped code-health leaf execution inputs behind a focused run context.
+- Split code-health pipeline decision gating into focused stat/predicate helpers.
+- Ratcheted the self-audit baseline from 77 to 74 normalized identities.
+
 ## 0.5.6 - 2026-06-12
 
 - Fixed test-audit-pipeline so parallel TQA and triage stages run once.
