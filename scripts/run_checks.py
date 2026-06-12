@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = ROOT / "scripts"
 
-# ── gate definitions ──────────────────────────────────────────────────────
+# ------------------------------------------------------------------ gate definitions
 
 CHEAP: list[tuple[str, str]] = [
     ("vendored", "scripts/check_vendored_common.py"),
@@ -40,7 +40,7 @@ HEAVY: list[tuple[str, str]] = [
     ("pytest", "scripts/check_full_pytest.py"),
 ]
 
-# ── budget helpers ────────────────────────────────────────────────────────
+# ------------------------------------------------------------------ budget helpers
 
 
 def budget_violations(
@@ -69,13 +69,13 @@ def _load_budget() -> dict[str, float]:
     return {}
 
 
-# ── gate execution ────────────────────────────────────────────────────────
+# ------------------------------------------------------------------ gate execution
 
 
 def _run_one(gate_name: str, script_rel: str) -> tuple[str, int, float, str]:
     """Run a single check script and return ``(name, exit_code, elapsed, tail)``.
 
-    *tail* combines the last lines of stdout + stderr for human-readable
+    *tail* combines the last 2000 chars of stdout + stderr for human-readable
     failure reporting in ``main()``.
     """
     script = ROOT / script_rel
@@ -93,29 +93,18 @@ def _run_one(gate_name: str, script_rel: str) -> tuple[str, int, float, str]:
         elapsed = time.perf_counter() - start
         return (gate_name, 1, elapsed, "TIMEOUT after 600 s")
     elapsed = time.perf_counter() - start
-    # Keep only the last 2000 chars of combined output to avoid flooding
-    # the terminal when a gate produces a huge report.
     combined = (proc.stdout + proc.stderr).strip()
-    if len(combined) > 2000:
-        tail = combined[-2000:]
-    else:
-        tail = combined
+    tail = combined[-2000:] if len(combined) > 2000 else combined
     return (gate_name, proc.returncode, elapsed, tail)
 
 
-# ── main ──────────────────────────────────────────────────────────────────
+def _run_all_gates(
+    timings: dict[str, float], results: dict[str, tuple[int, str]]
+) -> None:
+    """Populate *timings* and *results* by executing every gate.
 
-
-def main() -> int:
-    """Run every gate, write timings, and report failures / budget violations.
-
-    Returns 0 when every gate passes and stays within budget; nonzero
-    otherwise.
+    Cheap gates run concurrently; heavy gates run sequentially.
     """
-    timings: dict[str, float] = {}
-    results: dict[str, tuple[int, str]] = {}  # name → (exit_code, tail)
-
-    # Phase 1 — cheap gates (concurrent) ────────────────────────────────
     with ThreadPoolExecutor(max_workers=len(CHEAP)) as executor:
         future_to_name = {
             executor.submit(_run_one, name, path): name for name, path in CHEAP
@@ -125,65 +114,93 @@ def main() -> int:
             timings[name] = elapsed
             results[name] = (code, tail)
 
-    # Phase 2 — heavy gates (sequential) ─────────────────────────────────
     for name, path in HEAVY:
         name, code, elapsed, tail = _run_one(name, path)
         timings[name] = elapsed
         results[name] = (code, tail)
 
-    # Persist timings ────────────────────────────────────────────────────
+
+def _write_timings(timings: dict[str, float]) -> None:
+    """Persist per-gate elapsed seconds to ``scripts/check_timings.json``."""
     SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
     timings_path = SCRIPTS_DIR / "check_timings.json"
     timings_path.write_text(json.dumps(timings, indent=2) + "\n", encoding="utf-8")
 
-    # Budget check ───────────────────────────────────────────────────────
-    budget = _load_budget()
-    violations = budget_violations(timings, budget)
 
-    # Determine exit code ────────────────────────────────────────────────
-    any_failure = any(code != 0 for code, _ in results.values())
-    any_over_budget = len(violations) > 0
-    exit_code = 1 if (any_failure or any_over_budget) else 0
+# ------------------------------------------------------------------ reporting
 
-    # ── report ──────────────────────────────────────────────────────────
 
-    # Failed gate tails
-    if any_failure:
-        print("--- FAILED GATES ---")
-        for name in sorted(results):
-            code, tail = results[name]
-            if code != 0:
-                print(f"\nFAIL  {name}  (exit {code}, {timings[name]:.2f}s)")
-                if tail:
-                    print(tail)
+def _print_failed_gates(
+    results: dict[str, tuple[int, str]], timings: dict[str, float]
+) -> None:
+    """Print the tail output of every gate that returned a non-zero exit code."""
+    print("--- FAILED GATES ---")
+    for name in sorted(results):
+        code, tail = results[name]
+        if code != 0:
+            print(f"\nFAIL  {name}  (exit {code}, {timings[name]:.2f}s)")
+            if tail:
+                print(tail)
 
-    # Over-budget rows
-    if any_over_budget:
-        print("\n--- OVER BUDGET ---")
-        for name, elapsed, budget_val in violations:
-            if budget_val is not None:
-                print(
-                    f"OVER-BUDGET  {name}  {elapsed:.3f}s > {budget_val:.3f}s"
-                )
-            else:
-                print(
-                    f"OVER-BUDGET  {name}  {elapsed:.3f}s (no budget entry)"
-                )
 
-    # Final gates summary line
+def _print_over_budget(
+    violations: list[tuple[str, float, float | None]],
+) -> None:
+    """Print one line per budget violation."""
+    print("\n--- OVER BUDGET ---")
+    for name, elapsed, budget_val in violations:
+        if budget_val is not None:
+            print(f"OVER-BUDGET  {name}  {elapsed:.3f}s > {budget_val:.3f}s")
+        else:
+            print(f"OVER-BUDGET  {name}  {elapsed:.3f}s (no budget entry)")
+
+
+def _print_summary(
+    results: dict[str, tuple[int, str]],
+    violations: list[tuple[str, float, float | None]],
+) -> None:
+    """Print the one-line ``gates:`` summary."""
     cheap_passed = sum(
         1 for name, _ in CHEAP if results.get(name, (1, ""))[0] == 0
     )
     heavy_passed = sum(
         1 for name, _ in HEAVY if results.get(name, (1, ""))[0] == 0
     )
-    n_failed = sum(1 for _, code in results.values() if code != 0)
+    n_failed = sum(1 for code, _ in results.values() if code != 0)
     print(
         f"\ngates: {cheap_passed}/{len(CHEAP)} cheap, "
         f"{heavy_passed}/{len(HEAVY)} heavy, "
         f"{len(violations)} over-budget, "
         f"{n_failed} failed"
     )
+
+
+# ------------------------------------------------------------------ main
+
+
+def main() -> int:
+    """Run every gate, write timings, and report failures / budget violations.
+
+    Returns 0 when every gate passes and stays within budget; nonzero
+    otherwise.
+    """
+    timings: dict[str, float] = {}
+    results: dict[str, tuple[int, str]] = {}
+
+    _run_all_gates(timings, results)
+    _write_timings(timings)
+
+    budget = _load_budget()
+    violations = budget_violations(timings, budget)
+
+    any_failure = any(code != 0 for code, _ in results.values())
+    exit_code = 1 if (any_failure or violations) else 0
+
+    if any_failure:
+        _print_failed_gates(results, timings)
+    if violations:
+        _print_over_budget(violations)
+    _print_summary(results, violations)
 
     return exit_code
 
