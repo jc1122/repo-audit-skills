@@ -1,6 +1,6 @@
 ---
 name: coverage-gap-audit
-version: 0.5.15
+version: 0.5.16
 description: >
   Deterministic, advisory testedness audit for Python. Consumes coverage.py JSON
   report(s) and emits TEST findings (shared code-health schema) for production

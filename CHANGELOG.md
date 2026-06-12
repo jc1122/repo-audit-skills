@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.16 - 2026-06-12
+
+- Split test-redundancy-triage assertion and intent classifiers into focused
+  helpers while preserving fixture decisions and public CLI behavior.
+- Ratcheted the self-audit baseline from 55 to 53 normalized identities.
+
 ## 0.5.15 - 2026-06-12
 
 - Split structure-audit `analyze_tree` finding assembly into focused helpers

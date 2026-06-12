@@ -1,6 +1,6 @@
 ---
 name: quality-audit
-version: 0.5.15
+version: 0.5.16
 description: >
   Deterministic, advisory lint/format/type audit for Python. Uses ruff lint
   (with dead-code and complexity codes excluded), config-gated ruff format

@@ -1,6 +1,6 @@
 ---
 name: hotspot-audit
-version: 0.5.15
+version: 0.5.16
 description: >
   Deterministic, advisory git-history hotspot audit. Mines commit history to
   identify churn hotspots (DECOMPOSE), temporally coupled files
