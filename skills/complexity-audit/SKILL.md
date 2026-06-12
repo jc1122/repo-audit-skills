@@ -1,6 +1,6 @@
 ---
 name: complexity-audit
-version: 0.5.8
+version: 0.5.9
 description: >
   Deterministic, advisory complexity and maintainability audit for Python. Uses
   lizard (per-function cyclomatic complexity, length, parameters) and radon mi

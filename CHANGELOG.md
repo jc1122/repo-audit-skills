@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.9 - 2026-06-12
+
+- Split test-quality-assurance CLI argument registration into focused helpers
+  while preserving the public `parse_args()` entry point and CLI options.
+- Ratcheted the self-audit baseline from 71 to 70 normalized identities.
+
 ## 0.5.8 - 2026-06-12
 
 - Grouped test-audit-pipeline report summary inputs behind compatibility

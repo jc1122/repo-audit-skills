@@ -1,6 +1,6 @@
 ---
 name: dead-code-audit
-version: 0.5.8
+version: 0.5.9
 description: >
   Deterministic, advisory dead-code audit for Python. Uses vulture (unused
   functions/classes/methods/properties) and ruff F401/F811/F841 (unused imports,
