@@ -613,14 +613,12 @@ def compute_delta(current: dict[str, Any], baseline: dict[str, Any]) -> dict[str
     return delta
 
 
-def render_markdown(report: dict[str, Any]) -> str:
+def _render_summary_sections(report: dict[str, Any]) -> list[str]:
     config = report["config"]
     totals = report["summary"]["totals"]
     ratios = report["summary"]["ratios"]
     classes = report["summary"]["classification_counts"]
-    markers = report["summary"]["markers"]
-
-    lines = [
+    return [
         "# Test Quality Inventory",
         "",
         "## Config",
@@ -664,6 +662,9 @@ def render_markdown(report: dict[str, Any]) -> str:
         "## Marker Breakdown",
     ]
 
+
+def _render_marker_breakdown(markers: dict[str, int]) -> list[str]:
+    lines: list[str] = []
     custom = {k: v for k, v in markers.items() if k not in PYTEST_BUILTIN_MARKERS}
     builtin = {k: v for k, v in markers.items() if k in PYTEST_BUILTIN_MARKERS}
     if custom:
@@ -677,14 +678,18 @@ def render_markdown(report: dict[str, Any]) -> str:
             for m, c in sorted(builtin.items(), key=lambda kv: (-kv[1], kv[0]))
         )
         lines.append(f"- Structural (filtered from signal): {summary}")
+    return lines
 
-    lines.extend(
-        [
-            "",
-            "## Flags",
-        ]
-    )
 
+def _render_flags(report: dict[str, Any]) -> list[str]:
+    config = report["config"]
+    totals = report["summary"]["totals"]
+    ratios = report["summary"]["ratios"]
+    classes = report["summary"]["classification_counts"]
+    lines = [
+        "",
+        "## Flags",
+    ]
     flags: list[str] = []
     if not config["public_hints"]:
         flags.append(
@@ -706,95 +711,111 @@ def render_markdown(report: dict[str, Any]) -> str:
         lines.extend(flags)
     else:
         lines.append("- No high-level heuristic flags triggered by this static pass.")
+    return lines
 
-    # Rubric Scores section
-    rubric = report.get("rubric_scores")
-    if rubric:
-        lines.extend(
-            [
-                "",
-                "## Rubric Scores",
-                "",
-                "| Dimension | Score | Max | Rationale |",
-                "|-----------|-------|-----|-----------|",
-            ]
-        )
-        dimension_order = [
-            "Contract Coverage",
-            "Behavior-First Focus",
-            "White-Box Justification",
-            "Determinism/Isolation",
-            "Assertion Quality",
-            "Pyramid/Scope",
-            "Coverage/Mutation",
-            "Non-Functional",
-        ]
-        for dim in dimension_order:
-            entry = rubric.get(dim, {})
-            if isinstance(entry, dict) and "score" in entry:
-                lines.append(
-                    f"| {dim} | {entry['score']} | {entry['max']} | "
-                    f"{entry['rationale']} |"
-                )
+
+def _render_rubric_scores(rubric: dict[str, Any] | None) -> list[str]:
+    if not rubric:
+        return []
+    lines = [
+        "",
+        "## Rubric Scores",
+        "",
+        "| Dimension | Score | Max | Rationale |",
+        "|-----------|-------|-----|-----------|",
+    ]
+    dimension_order = [
+        "Contract Coverage",
+        "Behavior-First Focus",
+        "White-Box Justification",
+        "Determinism/Isolation",
+        "Assertion Quality",
+        "Pyramid/Scope",
+        "Coverage/Mutation",
+        "Non-Functional",
+    ]
+    for dim in dimension_order:
+        entry = rubric.get(dim, {})
+        if isinstance(entry, dict) and "score" in entry:
+            lines.append(
+                f"| {dim} | {entry['score']} | {entry['max']} | "
+                f"{entry['rationale']} |"
+            )
+    lines.append(
+        f"| **Total** | **{rubric.get('total', '?')}** | "
+        f"**{rubric.get('max_total', 24)}** | |"
+    )
+    return lines
+
+
+def _render_count_delta_section(title: str, values: dict[str, Any]) -> list[str]:
+    if not values:
+        return []
+    lines = [title]
+    for key, info in sorted(values.items()):
+        change = info["change"]
+        sign = "+" if change > 0 else ""
         lines.append(
-            f"| **Total** | **{rubric.get('total', '?')}** | "
-            f"**{rubric.get('max_total', 24)}** | |"
+            f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
         )
+    lines.append("")
+    return lines
 
-    # Delta Report section
-    delta = report.get("delta")
-    if delta:
-        lines.extend(
-            [
-                "",
-                "## Delta Report",
-                "",
-            ]
+
+def _render_ratio_delta_section(values: dict[str, Any]) -> list[str]:
+    if not values:
+        return []
+    lines = ["### Ratios"]
+    for key, info in sorted(values.items()):
+        lines.append(f"- {key}: {info['before']} \u2192 {info['after']}")
+    lines.append("")
+    return lines
+
+
+def _render_rubric_delta_section(values: dict[str, Any]) -> list[str]:
+    if not values:
+        return []
+    lines = ["### Rubric Score Changes"]
+    for key, info in sorted(values.items()):
+        if key in ("total", "max_total"):
+            lines.append(f"- {key}: {info['before']} \u2192 {info['after']}")
+        else:
+            change = info.get("change", "")
+            sign = "+" if isinstance(change, int) and change > 0 else ""
+            lines.append(
+                f"- {key}: {info['before']} \u2192 "
+                f"{info['after']} ({sign}{change})"
+            )
+    lines.append("")
+    return lines
+
+
+def _render_delta_report(delta: dict[str, Any] | None) -> list[str]:
+    if not delta:
+        return []
+    lines = [
+        "",
+        "## Delta Report",
+        "",
+    ]
+    lines.extend(_render_count_delta_section("### Totals", delta.get("totals", {})))
+    lines.extend(_render_ratio_delta_section(delta.get("ratios", {})))
+    lines.extend(
+        _render_count_delta_section(
+            "### Classifications", delta.get("classification_counts", {})
         )
-        # Totals changes
-        totals_d = delta.get("totals", {})
-        if totals_d:
-            lines.append("### Totals")
-            for key, info in sorted(totals_d.items()):
-                change = info["change"]
-                sign = "+" if change > 0 else ""
-                lines.append(
-                    f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
-                )
-            lines.append("")
-        # Ratio changes
-        ratios_d = delta.get("ratios", {})
-        if ratios_d:
-            lines.append("### Ratios")
-            for key, info in sorted(ratios_d.items()):
-                lines.append(f"- {key}: {info['before']} \u2192 {info['after']}")
-            lines.append("")
-        # Classification changes
-        class_d = delta.get("classification_counts", {})
-        if class_d:
-            lines.append("### Classifications")
-            for key, info in sorted(class_d.items()):
-                change = info["change"]
-                sign = "+" if change > 0 else ""
-                lines.append(
-                    f"- {key}: {info['before']} \u2192 {info['after']} ({sign}{change})"
-                )
-            lines.append("")
-        # Rubric score changes
-        rubric_d = delta.get("rubric_scores", {})
-        if rubric_d:
-            lines.append("### Rubric Score Changes")
-            for key, info in sorted(rubric_d.items()):
-                if key in ("total", "max_total"):
-                    lines.append(f"- {key}: {info['before']} \u2192 {info['after']}")
-                else:
-                    change = info.get("change", "")
-                    sign = "+" if isinstance(change, int) and change > 0 else ""
-                    lines.append(
-                        f"- {key}: {info['before']} \u2192 "
-                        f"{info['after']} ({sign}{change})"
-                    )
-            lines.append("")
+    )
+    lines.extend(_render_rubric_delta_section(delta.get("rubric_scores", {})))
+    return lines
+
+
+def render_markdown(report: dict[str, Any]) -> str:
+    markers = report["summary"]["markers"]
+    lines = _render_summary_sections(report)
+    lines.extend(_render_marker_breakdown(markers))
+    lines.extend(_render_flags(report))
+    lines.extend(_render_rubric_scores(report.get("rubric_scores")))
+    lines.extend(_render_delta_report(report.get("delta")))
 
     return "\n".join(lines) + "\n"
 
