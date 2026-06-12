@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.20 - 2026-06-13
+## 0.5.20 - 2026-06-12
 
 - Release preparation for W0 behavior-change release.
 - Version metadata bumped from 0.5.19 to 0.5.20 across package.json and all 16
