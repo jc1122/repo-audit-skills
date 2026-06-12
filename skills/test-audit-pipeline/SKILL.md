@@ -1,6 +1,6 @@
 ---
 name: test-audit-pipeline
-version: 0.5.18
+version: 0.5.19
 description: >
   One-command test health check that orchestrates coverage collection,
   TDD quality scoring, and redundancy triage into a unified pipeline.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.19 - 2026-06-12
+
+- Split test-redundancy-triage coverage bootstrap, mutation artifacts, and
+  mutation-probe execution into focused helpers while preserving fixture
+  decisions and public CLI behavior.
+- Ratcheted the self-audit baseline from 44 to 40 normalized identities.
+
 ## 0.5.18 - 2026-06-12
 
 - Grouped the remaining test-redundancy-triage strict-gate,
