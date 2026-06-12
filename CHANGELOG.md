@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.17 - 2026-06-12
+
+- Grouped test-redundancy-triage pytest suite and coverage run parameters into
+  context objects while preserving fixture decisions and public CLI behavior.
+- Ratcheted the self-audit baseline from 53 to 49 normalized identities.
+
 ## 0.5.16 - 2026-06-12
 
 - Split test-redundancy-triage assertion and intent classifiers into focused

@@ -1,6 +1,6 @@
 ---
 name: dependency-audit
-version: 0.5.16
+version: 0.5.17
 description: >
   Deterministic, advisory dependency audit for Python. Compiles declared
   dependencies (pyproject.toml [project] or requirements*.txt) against
