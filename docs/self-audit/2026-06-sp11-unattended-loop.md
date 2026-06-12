@@ -2212,3 +2212,128 @@ Iteration 10 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline `31`, consisting of 24 code-health rows and 7 real
   hotspot churn rows.
+
+## Iteration 11
+
+### Iteration 11 C-0 installed readback and diagnosis
+
+- Source/readback at iteration start:
+  - Repo-A source `f15461a0ec5c0595fc592c7469048a51c6bc8ef0`, with
+    installed repo-A leaves still at release source
+    `baea4d3c7b8e750ab0f953222da4176e7fdc78e7`.
+  - Repo-B source `f6ace4b6290089c15108f90028e637c202bef755`.
+  - Repo-P source `95ab00fadbca55b637fc84e27ce978c4691bb9f6`.
+- Installed versions: all 16 repo-A leaves `0.5.11`;
+  repo-audit-refactor-optimize `0.4.3`; perf-benchmark `0.3.8`;
+  perf-optimization `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P with
+  `restart_required=false` and `stop_before_discovery=false`. Artifact root:
+  `artifacts/sp11/iteration-11/c0`.
+- C-0 wave summaries:
+  - Repo-A: code-health `42`, security/hygiene/docs/dependency `0`,
+    hotspot `197`.
+  - Repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+    hotspot `4`.
+  - Repo-P: code-health `24`, security/hygiene/docs/dependency `0`,
+    hotspot `7`.
+- C-0 wave artifacts are under `artifacts/sp11/iteration-11/c0-wave`.
+
+### Iteration 11 accepted batches
+
+Repo-A:
+
+- Split `score_rubric` into focused per-dimension scoring helpers while
+  preserving the rubric JSON shape and Markdown output.
+- Split `summarize` into marker/classification, totals, and ratio helpers while
+  preserving the summary JSON shape and Markdown output.
+- Focused verification passed after each batch:
+  `python3 -m pytest skills/test-quality-assurance/tests -q --color=no` -> 80
+  passed.
+- Fixed dirty-fixture JSON and Markdown outputs were byte-identical before and
+  after both batches. Artifact roots:
+  - `artifacts/sp11/iteration-11/prechange/repo-a-test-quality-score-rubric`
+  - `artifacts/sp11/iteration-11/postchange/repo-a-test-quality-score-rubric-rerun`
+  - `artifacts/sp11/iteration-11/prechange/repo-a-test-quality-summarize`
+  - `artifacts/sp11/iteration-11/postchange/repo-a-test-quality-summarize-rerun`
+- `npm run check` passed after both batches. The final run reported selfaudit
+  `61/61`, security/hygiene/docs/dependency/coverage `0/0`, and full-pytest
+  `17/17`.
+- Installed validation wave shrank repo-A code-health from `42` to `39`;
+  hotspot remained `197`.
+- Removed identities relative to C-0:
+  - `score_rubric` `cyclomatic_complexity`
+  - `score_rubric` `function_nloc`
+  - `summarize` `cyclomatic_complexity`
+- No new validation-wave identities appeared.
+- Accepted commits:
+  - `2914e996d472d7435f9e4d46921e85a5f725e5a8`
+    (`refactor(test-quality): split rubric scoring`).
+  - `b51d5034ff47f9088c964e9cb4994e74221bf908`
+    (`refactor(test-quality): split summary aggregation`).
+
+Repo-B:
+
+- No accepted source change. The remaining three module-MI rows in private
+  bootstrap helpers remain deferred structural work, and the four hotspot rows
+  remain unchanged.
+
+Repo-P:
+
+- No accepted source change. The next remaining rows are broader scoring,
+  stage-helper, and benchmark-pipeline complexity work; iteration 11 used its
+  repo-A batch budget on the tighter test-quality-assurance shrink.
+
+### Iteration 11 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `61/61`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched byte-for-byte across run 1 and
+  run 2. Summary: code-health `39`, security/hygiene/docs/dependency `0`,
+  hotspot `197`.
+- Convergence artifacts are under `artifacts/sp11/iteration-11/convergence`.
+
+### Iteration 11 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.12` at
+  `dc8d842e632ac6bcf79468a9fc662907173cc401`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulation before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `61/61`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-11/fresh-clone/repo-a-release`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27409413679` completed success for
+  `dc8d842e632ac6bcf79468a9fc662907173cc401`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-11/ci/repo-a-release`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.12
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.12`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.8`;
+  both nested and top-level perf-optimization at `0.2.1`.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Probe
+  stdout for all three repos reported `restart_required=false` and
+  `stop_before_discovery=false`.
+- Postinstall artifact roots are under `artifacts/sp11/iteration-11/postinstall`.
+
+Iteration 11 closing baseline counts:
+
+- Repo-A: selfaudit `61`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
+  real hotspot churn rows.
