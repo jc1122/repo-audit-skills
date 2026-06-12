@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.13 - 2026-06-12
+
+- Split test-quality-assurance public-hint inference into focused helpers while
+  preserving inferred hints and CLI fixture output.
+- Split dead-code-audit ruff execution, parsing, and finding construction into
+  focused helpers while preserving dead-code output contracts.
+- Ratcheted the self-audit baseline from 61 to 58 normalized identities.
+
 ## 0.5.12 - 2026-06-12
 
 - Split test-quality-assurance rubric scoring and summary aggregation into
