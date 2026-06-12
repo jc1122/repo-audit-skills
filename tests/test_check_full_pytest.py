@@ -92,3 +92,45 @@ def test_snapshot_order_is_sorted_not_completion_order(tmp_path, monkeypatch):
     ]
     ordered = gate.sort_results(recorded)
     assert [r["suite"] for r in ordered] == ["skills/a/tests", "skills/b/tests"]
+
+
+def test_normalize_tail_strips_volatile_duration():
+    """normalize_tail removes pytest timing so snapshots are byte-stable."""
+    import scripts.check_full_pytest as gate
+
+    # Simple duration
+    assert gate.normalize_tail(["34 passed in 9.60s"]) == ["34 passed"]
+    # Failed + passed with duration
+    assert gate.normalize_tail(["6 failed, 2 passed in 1.57s"]) == [
+        "6 failed, 2 passed"
+    ]
+    # Duration with parenthesised H:MM:SS
+    assert gate.normalize_tail(["208 passed in 185.99s (0:03:05)"]) == [
+        "208 passed"
+    ]
+    # No tests ran (edge case)
+    assert gate.normalize_tail(["no tests ran in 0.01s"]) == ["no tests ran"]
+    # Already normalized (no-op)
+    assert gate.normalize_tail(["1 passed"]) == ["1 passed"]
+    # Integer seconds (no decimal)
+    assert gate.normalize_tail(["5 passed in 2s"]) == ["5 passed"]
+    # Empty tail
+    assert gate.normalize_tail([]) == []
+
+
+def test_run_suite_normalizes_tail(tmp_path, monkeypatch):
+    """run_suite returns tail without volatile duration strings."""
+    mod = _load()
+    monkeypatch.setattr(mod, "ROOT", tmp_path)
+
+    suite = tmp_path / "tests"
+    suite.mkdir()
+    (suite / "test_ok.py").write_text(
+        "def test_passes():\n    assert True\n",
+        encoding="utf-8",
+    )
+
+    result = mod.run_suite(suite)
+    tail_joined = " ".join(result["tail"])
+    assert "1 passed" in tail_joined
+    assert " in " not in tail_joined, f"tail still contains timing: {result['tail']}"

@@ -3,119 +3,119 @@
     "suite": "skills/code-health-audit-pipeline/tests",
     "returncode": 0,
     "tail": [
-      "34 passed in 6.41s"
+      "34 passed"
     ]
   },
   {
     "suite": "skills/complexity-audit/tests",
     "returncode": 0,
     "tail": [
-      "13 passed in 2.83s"
+      "13 passed"
     ]
   },
   {
     "suite": "skills/coverage-gap-audit/tests",
     "returncode": 0,
     "tail": [
-      "13 passed in 1.45s"
+      "13 passed"
     ]
   },
   {
     "suite": "skills/dead-code-audit/tests",
     "returncode": 0,
     "tail": [
-      "12 passed in 2.78s"
+      "12 passed"
     ]
   },
   {
     "suite": "skills/dependency-audit/tests",
     "returncode": 0,
     "tail": [
-      "47 passed in 0.52s"
+      "47 passed"
     ]
   },
   {
     "suite": "skills/docs-consistency-audit/tests",
     "returncode": 0,
     "tail": [
-      "36 passed in 0.87s"
+      "36 passed"
     ]
   },
   {
     "suite": "skills/duplication-audit/tests",
-    "returncode": 1,
+    "returncode": 0,
     "tail": [
-      "6 failed, 2 passed in 1.47s"
+      "8 passed"
     ]
   },
   {
     "suite": "skills/hotspot-audit/tests",
     "returncode": 0,
     "tail": [
-      "38 passed in 4.08s"
+      "38 passed"
     ]
   },
   {
     "suite": "skills/quality-audit/tests",
     "returncode": 0,
     "tail": [
-      "15 passed in 12.86s"
+      "15 passed"
     ]
   },
   {
     "suite": "skills/repo-hygiene-audit/tests",
     "returncode": 0,
     "tail": [
-      "18 passed in 0.88s"
+      "18 passed"
     ]
   },
   {
     "suite": "skills/security-audit/tests",
     "returncode": 0,
     "tail": [
-      "15 passed in 3.39s"
+      "15 passed"
     ]
   },
   {
     "suite": "skills/structure-audit/tests",
     "returncode": 0,
     "tail": [
-      "19 passed in 1.26s"
+      "19 passed"
     ]
   },
   {
     "suite": "skills/test-audit-pipeline/tests",
     "returncode": 0,
     "tail": [
-      "60 passed in 1.00s"
+      "60 passed"
     ]
   },
   {
     "suite": "skills/test-effectiveness-audit/tests",
     "returncode": 0,
     "tail": [
-      "49 passed in 5.95s"
+      "49 passed"
     ]
   },
   {
     "suite": "skills/test-quality-assurance/tests",
     "returncode": 0,
     "tail": [
-      "80 passed in 1.97s"
+      "80 passed"
     ]
   },
   {
     "suite": "skills/test-redundancy-triage/tests",
     "returncode": 0,
     "tail": [
-      "208 passed in 107.49s (0:01:47)"
+      "208 passed"
     ]
   },
   {
     "suite": "tests",
     "returncode": 0,
     "tail": [
-      "63 passed in 4.72s"
+      "65 passed"
     ]
   }
 ]

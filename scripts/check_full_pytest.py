@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -18,6 +19,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SNAPSHOT = ROOT / "scripts" / "full_pytest_snapshot.json"
 WORKERS = max(2, (os.cpu_count() or 2) - 1)
+
+# Volatile pytest duration suffixes that prevent byte-identical snapshots.
+_DURATION_RE = re.compile(r"\s+in\s+\d+\.?\d*s(?:\s+\(\d+:\d{2}:\d{2}\))?")
+
+
+def normalize_tail(tail: list[str]) -> list[str]:
+    """Strip volatile pytest duration strings so snapshots are byte-stable."""
+    return [_DURATION_RE.sub("", line) for line in tail]
 
 
 def suite_dirs() -> list[Path]:
@@ -32,8 +41,8 @@ def run_suite(suite: Path) -> dict:
          "-p", "no:cacheprovider"],
         capture_output=True, text=True, cwd=suite.parent, check=False,
     )
-    tail = (proc.stdout.strip().splitlines()[-1:]
-            or proc.stderr.strip().splitlines()[-1:])
+    tail = normalize_tail(proc.stdout.strip().splitlines()[-1:]
+                          or proc.stderr.strip().splitlines()[-1:])
     return {
         "suite": str(suite.relative_to(ROOT)),
         "returncode": proc.returncode,
