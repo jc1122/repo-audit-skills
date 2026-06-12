@@ -243,12 +243,6 @@
     "leaf": "complexity",
     "metric": "function_nloc",
     "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
-    "symbol": "parse_args"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "function_nloc",
-    "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
     "symbol": "render_markdown"
   },
   {

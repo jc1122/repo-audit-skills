@@ -795,8 +795,7 @@ def render_markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Static test quality inventory.")
+def _add_input_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--root", default=".", help="Repository root path (default: current directory)."
     )
@@ -812,6 +811,9 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Glob pattern under each test dir. Repeat or comma-separate for multiple.",
     )
+
+
+def _add_detection_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--internal-import-pattern",
         action="append",
@@ -841,6 +843,9 @@ def parse_args() -> argparse.Namespace:
             "Defaults to the built-in EXACT_EQ_ASSERT_RE pattern."
         ),
     )
+
+
+def _add_output_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--json-out", default="", help="Optional JSON report output path."
     )
@@ -859,6 +864,13 @@ def parse_args() -> argparse.Namespace:
         help="Path to a previous JSON report. "
         "When provided, a delta report is included showing changes.",
     )
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Static test quality inventory.")
+    _add_input_args(parser)
+    _add_detection_args(parser)
+    _add_output_args(parser)
     return parser.parse_args()
 
 
