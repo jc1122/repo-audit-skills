@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.18 - 2026-06-12
+
+- Grouped the remaining test-redundancy-triage strict-gate,
+  mutation-probe, and branch-equivalence parameters behind context/request
+  objects while preserving fixture decisions and public CLI behavior.
+- Split quality-audit lint and type finding construction into focused helpers
+  while preserving byte-identical dirty-fixture CLI output.
+- Ratcheted the self-audit baseline from 49 to 44 normalized identities.
+
 ## 0.5.17 - 2026-06-12
 
 - Grouped test-redundancy-triage pytest suite and coverage run parameters into
