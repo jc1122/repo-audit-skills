@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.6 - 2026-06-12
+
+- Fixed test-audit-pipeline so parallel TQA and triage stages run once.
+- Grouped test-audit-pipeline stage-runner inputs into focused runtime/config
+  objects.
+- Ratcheted the self-audit baseline from 81 to 77 normalized identities.
+
 ## 0.5.5 - 2026-06-12
 
 - Split test-audit-pipeline report rendering and parser construction into

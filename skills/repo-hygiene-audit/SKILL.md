@@ -1,6 +1,6 @@
 ---
 name: repo-hygiene-audit
-version: 0.5.5
+version: 0.5.6
 description: >
   Deterministic, advisory tracked-tree hygiene and release hygiene audit for any
   repository. Checks tracked artifacts, gitignore violations, oversized files,
