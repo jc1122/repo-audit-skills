@@ -3196,3 +3196,175 @@ Iteration 17 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
   real hotspot churn rows.
+
+## Iteration 18
+
+### Iteration 18 C-0
+
+Installed readback:
+
+- Timestamp: `2026-06-12T19:01:12Z`.
+- Repo-A start SHA:
+  `e654a636ffef22b0e54ea9b9fd2457b09726a057`.
+- Repo-B start SHA:
+  `f6ace4b6290089c15108f90028e637c202bef755`.
+- Repo-P start SHA:
+  `95ab00fadbca55b637fc84e27ce978c4691bb9f6`.
+- Installed repo-A package/leaves were at `0.5.18`.
+- Repo-audit-refactor-optimize remained at `0.4.3`.
+- Perf-benchmark remained at `0.3.8`; perf-optimization remained at `0.2.1`.
+
+Bootstrap:
+
+- Repo-A, repo-B, and repo-P bootstrap probes exited 0.
+- All three bootstrap probes reported `restart_required=false` and
+  `stop_before_discovery=false`.
+
+C-0 configured waves:
+
+- Repo-A: code-health `22`, security/hygiene/docs/dependency `0`, hotspot
+  `204`.
+- Repo-B: code-health `3`, security/hygiene/docs/dependency `0`, hotspot `4`.
+- Repo-P: code-health `24`, security/hygiene/docs/dependency `0`, hotspot
+  `7`.
+- Comparable structural total at C-0: `49`.
+
+### Iteration 18 accepted batches
+
+Repo-A batch 1:
+
+- Commit:
+  - `38bd5a5` (`refactor(triage): split coverage mutation helpers`).
+- Touched files:
+  - `skills/test-redundancy-triage/scripts/triage_redundancy.py`.
+  - `scripts/self_audit_baseline.json`.
+- Removed structural identities:
+  - `collect_node_coverage_runs` `function_nloc`.
+  - `ensure_coverage_tool` `function_nloc`.
+  - `write_mutation_artifacts` `function_nloc`.
+- Focused test-redundancy-triage tests passed before and after:
+  - before: `208 passed in 118.50s`.
+  - after: `208 passed in 108.80s`.
+- Fixed CLI fixture outputs compared stable across 12 generated artifacts after
+  excluding only timestamp/runtime fields.
+- Producing-leaf and installed-wave validation removed the expected three
+  identities and added none.
+- Self-audit baseline ratcheted from `44` to `41`.
+- Full `npm run check` passed with selfaudit `41/41`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`.
+
+Repo-A batch 2:
+
+- Commit:
+  - `08332b3` (`refactor(triage): split mutation probe runner`).
+- Touched files:
+  - `skills/test-redundancy-triage/scripts/triage_redundancy.py`.
+  - `scripts/self_audit_baseline.json`.
+- Removed structural identity:
+  - `run_mutation_probe_kills` `function_nloc`.
+- Focused test-redundancy-triage tests passed before and after:
+  - before: `208 passed in 112.81s`.
+  - after: `208 passed in 113.62s`.
+- Fixed CLI fixture outputs compared stable across 12 generated artifacts after
+  excluding only timestamp/runtime fields.
+- Producing-leaf and installed-wave validation removed the expected identity
+  and added none.
+- Self-audit baseline ratcheted from `41` to `40`.
+- Full `npm run check` passed with selfaudit `40/40`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`.
+
+Repo-B:
+
+- No source changes accepted in iteration 18.
+
+Repo-P:
+
+- No source changes accepted in iteration 18.
+
+### Iteration 18 convergence
+
+- Repo-A convergence runs 1 and 2 matched exactly:
+  code-health `18`, security/hygiene/docs/dependency `0`, hotspot `204`.
+- Repo-B convergence runs 1 and 2 matched exactly:
+  code-health `3`, security/hygiene/docs/dependency `0`, hotspot `4`.
+- Repo-P convergence runs 1 and 2 matched exactly:
+  code-health `24`, security/hygiene/docs/dependency `0`, hotspot `7`.
+- Run 1 to run 2 identity deltas were empty for all three repos.
+- Relative to C-0, repo-A removed four complexity identities and added none:
+  - `collect_node_coverage_runs` `function_nloc`.
+  - `ensure_coverage_tool` `function_nloc`.
+  - `run_mutation_probe_kills` `function_nloc`.
+  - `write_mutation_artifacts` `function_nloc`.
+- Comparable structural total after accepted batches: `45`.
+
+### Iteration 18 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.19` at
+  `b27cc2fe1dbf3a05bfcd188913a7c8140706c5d5`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulation before push:
+
+- Repo-A fresh clone at `/tmp/sp11-iter18-fresh-repo-a`: `npm ci` followed by
+  `npm run check` exited 0.
+- Final fresh-clone counts were selfaudit `40/40`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27439567783` completed success for
+  `b27cc2fe1dbf3a05bfcd188913a7c8140706c5d5`; job `81110020657` completed
+  success.
+- The CI `Run checks` step ran from `2026-06-12T19:57:12Z` to
+  `2026-06-12T20:03:18Z`.
+- Warning/deprecation scan found only a generic Git checkout hint and no
+  repo runtime warning/deprecation rows. The local ignored CI-log artifact is
+  stored under the iteration-18 artifact directory.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.19
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.19`.
+- Source/install parity for
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py` matched by
+  SHA-256.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Probe
+  reports for all three repos recorded `restart_required=false` and
+  `stop_before_discovery=false`.
+- Postinstall re-anchor waves reported:
+  - repo-A: code-health `18`, security/hygiene/docs/dependency `0`, hotspot
+    `204`.
+  - repo-B: code-health `3`, security/hygiene/docs/dependency `0`, hotspot
+    `4`.
+  - repo-P: code-health `24`, security/hygiene/docs/dependency `0`, hotspot
+    `7`.
+
+Iteration 18 speed report:
+
+- A supervisor-facing report was written as `supervisor-speed-report.md` under
+  the local ignored iteration-18 artifact directory.
+- Main timing finding: diagnosis/editing was fast; repeated focused pytest,
+  serial coverage, serial full-pytest, clean-clone full check, and CI were the
+  dominant waits.
+- Recommended acceleration targets:
+  - separate batch-acceptance gates from release-confidence gates.
+  - run independent repo batches in parallel worktrees.
+  - parallelize `scripts/check_full_pytest.py` with bounded workers.
+  - parallelize coverage collection with per-suite coverage files plus
+    `coverage combine`.
+  - use package/install smoke for most fresh-clone checks instead of a repeated
+    full `npm run check`.
+
+Iteration 18 closing baseline counts:
+
+- Repo-A: selfaudit `40`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`; current installed wave code-health `18`, hotspot `204`.
+- Repo-B: current installed wave code-health `3`, hotspot `4`.
+- Repo-P: current installed wave code-health `24`, hotspot `7`.
+- Comparable structural total: `45`.
