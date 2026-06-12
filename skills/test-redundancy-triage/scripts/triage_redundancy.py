@@ -213,29 +213,42 @@ def extract_calls(fn: ast.AST) -> set[str]:
     return out
 
 
-def infer_assertion_types(fn: ast.AST, calls: set[str], src: str) -> set[str]:
-    out: set[str] = set()
-    for n in ast.walk(fn):
-        if isinstance(n, ast.With):
-            for item in n.items:
-                ctx = item.context_expr
-                if isinstance(ctx, ast.Call) and dotted_name(ctx.func).endswith(
-                    "raises"
-                ):
-                    out.add("exception")
+_CALL_ASSERTION_TYPES = (
+    ("isinstance", "type_check"),
+    ("np.testing.assert_array_equal", "array_equality"),
+    ("simplify", "topology_equality"),
+)
+_SOURCE_ASSERTION_TYPES = (
+    (".dtype", "dtype_contract"),
+    (".flags.writeable", "mutability_contract"),
+    ("len(", "length_contract"),
+)
 
-    if "isinstance" in calls:
-        out.add("type_check")
-    if "np.testing.assert_array_equal" in calls:
-        out.add("array_equality")
-    if "simplify" in calls:
-        out.add("topology_equality")
-    if ".dtype" in src:
-        out.add("dtype_contract")
-    if ".flags.writeable" in src:
-        out.add("mutability_contract")
-    if "len(" in src:
-        out.add("length_contract")
+
+def _has_pytest_raises(fn: ast.AST) -> bool:
+    for n in ast.walk(fn):
+        if not isinstance(n, ast.With):
+            continue
+        for item in n.items:
+            ctx = item.context_expr
+            if isinstance(ctx, ast.Call) and dotted_name(ctx.func).endswith("raises"):
+                return True
+    return False
+
+
+def _matched_labels(pairs: tuple[tuple[str, str], ...], text: str) -> set[str]:
+    return {label for needle, label in pairs if needle in text}
+
+
+def _call_assertion_types(calls: set[str]) -> set[str]:
+    return {label for call, label in _CALL_ASSERTION_TYPES if call in calls}
+
+
+def infer_assertion_types(fn: ast.AST, calls: set[str], src: str) -> set[str]:
+    out = _call_assertion_types(calls)
+    out.update(_matched_labels(_SOURCE_ASSERTION_TYPES, src))
+    if _has_pytest_raises(fn):
+        out.add("exception")
     if "assert" in src and not out:
         out.add("general_assert")
     return out
@@ -321,40 +334,59 @@ def infer_entrypoint(
     return "unknown"
 
 
+_SHAPE_DTYPE_ASSERTIONS = {"mutability_contract", "dtype_contract"}
+_EQUIVALENCE_ASSERTIONS = {"array_equality", "topology_equality"}
+_NAME_INTENT_RULES = (
+    (("monkeypatch", "mock", "patch"), "mock_isolation"),
+    (("__del__", "cleanup", "teardown", "lifecycle"), "lifecycle_contract"),
+    (("cdll", "ctypes", "ffi", "library", "lib_stream"), "ffi_contract"),
+)
+_SOURCE_INTENT_RULES = (
+    (("ctypes", "CDLL", "_lib_stream"), "ffi_contract"),
+    (("__del__",), "lifecycle_contract"),
+)
+
+
+def _intent_from_assertions(assertions: set[str]) -> str:
+    if "exception" in assertions:
+        return "error_semantics"
+    if assertions & _SHAPE_DTYPE_ASSERTIONS:
+        return "shape_dtype_contract"
+    if assertions & _EQUIVALENCE_ASSERTIONS:
+        return "parity_equivalence"
+    return ""
+
+
+def _first_text_intent(
+    text: str, rules: tuple[tuple[tuple[str, ...], str], ...]
+) -> str:
+    for needles, intent in rules:
+        if any(needle in text for needle in needles):
+            return intent
+    return ""
+
+
+def _intent_from_source(src: str) -> str:
+    if "monkeypatch" in src.lower():
+        return "mock_isolation"
+    return _first_text_intent(src, _SOURCE_INTENT_RULES)
+
+
 def infer_intent(
     test_name: str, entrypoint: str, assertions: set[str], src: str
 ) -> str:
     low = test_name.lower()
     if "version" in low:
         return "introspection"
-    if "exception" in assertions:
-        return "error_semantics"
-    if "mutability_contract" in assertions or "dtype_contract" in assertions:
-        return "shape_dtype_contract"
-    if "array_equality" in assertions or "topology_equality" in assertions:
-        return "parity_equivalence"
-    # Mock/isolation tests
-    if "monkeypatch" in low or "mock" in low or "patch" in low:
-        return "mock_isolation"
-    # Lifecycle/cleanup tests
-    if "__del__" in low or "cleanup" in low or "teardown" in low or "lifecycle" in low:
-        return "lifecycle_contract"
-    # FFI/C-library tests
-    if (
-        "cdll" in low
-        or "ctypes" in low
-        or "ffi" in low
-        or "library" in low
-        or "lib_stream" in low
-    ):
-        return "ffi_contract"
-    # Check source for monkeypatch usage
-    if "monkeypatch" in src.lower():
-        return "mock_isolation"
-    if "ctypes" in src or "CDLL" in src or "_lib_stream" in src:
-        return "ffi_contract"
-    if "__del__" in src:
-        return "lifecycle_contract"
+    assertion_intent = _intent_from_assertions(assertions)
+    if assertion_intent:
+        return assertion_intent
+    name_intent = _first_text_intent(low, _NAME_INTENT_RULES)
+    if name_intent:
+        return name_intent
+    source_intent = _intent_from_source(src)
+    if source_intent:
+        return source_intent
     return "shape_dtype_contract"
 
 

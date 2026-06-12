@@ -177,18 +177,6 @@
     "leaf": "complexity",
     "metric": "cyclomatic_complexity",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "infer_assertion_types"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "infer_intent"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "cyclomatic_complexity",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "main"
   },
   {
