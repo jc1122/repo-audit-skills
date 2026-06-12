@@ -1160,3 +1160,86 @@ Verification:
   count `35`, baseline `35`. `cmp` returned 0 for `wave_findings.json` and
   `wave_summary.json`.
 - Convergence artifacts are under `artifacts/sp11/iteration-04/convergence`.
+
+### Iteration 4 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A changed source in iteration 4 and shipped `v0.5.5` at
+  `dcb489fce4ad07d73c7dc8dcf4371b3a5df66ac3`.
+- Repo-P changed source in iteration 4 and shipped `v0.3.3` at
+  `69ee41a604f8aa7924f30531e23c94f5673d63ee`; nested perf-optimization
+  remains at `0.2.1`.
+- Repo-B had no accepted source change in iteration 4 and did not ship a new
+  release.
+
+Fresh-clone simulations before push:
+
+- Repo-A fresh clone: `npm ci` followed by `npm run check` exited 0. Final
+  counts were selfaudit `81/81`, security/hygiene/docs/dependency/coverage
+  `0/0`, full-pytest `17/17`, installed wave code-health `58`, and hotspot
+  `160`. Artifact root: `artifacts/sp11/iteration-04/fresh-clone/repo-a`.
+- Repo-P release fresh clone: ruff check and format passed, pytest reported
+  155 passed, and wave baseline passed at `35/35`. Artifact root:
+  `artifacts/sp11/iteration-04/fresh-clone/repo-p`.
+
+CI and release evidence:
+
+- Repo-A CI run `27388302737` completed success for
+  `dcb489fce4ad07d73c7dc8dcf4371b3a5df66ac3`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.5
+- Repo-A CI log scan found no warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-04/ci/repo-a-release`.
+- Repo-P release CI run `27388302690` completed success for
+  `69ee41a604f8aa7924f30531e23c94f5673d63ee`.
+- Repo-P release:
+  https://github.com/jc1122/perf-benchmark-skill/releases/tag/v0.3.3
+- Repo-P release CI log scan found no warning/deprecation annotations. Log
+  artifact: `artifacts/sp11/iteration-04/ci/repo-p-release`.
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`, then synced repo-P into the installed
+  perf-benchmark and perf-optimization skill directories.
+- Installed readback passed: all 16 repo-A leaves at `0.5.5`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.3`; both
+  nested and top-level perf-optimization at `0.2.1`.
+- Installed readback artifact is in the iteration 4 postinstall artifact root.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Report
+  readback for all three repos: `install_candidates=[]`,
+  `summary.restart_required=false`, and `summary.stop_before_discovery=false`.
+- Bootstrap artifact roots:
+  `artifacts/sp11/iteration-04/postinstall/repo-a`,
+  `artifacts/sp11/iteration-04/postinstall/repo-b`, and
+  `artifacts/sp11/iteration-04/postinstall/repo-p`.
+
+Repo-P C-6 hotspot re-anchor:
+
+- After reinstall, repo-P advanced its hotspot anchor to the `v0.3.3` release
+  commit and reran the wave gate.
+- Re-anchor surfaced two loop-induced, non-suppressible churn rows: repo-P
+  SKILL.md from the release-version bump and repo-P wave_frozen.md from
+  repeated ratchet evidence updates.
+- Per SP11 pre-flight rule 5, both rows were recorded as real re-anchor
+  residue rather than hidden or treated as unfixable growth. Repo-P baseline
+  moved from `35/35` to `37/37`.
+- Repo-P re-anchor commit: `0c4e3fd7f2143a79f239eb5d31b74ccfd674cdaf`
+  (`ratchet(wave): re-anchor iteration four hotspot window`).
+- Repo-P re-anchor fresh clone passed: ruff check and format, 155 tests, and
+  wave baseline `37/37`. Artifact root:
+  `artifacts/sp11/iteration-04/fresh-clone/repo-p-reanchor`.
+- Repo-P re-anchor CI run `27388742518` completed success for
+  `0c4e3fd7f2143a79f239eb5d31b74ccfd674cdaf`; log scan found no
+  warning/deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-04/ci/repo-p-reanchor`.
+
+Iteration 4 closing baseline counts:
+
+- Repo-A: selfaudit `81`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`.
+- Repo-B: wave baseline remains `7`; the only attempted repo-B refactor was
+  discarded because it grew findings.
+- Repo-P: wave baseline `37` after C-6 re-anchor, consisting of 31
+  code-health rows and 6 real hotspot churn rows.
