@@ -3030,3 +3030,169 @@ Iteration 16 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
   real hotspot churn rows.
+
+## Iteration 17
+
+### Iteration 17 C-0 installed readback and diagnosis
+
+Installed versions at C-0:
+
+- Repo-A head:
+  `0f85aa437eaed26d118018e9b5713cbe2bd3a5a0`.
+- Repo-B head:
+  `f6ace4b6290089c15108f90028e637c202bef755`.
+- Repo-P head:
+  `95ab00fadbca55b637fc84e27ce978c4691bb9f6`.
+- Repo-A leaves: `0.5.17`.
+- repo-audit-refactor-optimize: `0.4.3`.
+- perf-benchmark: `0.3.8`.
+- perf-optimization: `0.2.1`.
+- Installed readback artifact: `installed-versions-and-shas.txt` in the
+  iteration-17 C-0 artifact directory.
+
+C-0 bootstrap and wave:
+
+- Bootstrap probes for repo-A, repo-B, and repo-P all exited 0 with
+  `restart_required=false` and `stop_before_discovery=false`.
+- C-0 wave summaries:
+  - Repo-A: code-health `27`, security/hygiene/docs/dependency `0`,
+    hotspot `204`.
+  - Repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+    hotspot `4`.
+  - Repo-P: code-health `24`, security/hygiene/docs/dependency `0`,
+    hotspot `7`.
+- Comparable structural total at C-0: `54`.
+- C-0 artifacts are under `artifacts/sp11/iteration-17/c0-bootstrap` and
+  `artifacts/sp11/iteration-17/c0-wave`.
+
+### Iteration 17 accepted batches
+
+Repo-A:
+
+- Batch 1 grouped the remaining test-redundancy-triage strict-gate,
+  mutation-probe, and branch-equivalence parameters behind request/context
+  objects while preserving public CLI behavior and fixture decisions.
+- Batch 1 touched
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py`,
+  `skills/test-redundancy-triage/tests/test_more_coverage.py`, and
+  `scripts/self_audit_baseline.json`.
+- Focused test-redundancy-triage tests passed before and after the batch:
+  `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no` ->
+  208 passed.
+- Fixed CLI fixture outputs compared stable across 12 generated artifacts after
+  excluding only timestamp/runtime fields.
+- Producing-leaf validation removed the expected `parameter_count` rows for
+  `run_mutation_probe_kills`, `run_strict_delete_gate`, and
+  `write_branch_equiv_artifacts`, and added none.
+- Batch 1 ratcheted the self-audit baseline from 49 to 46 normalized
+  identities. Full `npm run check` passed with selfaudit `46/46`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`.
+- Accepted commit:
+  - `2acd6f5` (`refactor(triage): group remaining gate contexts`).
+
+- Batch 2 split quality-audit lint and type finding construction into focused
+  helpers while preserving byte-identical dirty-fixture CLI output.
+- Batch 2 touched `skills/quality-audit/scripts/quality_audit.py` and
+  `scripts/self_audit_baseline.json`.
+- Focused quality-audit tests passed before and after the batch:
+  `python3 -m pytest skills/quality-audit/tests -q --color=no` -> 15 passed.
+- Dirty-fixture CLI output compared byte-identical before and after the split.
+- Producing-leaf validation removed the expected `function_nloc` rows for
+  `_ruff_lint` and `_type_findings`, and added none.
+- Batch 2 ratcheted the self-audit baseline from 46 to 44 normalized
+  identities. Full `npm run check` passed with selfaudit `44/44`,
+  security/hygiene/docs/dependency/coverage `0/0`, and full-pytest `17/17`.
+- Accepted commit:
+  - `653cba5` (`refactor(quality): split lint type finding builders`).
+
+Installed validation:
+
+- Repo-A validation wave after both accepted batches shrank code-health from
+  `27` to `22`; hotspot remained `204` with the iteration-start anchor.
+- Removed identities relative to C-0:
+  - `run_mutation_probe_kills` `parameter_count`.
+  - `run_strict_delete_gate` `parameter_count`.
+  - `write_branch_equiv_artifacts` `parameter_count`.
+  - `_ruff_lint` `function_nloc`.
+  - `_type_findings` `function_nloc`.
+- No new validation-wave identities appeared.
+
+Repo-B:
+
+- No accepted source change. The remaining three code-health rows and four
+  hotspot rows are unchanged.
+
+Repo-P:
+
+- No accepted source change. The remaining 24 code-health rows and seven
+  hotspot rows are unchanged.
+
+### Iteration 17 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `44/44`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched byte-for-byte across run 1 and
+  run 2. Summary: code-health `22`, security/hygiene/docs/dependency `0`,
+  hotspot `204`.
+- Relative to C-0, the final convergence wave removed five identities and
+  added none. Diff artifacts:
+  - `artifacts/sp11/iteration-17/convergence/c0-to-run2.removed.tsv`.
+  - `artifacts/sp11/iteration-17/convergence/c0-to-run2.new.tsv`.
+- Run 1 to run 2 identity deltas were empty.
+- Convergence artifacts are under `artifacts/sp11/iteration-17/convergence`.
+
+### Iteration 17 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.18` at
+  `0cfa77d81afbaa6fc6c65fba5d31e5d51f4a8aad`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulation before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `44/44`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-17/fresh-clone/repo-a-v0.5.18`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27435253024` completed success for
+  `0cfa77d81afbaa6fc6c65fba5d31e5d51f4a8aad`; job `81095442945` completed
+  success. Warning/deprecation scan was empty, with no runtime deprecation
+  annotations. Log artifact:
+  `artifacts/sp11/iteration-17/ci/repo-a-v0.5.18`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.18
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.18`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.8`;
+  perf-optimization at `0.2.1`.
+- Source/install parity for
+  `skills/test-redundancy-triage/SKILL.md`,
+  `skills/test-redundancy-triage/scripts/triage_redundancy.py`,
+  `skills/quality-audit/SKILL.md`, and
+  `skills/quality-audit/scripts/quality_audit.py` matched by SHA-256.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Probe
+  reports for all three repos recorded `restart_required=false` and
+  `stop_before_discovery=false`.
+- Repo-A postinstall re-anchor wave at
+  `0cfa77d81afbaa6fc6c65fba5d31e5d51f4a8aad` reported code-health `22`,
+  security/hygiene/docs/dependency `0`, hotspot `204`. Compared with the
+  final convergence wave, hotspot identity deltas were empty.
+- Postinstall artifacts are under `artifacts/sp11/iteration-17/postinstall`.
+
+Iteration 17 closing baseline counts:
+
+- Repo-A: selfaudit `44`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`; current installed wave code-health `22`, hotspot `204`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
+  real hotspot churn rows.
