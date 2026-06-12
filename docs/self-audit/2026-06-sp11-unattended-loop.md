@@ -2596,3 +2596,139 @@ Iteration 13 closing baseline counts:
 - Repo-B: wave baseline remains `7`.
 - Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
   real hotspot churn rows.
+
+## Iteration 14
+
+### Iteration 14 C-0 installed readback and diagnosis
+
+Installed versions at C-0:
+
+- Repo-A head:
+  `721e34c47e4722d71e81e8bfc8bf4e86d906eb4a`.
+- Repo-B head:
+  `f6ace4b6290089c15108f90028e637c202bef755`.
+- Repo-P head:
+  `95ab00fadbca55b637fc84e27ce978c4691bb9f6`.
+- Repo-A leaves: `0.5.14`.
+- repo-audit-refactor-optimize: `0.4.3`.
+- perf-benchmark: `0.3.8`.
+- perf-optimization: `0.2.1`.
+- Installed readback artifact: `installed-versions-and-shas.txt` in the
+  iteration-14 C-0 artifact directory.
+
+C-0 wave summaries:
+
+- Repo-A: code-health `35`, security/hygiene/docs/dependency `0`,
+  hotspot `202`.
+- Repo-B: code-health `3`, security/hygiene/docs/dependency `0`,
+  hotspot `4`.
+- Repo-P: code-health `24`, security/hygiene/docs/dependency `0`,
+  hotspot `7`.
+- C-0 wave artifacts are under `artifacts/sp11/iteration-14/c0-wave`.
+
+### Iteration 14 accepted batches
+
+Repo-A:
+
+- Split `structure_audit.py::analyze_tree` finding assembly into focused
+  cycle, fan-in/fan-out, and layer-violation helper builders while preserving
+  the public CLI contract.
+- Added direct finding-builder tests in
+  `skills/structure-audit/tests/test_structure_finding_builders.py`.
+- Dirty-fixture CLI output was byte-identical before and after the split:
+  `structure_findings.json`, `structure_report.md`, and stdout all compared
+  equal in the final shape.
+- Focused structure-audit tests passed after the batch:
+  `python3 -m pytest skills/structure-audit/tests -q --color=no` -> 19
+  passed.
+- Scoped helper-surface mutation gate passed with no findings for the temporary
+  harness under `/tmp/sp11-iter14-structure-helper-mutation`.
+- `npm run check` passed after the batch. The final run reported selfaudit
+  `55/55`, security/hygiene/docs/dependency/coverage `0/0`, and full-pytest
+  `17/17`.
+- Installed validation waves shrank repo-A code-health from `35` to `33`;
+  hotspot remained `202`.
+- Removed identities relative to C-0:
+  - `analyze_tree` `cyclomatic_complexity`.
+  - `analyze_tree` `function_nloc`.
+- No new validation-wave identities appeared.
+- Accepted commit:
+  - `07e4964efbbe03dac6cbe432a8f5fdf801443c71`
+    (`refactor(structure): split analyze tree findings`).
+
+Repo-B:
+
+- No accepted source change. The remaining three code-health rows and four
+  hotspot rows are unchanged.
+
+Repo-P:
+
+- No accepted source change. The remaining 24 code-health rows and seven
+  hotspot rows are unchanged.
+
+### Iteration 14 convergence
+
+- Repo-A convergence runs 1 and 2: `npm run check` passed in both runs with
+  selfaudit `55/55`, security/hygiene/docs/dependency/coverage `0/0`, and
+  full-pytest `17/17`.
+- Repo-A installed convergence waves matched with zero identity deltas across
+  run 1 and run 2. Summary: code-health `33`,
+  security/hygiene/docs/dependency `0`, hotspot `202`.
+- Relative to C-0, the final convergence wave removed two identities and added
+  none. Diff artifacts:
+  - `artifacts/sp11/iteration-14/convergence/c0-to-run2.removed.tsv`.
+  - `artifacts/sp11/iteration-14/convergence/c0-to-run2.new.tsv`.
+- Convergence artifacts are under `artifacts/sp11/iteration-14/convergence`.
+
+### Iteration 14 C-6 ship and reinstall
+
+Version bumps:
+
+- Repo-A shipped `v0.5.15` at
+  `ea78d5dee46781ef861730d532c736d1111a8800`.
+- Repo-B and repo-P had no accepted source changes and did not ship new
+  releases.
+
+Fresh-clone simulation before push:
+
+- Repo-A release fresh clone: `npm ci` followed by `npm run check` exited 0.
+  Final counts were selfaudit `55/55`, security/hygiene/docs/dependency/
+  coverage `0/0`, and full-pytest `17/17`. Artifact root:
+  `artifacts/sp11/iteration-14/fresh-clone/repo-a-v0.5.15`.
+
+CI and release evidence:
+
+- Repo-A release CI run `27420758852` completed success for
+  `ea78d5dee46781ef861730d532c736d1111a8800`. Warning/deprecation scan was
+  empty, with no runtime deprecation annotations. Log artifact:
+  `artifacts/sp11/iteration-14/ci/repo-a-v0.5.15`.
+- Repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.15
+
+Post-release reinstall/readback:
+
+- Reinstalled repo-A leaves with the node installer into
+  `/home/jakub/.agents/skills`.
+- Installed readback passed: all 16 repo-A leaves at `0.5.15`;
+  repo-audit-refactor-optimize at `0.4.3`; perf-benchmark at `0.3.8`;
+  perf-optimization at `0.2.1`.
+- Source/install parity for
+  `skills/structure-audit/scripts/structure_audit.py` and
+  `skills/structure-audit/tests/test_structure_finding_builders.py` matched
+  by SHA-256.
+- Installed bootstrap probes exited 0 for repo-A, repo-B, and repo-P. Probe
+  reports for all three repos recorded `restart_required=false` and
+  `stop_before_discovery=false`.
+- Repo-A postinstall re-anchor wave at
+  `ea78d5dee46781ef861730d532c736d1111a8800` matched the final convergence
+  wave byte-for-byte. Summary: code-health `33`,
+  security/hygiene/docs/dependency `0`, hotspot `202`.
+- Postinstall artifacts are under `artifacts/sp11/iteration-14/postinstall`.
+
+Iteration 14 closing baseline counts:
+
+- Repo-A: selfaudit `55`, security/hygiene/docs/dependency/coverage `0`,
+  full-pytest `17/17`; current installed wave code-health `33`, hotspot `202`.
+- Repo-B: wave baseline remains `7`.
+- Repo-P: wave baseline remains `31`, consisting of 24 code-health rows and 7
+  real hotspot churn rows.
