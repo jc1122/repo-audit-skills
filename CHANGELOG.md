@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.14 - 2026-06-12
+
+- Split structure-audit's iterative Tarjan SCC search into a focused helper
+  module with direct SCC coverage while preserving byte-identical CLI output.
+- Ratcheted the self-audit baseline from 58 to 57 normalized identities.
+
 ## 0.5.13 - 2026-06-12
 
 - Split test-quality-assurance public-hint inference into focused helpers while
