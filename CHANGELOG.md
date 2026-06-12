@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.10 - 2026-06-12
+
+- Split test-quality-assurance delta comparison logic into focused helpers
+  while preserving the public `compute_delta()` report shape.
+- Ratcheted the self-audit baseline from 70 to 68 normalized identities.
+
 ## 0.5.9 - 2026-06-12
 
 - Split test-quality-assurance CLI argument registration into focused helpers

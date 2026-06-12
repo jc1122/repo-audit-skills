@@ -1,6 +1,6 @@
 ---
 name: docs-consistency-audit
-version: 0.5.9
+version: 0.5.10
 description: >
   Deterministic, advisory docs-vs-reality audit for Python docs and command docs
   that emits LINT findings. Compares documented CLI flags against actual
