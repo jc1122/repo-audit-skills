@@ -68,7 +68,7 @@ Discarded batches:
 
 - None. Two repair follow-ups were required before acceptance:
   - W0.1 first pass produced green full-pytest runs but non-identical snapshots because pytest duration strings varied; repaired by normalizing volatile tail timing.
-  - W0.3 initially tracked generated snapshot artifacts and introduced undercovered/over-complex `run_checks.py`; repaired by untracking generated artifacts, simplifying the runner, expanding tests, and ignoring `scripts/check_timings.json`.
+  - W0.3 initially tracked generated snapshot artifacts and introduced undercovered/over-complex `run_checks.py`; repaired by untracking generated artifacts, simplifying the runner, expanding tests, and ignoring the generated timing telemetry artifact.
 
 ### W0 verification
 
@@ -78,7 +78,7 @@ Orchestrator re-ran the gates before each merge. Final main check:
 - Exit: `0`.
 - Summary: `gates: 8/8 cheap, 2/2 heavy, 0 over-budget, 0 failed`.
 
-Timing vs budget table from final main `scripts/check_timings.json`:
+Timing vs budget table from the final main generated timing telemetry:
 
 | Gate | Seconds | Budget seconds |
 | --- | ---: | ---: |
@@ -95,9 +95,9 @@ Timing vs budget table from final main `scripts/check_timings.json`:
 
 Generated artifacts:
 
-- `scripts/check_timings.json` is ignored and untracked.
-- `scripts/coverage_gap_snapshot.json` is ignored and untracked.
-- `scripts/full_pytest_snapshot.json` is ignored and untracked.
+- The timing telemetry JSON is ignored and untracked.
+- The coverage-gap snapshot JSON is ignored and untracked.
+- The full-pytest snapshot JSON is ignored and untracked.
 
 W0 issue notes:
 
