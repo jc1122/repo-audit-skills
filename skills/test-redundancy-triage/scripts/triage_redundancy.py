@@ -68,6 +68,15 @@ class CoverageCommandContext:
 
 
 @dataclass(frozen=True)
+class SuiteRunContext:
+    root: Path
+    python_exe: str
+    env: dict[str, str]
+    timeout: int
+    use_xdist: bool
+
+
+@dataclass(frozen=True)
 class SingleCoverageRunContext:
     coverage_python: str
     env: dict[str, str]
@@ -533,41 +542,23 @@ def has_xdist_plugin(root: Path, python_exe: str, env: dict[str, str]) -> bool:
 
 
 def run_suite(
-    root: Path,
-    python_exe: str,
     suite_files: list[str],
-    env: dict[str, str],
     deselect: str | None,
-    timeout: int,
-    *,
-    use_xdist: bool,
+    context: SuiteRunContext,
 ) -> dict[str, Any]:
     deselects = [deselect] if deselect else []
-    return run_suite_multi(
-        root,
-        python_exe,
-        suite_files,
-        env,
-        deselects,
-        timeout,
-        use_xdist=use_xdist,
-    )
+    return run_suite_multi(suite_files, deselects, context)
 
 
 def run_suite_multi(
-    root: Path,
-    python_exe: str,
     suite_files: list[str],
-    env: dict[str, str],
     deselects: list[str] | None,
-    timeout: int,
-    *,
-    use_xdist: bool,
+    context: SuiteRunContext,
 ) -> dict[str, Any]:
     with tempfile.TemporaryDirectory(prefix="triage_pycache_") as td:
         cache_dir = Path(td) / ".pytest_cache"
         cmd = [
-            python_exe,
+            context.python_exe,
             "-P",
             "-m",
             "pytest",
@@ -579,12 +570,14 @@ def run_suite_multi(
             f"cache_dir={cache_dir}",
             "-q",
         ]
-        if use_xdist:
+        if context.use_xdist:
             cmd.extend(["-n", "0"])
         cmd += suite_files
         for nodeid in deselects or []:
             cmd.append(f"--deselect={nodeid}")
-        return run_cmd(cmd, cwd=root, env=env, timeout=timeout)
+        return run_cmd(
+            cmd, cwd=context.root, env=context.env, timeout=context.timeout
+        )
 
 
 def resolve_and_validate_suite_paths(
@@ -2090,14 +2083,13 @@ def run_mutation_probe_kills(
 
             applied_count += 1
             overlay_env = build_overlay_env(root, env, overlay_root)
+            overlay_context = SuiteRunContext(
+                root, python_exe, overlay_env, timeout, use_xdist
+            )
             run = run_suite_multi(
-                root,
-                python_exe,
                 suite_files,
-                overlay_env,
                 deselects,
-                timeout,
-                use_xdist=use_xdist,
+                overlay_context,
             )
             killed = run["returncode"] != 0
             kills += int(killed)
@@ -2257,6 +2249,7 @@ def run_strict_delete_gate(
     if max_batches > 0:
         batches = batches[:max_batches]
     processed_nodeids: set[str] = set()
+    suite_context = SuiteRunContext(root, python_exe, env, timeout, use_xdist)
 
     for batch_idx, batch in enumerate(batches, start=1):
         batch_nodeids = [
@@ -2270,13 +2263,9 @@ def run_strict_delete_gate(
         repeat_fail_excerpt = ""
         for _ in range(max(1, repeats)):
             rr = run_suite_multi(
-                root,
-                python_exe,
                 suite_files,
-                env,
                 pending,
-                timeout,
-                use_xdist=use_xdist,
+                suite_context,
             )
             if rr["returncode"] != 0:
                 repeat_pass = False
@@ -2286,24 +2275,16 @@ def run_strict_delete_gate(
                 break
 
         target_run = run_suite_multi(
-            root,
-            python_exe,
             suite_files,
-            env,
             pending,
-            timeout,
-            use_xdist=use_xdist,
+            suite_context,
         )
         target_pass = target_run["returncode"] == 0
 
         post_run = run_suite_multi(
-            root,
-            python_exe,
             post_suite_files,
-            env,
             pending,
-            timeout,
-            use_xdist=use_xdist,
+            suite_context,
         )
         post_pass = post_run["returncode"] == 0
 
@@ -2357,13 +2338,9 @@ def run_strict_delete_gate(
         candidate_pass = repeat_pass and target_pass and post_pass and mutation_pass
         candidate_state = accepted + batch_nodeids if candidate_pass else accepted
         reaudit_run = run_suite_multi(
-            root,
-            python_exe,
             suite_files,
-            env,
             candidate_state,
-            timeout,
-            use_xdist=use_xdist,
+            suite_context,
         )
         reaudit_pass = reaudit_run["returncode"] == 0
 
@@ -2717,14 +2694,13 @@ def main() -> int:
         for t in tests
         if t.entrypoint != "unknown" and len(by_cluster[(t.entrypoint, t.intent)]) > 1
     ]
+    suite_context = SuiteRunContext(
+        root, python_exe, env, args.timeout_seconds, use_xdist
+    )
     baseline = run_suite(
-        root,
-        python_exe,
         suite_files,
-        env,
         deselect=None,
-        timeout=args.timeout_seconds,
-        use_xdist=use_xdist,
+        context=suite_context,
     )
 
     rows: list[dict[str, Any]] = []
@@ -2767,13 +2743,9 @@ def main() -> int:
             cluster = by_cluster[(t.entrypoint, t.intent)]
             cluster_size = len(cluster)
             run = run_suite(
-                root,
-                python_exe,
                 suite_files,
-                env,
                 deselect=t.nodeid,
-                timeout=args.timeout_seconds,
-                use_xdist=use_xdist,
+                context=suite_context,
             )
             deselect_pass = run["returncode"] == 0
             ranked = ranked_map.get(t.nodeid, {})

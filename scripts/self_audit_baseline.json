@@ -303,18 +303,6 @@
     "leaf": "complexity",
     "metric": "parameter_count",
     "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "run_suite"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
-    "symbol": "run_suite_multi"
-  },
-  {
-    "leaf": "complexity",
-    "metric": "parameter_count",
-    "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
     "symbol": "write_branch_equiv_artifacts"
   }
 ]
