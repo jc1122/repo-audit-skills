@@ -137,6 +137,12 @@ def test_detects_tracked_files_and_net_loc_growth(tmp_path: Path):
     assert "tracked_files_growth" in metric_names
     assert "net_loc_growth" in metric_names
 
+    # Signal contract: all findings must use RESTRUCTURE, never GROWTH
+    for f_item in findings:
+        assert f_item["signal"] == "RESTRUCTURE", (
+            f"unexpected signal {f_item['signal']!r} in {f_item['metric']['name']}"
+        )
+
     summary = _read_summary(out)
     assert summary["metrics"]["tracked_files_growth"] >= 1
     assert summary["metrics"]["net_loc_growth"] > 0
@@ -375,3 +381,44 @@ def test_cli_flag_growth_detected(tmp_path: Path):
     assert summary["metrics"]["cli_flag_growth"] >= 2, (
         f"expected >= 2 new flags, got {summary['metrics']['cli_flag_growth']}"
     )
+
+
+# ---------------------------------------------------------------------------
+# test: signal contract — all findings must use RESTRUCTURE, never GROWTH
+# ---------------------------------------------------------------------------
+
+
+def test_growth_findings_signal_is_restructure(tmp_path: Path):
+    """Every growth finding must emit signal=RESTRUCTURE, never GROWTH."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git_init(repo)
+
+    _write(repo / "README.md", "# Hello\n")
+    _git_commit_all(repo, "initial")
+    _git_tag(repo, "base")
+
+    _write(repo / "a.py", "x = 1\n")
+    _write(repo / "b.py", "y = 2\n")
+    _git_commit_all(repo, "add two source files")
+
+    out = tmp_path / "out"
+    result = _run(
+        "--root", str(repo), "--out-dir", str(out), "--baseline-rev", "base"
+    )
+    assert result.returncode == 1, f"expected exit 1, got {result.returncode}"
+
+    findings = _read_findings(out)
+    assert len(findings) > 0, "expected at least one finding"
+
+    signals = {f["signal"] for f in findings}
+    assert "GROWTH" not in signals, f"GROWTH signal found, signals: {signals}"
+    assert signals == {"RESTRUCTURE"}, f"expected only RESTRUCTURE, got: {signals}"
+
+    # Verify findings JSON exists
+    assert (out / "growth-audit_findings.json").exists()
+    assert (out / "growth-audit_summary.json").exists()
+
+    summary = _read_summary(out)
+    assert "tracked_files_growth" in summary["metrics"]
+    assert summary["metrics"]["tracked_files_growth"] >= 2

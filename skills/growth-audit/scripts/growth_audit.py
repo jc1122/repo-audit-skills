@@ -39,7 +39,7 @@ if str(_SHARED) not in sys.path:
 import health_common as hc  # noqa: E402
 
 LEAF = "growth-audit"
-SIGNAL_GROWTH = "GROWTH"
+SIGNAL_GROWTH = "RESTRUCTURE"
 
 TOOL_TIMEOUT = 120
 
