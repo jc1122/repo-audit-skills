@@ -40,3 +40,72 @@ W0 status:
 
 - W0 is not present in repo-A history at entry.
 - Next action: dispatch W0.1 and W0.2 as disjoint worker packets in `/tmp/sp12` worktrees. Orchestrator will read only file-backed worker status and gate tails, then re-run gates itself before any merge.
+
+## Iteration 1 W0 gate speed + budget (2026-06-12)
+
+### W0 worker runs
+
+| Packet | Worktree | Run dir | Result |
+| --- | --- | --- | --- |
+| W0.1 full-pytest parallelization | `/tmp/sp12/repo-a-01-w0-full-pytest` | `/tmp/sp12/runs/repo-a-w0-full-pytest` | accepted |
+| W0.2 coverage parallelization | `/tmp/sp12/repo-a-01-w0-coverage` | `/tmp/sp12/runs/repo-a-w0-coverage` | accepted |
+| W0.3 timed runner and budget | `/tmp/sp12/repo-a-01-w0-run-checks` | `/tmp/sp12/runs/repo-a-w0-run-checks` | accepted |
+
+Accepted commits merged by fast-forward:
+
+- `73c3d7f` `perf(gates): parallelize full-pytest gate across suites`.
+- `33a30c6` `fix(gates): normalize full-pytest snapshot tails`.
+- `783e5da` `perf(gates): parallelize coverage suites with per-suite data files`.
+- `343d3e0` `fix(gates): refresh coverage snapshot after parallel combine`.
+- `8b7ec89` `feat(gates): add timed gate runner core`.
+- `84e40ef` `feat(gates): wire timed gate runner budget`.
+- `f13fb75` `fix(gates): leave generated gate snapshots untracked`.
+- `ca0da7d` `fix(gates): cover and simplify timed gate runner`.
+- `8cb4ca5` `chore(gates): ignore timing telemetry artifact`.
+- `488288a` `chore(gates): tune initial timing budget`.
+
+Discarded batches:
+
+- None. Two repair follow-ups were required before acceptance:
+  - W0.1 first pass produced green full-pytest runs but non-identical snapshots because pytest duration strings varied; repaired by normalizing volatile tail timing.
+  - W0.3 initially tracked generated snapshot artifacts and introduced undercovered/over-complex `run_checks.py`; repaired by untracking generated artifacts, simplifying the runner, expanding tests, and ignoring `scripts/check_timings.json`.
+
+### W0 verification
+
+Orchestrator re-ran the gates before each merge. Final main check:
+
+- Command: `npm run check`.
+- Exit: `0`.
+- Summary: `gates: 8/8 cheap, 2/2 heavy, 0 over-budget, 0 failed`.
+
+Timing vs budget table from final main `scripts/check_timings.json`:
+
+| Gate | Seconds | Budget seconds |
+| --- | ---: | ---: |
+| vendored | 0.03 | 10 |
+| fixtures | 0.96 | 15 |
+| release | 0.23 | 10 |
+| selfaudit | 1.72 | 20 |
+| security | 1.29 | 15 |
+| hygiene | 0.21 | 10 |
+| docs | 0.93 | 10 |
+| dependency | 0.13 | 10 |
+| coverage | 111.54 | 270 |
+| pytest | 117.81 | 260 |
+
+Generated artifacts:
+
+- `scripts/check_timings.json` is ignored and untracked.
+- `scripts/coverage_gap_snapshot.json` is ignored and untracked.
+- `scripts/full_pytest_snapshot.json` is ignored and untracked.
+
+W0 issue notes:
+
+- Isolated worktrees required `npm ci`; without `node_modules/.bin/jscpd`, duplication-audit tests failed inside W0 workers even though source behavior was not at fault.
+- A transient `npm run check` failure in W0.3 left a one-row coverage snapshot for `scripts/self_audit.py`; rerunning `python3 scripts/check_coverage_gap.py` alone reset the generated snapshot to zero rows, and subsequent `python3 scripts/run_checks.py` plus `npm run check` both passed.
+- Budgets were tuned only after all gates were functionally green: `coverage=270`, `pytest=260`; all cheap-gate budgets remain at their plan values.
+
+Current state after W0 merge:
+
+- repo-A `main` is ahead of `origin/main` locally.
+- W0.4 ship/reinstall has not started yet.
