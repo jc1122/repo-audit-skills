@@ -100,7 +100,7 @@ def test_non_git_root_degrades(tmp_path, capsys):
 
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(plain), "--out-dir", str(out)])
+    mod.main(["--root", str(plain), "--out-dir", str(out)])
     # Non-git root still runs release/config checks; can exit 0 or 1
     captured = capsys.readouterr().out.strip()
     payload = json.loads(captured)

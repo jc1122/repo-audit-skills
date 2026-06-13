@@ -24,7 +24,7 @@ def test_conflicting_pytest_configs(tmp_path):
 
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(repo), "--out-dir", str(out)])
+    mod.main(["--root", str(repo), "--out-dir", str(out)])
     data = json.loads((out / "repo-hygiene_findings.json").read_text())
 
     conflicting = [f for f in data if f["metric"]["name"] == "conflicting_configs"]
@@ -56,7 +56,7 @@ def test_version_mismatch_detected(tmp_path):
 
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(repo), "--out-dir", str(out)])
+    mod.main(["--root", str(repo), "--out-dir", str(out)])
     data = json.loads((out / "repo-hygiene_findings.json").read_text())
 
     mismatches = [f for f in data if f["metric"]["name"] == "version_mismatch"]
@@ -88,7 +88,7 @@ def test_missing_ci_detected(tmp_path):
 
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(repo), "--out-dir", str(out)])
+    mod.main(["--root", str(repo), "--out-dir", str(out)])
     data = json.loads((out / "repo-hygiene_findings.json").read_text())
 
     ci = [f for f in data if f["metric"]["name"] == "ci_missing"]
@@ -118,7 +118,7 @@ def test_missing_license_detected(tmp_path):
 
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(repo), "--out-dir", str(out)])
+    mod.main(["--root", str(repo), "--out-dir", str(out)])
     data = json.loads((out / "repo-hygiene_findings.json").read_text())
 
     lic = [f for f in data if f["metric"]["name"] == "license_missing"]

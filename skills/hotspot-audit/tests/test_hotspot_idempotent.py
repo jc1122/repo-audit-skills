@@ -9,7 +9,6 @@ import io
 import json
 import subprocess
 from contextlib import redirect_stdout
-from pathlib import Path
 
 from helpers import load_module, make_history
 
