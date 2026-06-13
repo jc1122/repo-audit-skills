@@ -130,3 +130,15 @@ Limits:
 - `trusted_subprocess` is for pinned, internal, shell-free subprocess wrappers
   only. It is disabled by default and never hides rows silently: suppressions
   are counted in JSON and markdown output.
+
+## Limits
+
+- Advisory only — emits SECURITY findings and never mutates source.
+- Python only: wraps a pinned `bandit==1.9.4` static analysis run.
+- Standalone: not registered in the code-health umbrella, because bandit
+  baselines are repo-specific and dependency-heavy.
+- bandit reports suspicious patterns, not proven exploits, so every finding
+  needs human review and false positives are expected.
+- Never hits the network in-band; the optional dependency-vulnerability mode
+  ingests a pre-generated pip-audit-shaped JSON report rather than fetching it.
+- Deterministic for fixed `bandit==1.9.4`.

@@ -42,3 +42,15 @@ python3 scripts/duplication_audit.py \
 - Findings are deterministic: identical input yields byte-identical
   `duplication_findings.json`.
 - One finding per clone pair (cross-file → EXTRACT, same-file → MERGE).
+
+## Limits
+
+- Advisory only — emits EXTRACT/MERGE findings and never refactors or mutates
+  source.
+- Requires `jscpd` (run via `npx`) and a working Node.js toolchain; a missing
+  tool is a config error (exit `2`), not a finding.
+- Token-sequence based: detects copy-paste clones above `min_tokens`/`min_lines`
+  thresholds and will miss structurally similar but tokenwise-different code.
+- Tuned for the Python source surface; non-product code is filtered via
+  `--source-prefix`.
+- Deterministic and offline; no network access.

@@ -52,3 +52,13 @@ out-dir/
 
 See `skills/code-health-audit-pipeline/references/prioritization.md`, `skills/code-health-audit-pipeline/references/rule-ownership.md`,
 `skills/code-health-audit-pipeline/references/finding-schema.json`.
+
+## Limits
+
+- Advisory only — orchestrates leaves that report findings; never mutates source.
+- Only runs leaves declared in the registry for the selected `--languages`
+  (Python by default); unregistered or out-of-scope leaves are not executed.
+- The merged report is only as accurate as the underlying leaves; it adds no
+  independent analysis beyond merging, ranking, and the gate decision.
+- Each leaf must be installed and its script resolvable; a missing or erroring
+  leaf escalates to exit code `2` rather than being silently skipped.

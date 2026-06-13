@@ -82,7 +82,7 @@ When `--source-prefix` is provided, every finding, including release-hygiene
 paths such as `package.json`, `.github`, and `LICENSE`, is dropped unless its
 path starts with a prefix.
 
-## Honest Limits
+## Limits
 
 This leaf checks generic repository hygiene. It does not enforce
 repo-audit-skills-specific release contracts:

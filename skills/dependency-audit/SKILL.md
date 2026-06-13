@@ -12,8 +12,13 @@ description: >
 
 # dependency-audit
 
+## Overview
+
 Deterministic, advisory Python dependency audit for repository-level dependency
-hygiene.
+hygiene. It compiles declared dependencies (`pyproject.toml [project]` or
+`requirements*.txt`) against AST-collected imports and reports unused
+declarations, undeclared imports, test-only runtime usage, and optional C-8
+advisory enrichment.
 
 Requires Python >=3.11 (`tomllib`); no runtime dependencies beyond stdlib.
 
@@ -72,8 +77,12 @@ imported/runtime/test-scope/advisory cases; unused declared dependencies use
 - The umbrella registry runs the offline core only; it never passes
   `--advisory-report`.
 
-## Constraints / explicit limitations
+## Limits
 
+- Advisory only — reports dependency-hygiene findings and never mutates source
+  or dependency manifests.
+- Python only; requires Python >=3.11 (`tomllib`) and uses stdlib only.
+- Never makes network calls — declarations and imports are read locally.
 - Dynamic imports are not discoverable by AST top-level scan.
 - Import-to-distribution mapping is heuristic and imperfect.
 - Requirements parsing is intentionally naive (for `requirements*.txt` lines only).

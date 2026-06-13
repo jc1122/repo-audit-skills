@@ -9,6 +9,12 @@ description: >
 
 # Test Redundancy Triage
 
+## Overview
+
+Identifies redundant tests using empirical deselection, branch-equivalence,
+assertion dominance, and coverage/mutation signals, then produces conservative
+DELETE/KEEP/MERGE guidance gated by strict confidence tiers.
+
 ## Scope and Semantics
 Evaluate redundant tests conservatively. Default posture is `MERGE_RECOMMENDED` unless
 delete candidates are explicitly high-confidence.
@@ -110,7 +116,9 @@ post-suite checks, and mutation-probe deltas are required before delete-safe dec
 and `status_note` when bootstrap/provisioning is unavailable.
 Use `candidate_validation.csv` as the automation source of truth.
 
-## Known Limitations
+## Limits
+- Advisory only — produces DELETE/KEEP/MERGE guidance; never deletes or edits tests.
+- Conservative by default: posture is `MERGE_RECOMMENDED` unless delete candidates are high-confidence.
 - Mock-heavy/ctypes-mocked tests can be mis-ranked when branches are hard to observe.
 - Keyword-based intent inference may misclassify atypical test names.
 - No per-variant analysis for parametrized tests; all variants treated as one unit.

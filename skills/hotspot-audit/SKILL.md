@@ -122,7 +122,7 @@ set `single_maintainer: true` suppress otherwise-reportable rows and count them
 as `single_maintainer`. Metric: `author_concentration`; severity `low`;
 confidence `low`.
 
-## Honest Limits
+## Limits
 
 - Git history only: non-git repos exit 2, not a finding.
 - Deleted files are invisible; only files currently present on disk are examined.

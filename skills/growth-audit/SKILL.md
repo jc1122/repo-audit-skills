@@ -120,7 +120,7 @@ from the delta magnitude per metric:
 Confidence is `high` for overflow-from-allowance findings and `medium`
 for un-allowanced metrics.
 
-## Honest Limits
+## Limits
 
 - **Git history only:** non-git repos exit 2, not a finding.
 - **Surface growth only:** this leaf does not detect dead flags, dead

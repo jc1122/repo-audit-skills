@@ -44,3 +44,16 @@ symbols appear in `tests/test_*.py` are suppressed and counted as
 `suppressed_test_referenced`; ruff findings are unaffected. The test-reference
 scan is a conservative substring check, so even a test comment can suppress an
 advisory DELETE. Findings are deterministic.
+
+## Limits
+
+- Advisory only — emits DELETE findings and never deletes or mutates source.
+- Python only: backed by `vulture` and `ruff` (F401/F811/F841 only).
+- Requires `vulture` and `ruff` installed; a missing tool is a config error
+  (exit `2`), not a finding.
+- Static analysis cannot see dynamic usage (reflection, `getattr`, string-based
+  dispatch, plugin entry points), so vulture can report false positives; use
+  `--allowlist` to suppress them.
+- Test-reference suppression is a conservative substring check, so a mere
+  mention in a test (even a comment) can hide a genuine DELETE.
+- Deterministic and offline; no network access.
