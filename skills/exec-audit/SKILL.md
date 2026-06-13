@@ -117,8 +117,8 @@ repository. Emits at most one low-confidence `info` finding when no marker is
 found.
 
 Markers checked: pytest-benchmark dependency, `bench`/`benchmark` npm scripts,
-`conftest.py` with benchmark marker registration, `benchmarks/`/`bench/`
-directories, `@pytest.mark.benchmark` in test files, benchmark mentions in
+`conftest.py` with benchmark marker registration, directories named
+`benchmarks` or `bench`, `@pytest.mark.benchmark` in test files, benchmark mentions in
 Makefile/tox.ini/noxfile.py (plain-text scan).
 
 | Signal | Severity | Confidence | metric_name |
