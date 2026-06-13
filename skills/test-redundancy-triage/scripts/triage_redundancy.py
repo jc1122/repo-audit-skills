@@ -1511,8 +1511,10 @@ def write_branch_equiv_artifacts(
         if anchor:
             pair_defs.append((nodeid, anchor.nodeid))
 
-    pair_defs = unique_preserve([f"{c}|||{a}" for c, a in pair_defs])
-    resolved_pairs = [(p.split("|||", 1)[0], p.split("|||", 1)[1]) for p in pair_defs]
+    pair_def_strs = unique_preserve([f"{c}|||{a}" for c, a in pair_defs])
+    resolved_pairs = [
+        (p.split("|||", 1)[0], p.split("|||", 1)[1]) for p in pair_def_strs
+    ]
 
     branch_cache: dict[str, dict[str, Any]] = {}
     for nodeid, cov_row in coverage_map.items():
@@ -1533,11 +1535,11 @@ def write_branch_equiv_artifacts(
         return cached is None or cached.get("status") == "from_ranked"
 
     needed_nodeids: list[str] = []
-    for cand, anchor in resolved_pairs:
-        if _needs_live_collection(cand):
-            needed_nodeids.append(cand)
-        if _needs_live_collection(anchor):
-            needed_nodeids.append(anchor)
+    for cand_nid, anch_nid in resolved_pairs:
+        if _needs_live_collection(cand_nid):
+            needed_nodeids.append(cand_nid)
+        if _needs_live_collection(anch_nid):
+            needed_nodeids.append(anch_nid)
     needed_nodeids = unique_preserve(needed_nodeids)
 
     coverage_options = CoverageArtifactOptions(
@@ -3072,19 +3074,21 @@ def main() -> int:
         if r.get("validation_decision") != "DELETE_SAFE_HIGH":
             continue
         nodeid = str(r.get("test_nodeid", ""))
-        branch = branch_map.get(nodeid)
-        if not branch:
+        branch_info = branch_map.get(nodeid)
+        if not branch_info:
             continue
-        t = test_by_nodeid.get(nodeid)
-        if not t:
+        test_obj = test_by_nodeid.get(nodeid)
+        if not test_obj:
             continue
         ranked = ranked_map.get(nodeid, {})
         coverage_row = coverage_map.get(nodeid, {})
-        if not bool_low_signal(t, ranked, coverage_row, branch_equiv_row=branch):
+        if not bool_low_signal(
+            test_obj, ranked, coverage_row, branch_equiv_row=branch_info
+        ):
             r["validation_decision"] = "KEEP_FOR_SIGNAL"
             r["validation_reason"] = (
                 f"branch-equiv re-evaluation: test has "
-                f"{branch.get('branch_candidate_only_count', 0)} unique branches; "
+                f"{branch_info.get('branch_candidate_only_count', 0)} unique branches; "
                 "not low-signal after branch-level analysis"
             )
 
