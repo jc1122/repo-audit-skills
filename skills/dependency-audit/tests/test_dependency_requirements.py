@@ -32,7 +32,7 @@ def test_requirements_txt_finds_undeclared_import(tmp_path, capsys):
     """requirements.txt manifest: imported yaml (not in reqs) is undeclared."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "reqs"),
         "--out-dir", str(out),
     ])
@@ -52,7 +52,7 @@ def test_requirements_txt_finds_unused_declared(tmp_path, capsys):
     """requirements.txt manifest: left-pad-py is declared but unused."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "reqs"),
         "--out-dir", str(out),
     ])
@@ -72,7 +72,7 @@ def test_requirements_txt_findings_have_correct_signal(tmp_path, capsys):
     """requirements.txt findings use correct signals: DELETE for unused, RESTRUCTURE for undeclared."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "reqs"),
         "--out-dir", str(out),
     ])
@@ -110,7 +110,7 @@ def test_requirements_txt_with_advisory(tmp_path, capsys):
     """requirements.txt manifest combined with advisory report."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "reqs"),
         "--out-dir", str(out),
         "--advisory-report", str(FIXTURES / "advisory.json"),

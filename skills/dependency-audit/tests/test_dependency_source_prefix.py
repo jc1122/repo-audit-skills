@@ -7,7 +7,7 @@ def test_source_prefix_filters_imports_to_prefix(tmp_path, capsys):
     """With --source-prefix src, only files under src/ are scanned for imports."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "prefix"),
         "--out-dir", str(out),
         "--source-prefix", "src",
@@ -74,7 +74,7 @@ def test_local_module_not_flagged_as_undeclared(tmp_path, capsys):
     """A top-level import matching a local module file is skipped, not flagged."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "local_mod"),
         "--out-dir", str(out),
     ])
@@ -97,7 +97,7 @@ def test_local_module_package_not_flagged(tmp_path, capsys):
     """A top-level import matching a package directory is local, not undeclared."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "dirty"),
         "--out-dir", str(out),
     ])
