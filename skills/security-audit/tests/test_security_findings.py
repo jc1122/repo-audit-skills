@@ -1,6 +1,5 @@
 import importlib.util
 import json
-from pathlib import Path
 
 from helpers import FIXTURES, SKILL_ROOT, load_module, read_findings
 

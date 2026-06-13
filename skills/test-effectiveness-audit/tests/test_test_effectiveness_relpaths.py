@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 try:
-    from helpers import load_module, FIXTURES
+    from helpers import load_module
 except ImportError:
     pytest.skip("helpers module not yet available", allow_module_level=True)
 
