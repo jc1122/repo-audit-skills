@@ -1,0 +1,8 @@
+[project]
+name = "perf-smell-audit"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["pylint>=3.0", "perflint>=0.8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
