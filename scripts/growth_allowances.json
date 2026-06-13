@@ -7,15 +7,21 @@
       "expires": "never"
     },
     {
+      "metric": "tracked_files_growth",
+      "max_delta": 2,
+      "reason": "SP13 bootstrap docs: the combined SP12-continuation runtime self-improvement plan (docs/superpowers/plans/2026-06-13-sp13-runtime-self-improvement-loop.md) and its operator launch prompt (docs/superpowers/SP13-LAUNCH-PROMPT.md). Two new docs-only tracked files; no new source modules.",
+      "expires": "next-release"
+    },
+    {
       "metric": "docs_loc_growth",
-      "max_delta": 376,
-      "reason": "SP12 W6 iteration-3 and iteration-4 ledger evidence append plus accepted refactor/ratchet bookkeeping: convergent-loop documentation for W6 ship, installed wave, freeze boundary evidence, v0.4.6 reinstall, repo-B strict-shrink evidence, and final cross-repo W6 iteration-4 closeout.",
+      "max_delta": 740,
+      "reason": "SP13 bootstrap + SP12 closeout docs since v0.5.21: SP12 convergent-loop ledger terminal/closeout evidence append, the SP13 combined plan, and the SP13 operator launch prompt. Documentation only; no production source LOC.",
       "expires": "next-release"
     },
     {
       "metric": "net_loc_growth",
-      "max_delta": 368,
-      "reason": "SP12 W6 iteration-3 and iteration-4 ledger evidence append plus accepted refactor/ratchet bookkeeping: net LOC from ledger evidence plus allowance refresh and final W6 iteration-4 closeout. No new production source code.",
+      "max_delta": 760,
+      "reason": "SP13 bootstrap net LOC since v0.5.21: the docs above plus accepted SP12 triage_redundancy.py shrink bookkeeping and this allowance refresh. No new production source code.",
       "expires": "next-release"
     }
   ]
