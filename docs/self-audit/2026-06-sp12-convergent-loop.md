@@ -424,7 +424,7 @@ Issues found and fixed during W5:
 - repo-B wave runner treated code-health exit 2 with parsed findings as
   `error`; fixed and released in `v0.4.5`.
 - Baseline freeze commits themselves created growth identities, and repo-B also
-  created a hotspot identity on `scripts/wave_baseline.json`; follow-up
+  created a hotspot identity on its wave baseline file; follow-up
   baseline commits included those freeze-maintenance identities so the live
   baseline gates pass.
 
@@ -453,7 +453,7 @@ Triage before freeze:
   `net_loc_growth` identities from the baseline commits themselves.
 - No new lane/metric/class may be added after this point. The finding universe
   is CLOSED; K-1 is active. Hard cap: 14 iterations from the freeze boundary.
-  New classes go to `docs/superpowers/SP13-CANDIDATES.md`.
+  New classes go to `SP13-CANDIDATES.md`.
 
 Timing vs budget / wave timings:
 
