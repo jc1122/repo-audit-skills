@@ -1,0 +1,26 @@
+{
+  "skill": "complexity-audit",
+  "model": "claude-opus-4-8",
+  "expected_rows": 2,
+  "actual_rows": 1,
+  "pass": false,
+  "advisory": {
+    "finding": {
+      "signal": "EVAL",
+      "leaf": "instruction-eval",
+      "skill": "complexity-audit",
+      "model": "claude-opus-4-8",
+      "expected_rows": 2,
+      "actual_rows": 1,
+      "message": "instruction-eval drift for complexity-audit: model produced 1 rows vs 2 expected (advisory)"
+    },
+    "lesson": {
+      "id": "instruction-eval/complexity-audit",
+      "tier": "candidate",
+      "scope": "instruction-eval",
+      "text": "complexity-audit SKILL.md under-/over-specifies: model produced 1 rows vs 2 expected",
+      "fires": 1,
+      "escalated": false
+    }
+  }
+}
