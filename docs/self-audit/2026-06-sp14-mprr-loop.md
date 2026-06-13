@@ -226,7 +226,29 @@ marked the intentional fixtures, dogfooding the engine on repo-A:
 
 Post-pass re-audit (integration branch): `tests/` ruff residual = 16 intentional fixtures
 (now marked) + 9 deferred growth-audit duplicate-class F811. Gate: full `run_checks.py` green +
-fresh-clone sim → ff-merge to main → CI green. repo-A remains converged (production scope) and is
-now also clean in `tests/` except the flagged duplicate-class item.
+fresh-clone sim → ff-merge to main → CI green (`b4ab736`). repo-A converged (production scope).
+
+### Follow-up 2 — growth-audit duplicate classes RESOLVED (commit `1558303`, CI green)
+
+The "9 deferred-hard" item above was then investigated and resolved (user-requested). Method:
+- **AST analysis** of `skills/growth-audit/tests/test_growth_audit.py`: the 8 shadowed classes +
+  1 function aren't obsolete copies — each shadowed (earlier) version has *unique* methods absent
+  from its running twin. The file was **rewritten** and the old versions left shadowed above.
+- **Un-shadowed all of them and ran them against current code: 33 methods FAIL** (they test an
+  older, refactored API → genuinely dead AND obsolete). The *only* shadowed tests that still pass
+  are `TestDepEntries`'s dependency-format ones — and two of those, `test_gemfile_entries` and
+  `test_json_entries`, cover real behavior the running suite **lacked** (`test_json_entries` hits
+  `_package_json_dep_entries`, lines 232–248, which coverage showed **uncovered**).
+- **Action:** revived those 2 gap-closing tests into the running `TestDepEntries` class, then
+  deleted all 9 dead/obsolete shadowed definitions (−388/+73 lines).
+- **Verified (orchestrator):** pytest **50 → 52** (every original test preserved — set-diff:
+  REMOVED none, ADDED exactly the 2 revived); ruff F811 clean; growth_audit.py coverage
+  **83% → 87%** (package.json gap closed); full `run_checks.py` 10/10+2/2; fresh-clone sim green.
+- Family-wide re-scan: **no other test file has shadowed duplicate defs** — the mess was isolated.
+
+Net: repo-A `tests/` now has **0 dead-code findings** outside the 16 durably-marked intentional
+fixtures, AND recovered two real coverage scenarios the silent rewrite had dropped. The "needs
+human judgment" deferral was the right call at the time (unattended bulk-delete would have
+discarded the 2 valuable tests); given the go-ahead, the evidence-based resolution kept them.
 
 

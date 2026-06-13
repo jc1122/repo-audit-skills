@@ -20,11 +20,13 @@ discovered mid-run is parked here and never folded into the active SP14 run (L-1
   still has to apply it when building the audit scope. Wiring the engine to self-filter
   excluded paths (so intentional residue is never even proposed) is the next mechanization
   step: it converts a per-run judgment into permanent enforced state.
-- **Duplicate-named test classes in `skills/growth-audit/tests/test_growth_audit.py`** (8 classes +
-  1 function defined twice; the earlier definitions are shadowed/never-run and have *different*
-  bodies than their twins — latent test-coverage loss). Deferred-hard from SP14 dead-code
-  remediation because auto-deletion would discard differing shadowed scenarios; needs a human
-  decision to rename-and-revive vs delete. Worth scanning for family-wide.
+- ~~Duplicate-named test classes in `skills/growth-audit/tests/test_growth_audit.py`~~ **RESOLVED
+  (commit `1558303`).** The 8 shadowed classes + 1 function were a rewrite-left-behind: un-shadowed
+  and run, 33 methods failed (obsolete API) → deleted; the 2 still-passing gap-closing tests
+  (`test_gemfile_entries`, `test_json_entries`, covering `_package_json_dep_entries`) were revived
+  into the running class. pytest 50→52, coverage 83→87%. Family-wide scan: no other file affected.
+  Standing candidate: an automated check that flags duplicate top-level defs in test files (the
+  shadowing is invisible to pytest collection — only ruff F811 caught it).
 - **repo-A test-tree dead-code is below the selfaudit scope.** `self_audit.py::_prefixes()`
   audits production code only (`skills/*/scripts`), never `tests/`. SP14 cleaned `tests/`
   unused imports/locals opportunistically, but there is no standing gate keeping test dirs
