@@ -70,6 +70,15 @@ _DEP_PATTERNS: dict[str, list[str]] = {
     "Pipfile": [r'^\s*[A-Za-z0-9_\-]+\s*='],
 }
 
+_PACKAGE_JSON_DEP_SECTIONS = (
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "optionalDependencies",
+    "bundleDependencies",
+    "bundledDependencies",
+)
+
 # CLI flag patterns (heuristic, language-blind-ish).
 _CLI_FLAG_PATTERNS: list[str] = [
     r"\.add_argument\(",
@@ -199,10 +208,13 @@ def _dependency_delta(root: Path, base: str, head: str) -> int:
 
 def _dep_entries(content: str, path: str) -> list[str]:
     """Extract dependency-like lines from a manifest file's content."""
+    name = Path(path).name
+    if name == "package.json":
+        return _package_json_dep_entries(content)
+
     entries: list[str] = []
     ext = Path(path).suffix
-    name = Path(path).name
-    patterns: list[str] = _DEP_PATTERNS.get(name, [])
+    patterns: list[str] = list(_DEP_PATTERNS.get(name, []))
     patterns.extend(_DEP_PATTERNS.get(ext, []))
     for line in content.splitlines():
         stripped = line.strip()
@@ -212,6 +224,33 @@ def _dep_entries(content: str, path: str) -> list[str]:
             if re.match(pat, stripped):
                 entries.append(stripped)
                 break
+    return entries
+
+
+def _package_json_dep_entries(content: str) -> list[str]:
+    """Extract dependency declarations from package.json dependency sections."""
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(data, dict):
+        return []
+
+    entries: list[str] = []
+    for section in _PACKAGE_JSON_DEP_SECTIONS:
+        value = data.get(section)
+        if isinstance(value, dict):
+            entries.extend(
+                f"{section}:{dep_name}"
+                for dep_name in value
+                if isinstance(dep_name, str)
+            )
+        elif isinstance(value, list):
+            entries.extend(
+                f"{section}:{dep_name}"
+                for dep_name in value
+                if isinstance(dep_name, str)
+            )
     return entries
 
 

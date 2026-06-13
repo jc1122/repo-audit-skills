@@ -331,6 +331,113 @@ def test_dependency_delta_go_mod(tmp_path: Path):
     )
 
 
+def test_package_json_version_only_change_does_not_create_dependency_growth(
+    tmp_path: Path,
+):
+    """Changing package metadata only must not count as dependency growth."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git_init(repo)
+
+    _write(
+        repo / "package.json",
+        json.dumps(
+            {
+                "name": "demo",
+                "version": "0.1.0",
+                "scripts": {"test": "node test.js"},
+                "dependencies": {"react": "^18.0.0"},
+                "devDependencies": {"vite": "^5.0.0"},
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+    )
+    _git_commit_all(repo, "initial package")
+    _git_tag(repo, "base")
+
+    _write(
+        repo / "package.json",
+        json.dumps(
+            {
+                "name": "demo",
+                "version": "0.1.1",
+                "scripts": {"test": "node test.js"},
+                "dependencies": {"react": "^18.0.0"},
+                "devDependencies": {"vite": "^5.0.0"},
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+    )
+    _git_commit_all(repo, "bump version")
+
+    out = tmp_path / "out"
+    result = _run("--root", str(repo), "--out-dir", str(out), "--baseline-rev", "base")
+    assert result.returncode == 0, f"stderr: {result.stderr}"
+
+    summary = _read_summary(out)
+    assert summary["metrics"]["dependency_growth"] == 0
+
+    findings = _read_findings(out)
+    metric_names = {f["metric"]["name"] for f in findings}
+    assert "dependency_growth" not in metric_names
+
+
+def test_package_json_dependency_sections_still_create_dependency_growth(
+    tmp_path: Path,
+):
+    """New package dependencies and devDependencies should still be detected."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git_init(repo)
+
+    _write(
+        repo / "package.json",
+        json.dumps(
+            {
+                "name": "demo",
+                "version": "0.1.0",
+                "dependencies": {"react": "^18.0.0"},
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+    )
+    _git_commit_all(repo, "initial package")
+    _git_tag(repo, "base")
+
+    _write(
+        repo / "package.json",
+        json.dumps(
+            {
+                "name": "demo",
+                "version": "0.1.0",
+                "dependencies": {"lodash": "^4.17.21", "react": "^18.0.0"},
+                "devDependencies": {"vitest": "^1.0.0"},
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+    )
+    _git_commit_all(repo, "add package deps")
+
+    out = tmp_path / "out"
+    result = _run("--root", str(repo), "--out-dir", str(out), "--baseline-rev", "base")
+    assert result.returncode == 1, f"stderr: {result.stderr}"
+
+    summary = _read_summary(out)
+    assert summary["metrics"]["dependency_growth"] == 2
+
+    findings = _read_findings(out)
+    metric_names = {f["metric"]["name"] for f in findings}
+    assert "dependency_growth" in metric_names
+
+
 def test_cli_flag_growth_detected(tmp_path: Path):
     """Adding a new argparse add_argument call should be detected."""
     repo = tmp_path / "repo"
@@ -442,10 +549,19 @@ class TestDepEntries:
 
     def test_json_entries(self):
         mod = _load_module()
-        content = '{\n  "dependencies": {\n    "react": "^18",\n    "lodash": "^4"\n  }\n}'
+        content = json.dumps({
+            "name": "demo",
+            "version": "0.1.0",
+            "scripts": {"test": "vitest"},
+            "dependencies": {"react": "^18", "lodash": "^4"},
+            "devDependencies": {"vite": "^5"},
+        })
         entries = mod._dep_entries(content, "package.json")
-        # JSON patterns match lines with "key": value
-        assert len(entries) >= 2
+        assert set(entries) == {
+            "dependencies:react",
+            "dependencies:lodash",
+            "devDependencies:vite",
+        }
 
     def test_go_mod_entries(self):
         mod = _load_module()
