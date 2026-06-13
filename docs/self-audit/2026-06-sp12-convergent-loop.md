@@ -162,3 +162,120 @@ Next anchor:
 
 - repo-A hotspot anchor for the next installed wave is
   `7cb3831a6b9282b03cb69d1f54d244235b5179fc`.
+
+## Iteration 2 W1/W2 execution and growth leaves (2026-06-13)
+
+Scope:
+
+- W1 `exec-audit` leaf added, registered, and gate-clean.
+- W2 `growth-audit` leaf added, registered, and repo-A growth gate wired into
+  the timed gate runner.
+- Main fast-forwarded from `2e5199a` to `78a012d`.
+- This is pre-W5 work; the finding universe is not frozen yet.
+
+Worker runs:
+
+| Packet | Run dir | Result |
+| --- | --- | --- |
+| W1 exec-audit core | `/tmp/sp12/runs/repo-a-w1-exec-audit-core` | accepted after output-contract follow-up |
+| W2 growth-audit core | `/tmp/sp12/runs/repo-a-w2-growth-audit-core` | accepted after signal-contract follow-up |
+| exec-audit metadata/helper | `/tmp/sp12/runs/repo-a-w12-exec-metadata` | accepted |
+| growth-audit metadata/helper | `/tmp/sp12/runs/repo-a-w12-growth-metadata` | accepted |
+| release/install registration | `/tmp/sp12/runs/repo-a-w12-release-installer-registration` | accepted |
+| fixture/coverage registration | `/tmp/sp12/runs/repo-a-w12-fixture-coverage-registration` | blocked until coverage repaired |
+| leaf coverage tests | `/tmp/sp12/runs/repo-a-w12-leaf-coverage-tests` | accepted |
+| fixture/coverage finalize | `/tmp/sp12/runs/repo-a-w12-fixture-coverage-registration-finalize` | accepted |
+| growth gate core | `/tmp/sp12/runs/repo-a-w12-growth-gate-core` | accepted |
+| initial growth allowances | `/tmp/sp12/runs/repo-a-w12-growth-allowances` | accepted then corrected after committed deltas changed |
+| allowance correction | `/tmp/sp12/runs/repo-a-w12-growth-allowances-fix` | accepted |
+| run-checks growth wiring | `/tmp/sp12/runs/repo-a-w12-run-checks-growth` | committed but needed repair follow-ups |
+| run-checks test repair | `/tmp/sp12/runs/repo-a-w12-run-checks-tests-fix` | accepted |
+| exec-audit gate repair | `/tmp/sp12/runs/repo-a-w12-exec-audit-gates-fix` | accepted |
+| growth-audit gate repair | `/tmp/sp12/runs/repo-a-w12-growth-audit-gates-fix` | accepted |
+| final allowance correction | `/tmp/sp12/runs/repo-a-w12-growth-allowances-final` | accepted |
+
+Accepted commits merged by fast-forward:
+
+- `071a8b3` `feat(exec-audit): add execution audit core`.
+- `c4f38fa` `fix(exec-audit): align leaf output contract`.
+- `eedbcf7` `feat(growth-audit): add surface growth audit core`.
+- `2d931b5` `fix(growth-audit): emit restructure signal for growth rows`.
+- `38dc0e4` `chore(exec-audit): add skill metadata and vendored helper`.
+- `07afcfb` `chore(growth-audit): add skill metadata and vendored helper`.
+- `03bb240` `chore(skills): register exec and growth audits for release/install`.
+- `f132595` `test(audit-leaves): cover exec and growth scripts in process`.
+- `acfd530` `chore(skills): register exec and growth audits in fixtures and coverage`.
+- `d4357f5` `feat(gates): add growth gate core`.
+- `161bdca` `chore(gates): add SP12 growth allowances`.
+- `7e230b8` `fix(gates): align growth allowances with committed surface`.
+- `b3a6513` `feat(gates): wire growth gate into run checks`.
+- `e68429b` `test(gates): update run-checks expectations for growth gate`.
+- `f10afc4` `fix(exec-audit): satisfy docs security and selfaudit gates`.
+- `b736634` `fix(growth-audit): satisfy selfaudit gates`.
+- `78a012d` `fix(gates): refresh growth allowance after repairs`.
+
+Issues found and fixed during W1/W2:
+
+- `exec-audit` initially emitted `exec_findings.json` and leaf `exec`; fixed to
+  `exec-audit_findings.json` and leaf `exec-audit`.
+- `growth-audit` initially emitted signal `GROWTH`; fixed to the planned
+  `RESTRUCTURE` signal.
+- Both new leaves initially lacked `SKILL.md` and vendored helper copies;
+  fixed with byte-identical `health_common.py` copies.
+- Release, installer, fixture, and coverage registration were missing; all are
+  now wired.
+- Coverage registration exposed four new coverage findings for the new leaves
+  and vendored helpers; in-process tests raised coverage enough for
+  `check_coverage_gap.py` to pass with zero findings across 19 suites.
+- `run_checks` root tests still expected the old 8 cheap gates; updated to the
+  new 9-cheap-gate contract.
+- `exec-audit` tripped docs, security, quality, complexity, and duplication
+  gates; repaired without changing its output contract.
+- `growth-audit` tripped quality, complexity, dead-code, and duplication gates;
+  repaired without changing its output or `RESTRUCTURE` contract.
+- Growth allowances required three recalibrations because each admitted gate or
+  repair commit changed the final growth delta; final gate reports zero
+  unsuppressed growth findings.
+
+Verification:
+
+- Integration branch `npm run check`: `gates: 9/9 cheap, 2/2 heavy, 0 over-budget, 0 failed`.
+- Main after fast-forward `npm run check`: `gates: 9/9 cheap, 2/2 heavy, 0 over-budget, 0 failed`.
+- Focused root tests after repair: `98 passed`.
+- Focused exec-audit tests after repair: `100 passed`.
+- Focused growth-audit tests after repair: `48 passed`.
+- Growth gate after final allowance correction:
+  `{"status": "pass", "count": 0, "baseline": "v0.5.20"}`.
+
+Timing vs budget table from the post-merge main run:
+
+| Gate | Seconds | Budget seconds |
+| --- | ---: | ---: |
+| vendored | 0.03 | 10 |
+| hygiene | 0.14 | 10 |
+| dependency | 0.15 | 10 |
+| release | 0.23 | 10 |
+| growth | 0.29 | 15 |
+| docs | 0.69 | 10 |
+| fixtures | 1.11 | 15 |
+| security | 1.69 | 15 |
+| selfaudit | 1.76 | 20 |
+| coverage | 112.80 | 270 |
+| pytest | 110.23 | 260 |
+
+Growth allowance table:
+
+| Metric | Max delta | Expiry | Reason |
+| --- | ---: | --- | --- |
+| tracked files | 11 | next release | SP12 W1/W2 exec-audit and growth-audit leaf admission plus gate integration |
+| net LOC | 4379 | next release | SP12 W1/W2 implementation, tests, metadata, registrations, and repairs |
+| docs LOC | 337 | next release | SP12 W1/W2 skill metadata and operator-facing descriptions |
+| CLI flags | 15 | next release | SP12 W1/W2 leaf and gate CLI surfaces |
+| dependencies | 0 | never | stdlib-only rule; positive dependency growth remains disallowed |
+
+Current state after merge:
+
+- repo-A `main` is ahead of `origin/main` by 17 commits.
+- W1/W2 source work is accepted locally but not yet shipped/reinstalled.
+- Next action: continue with W3/W4 or perform the next K-6 ship step when the
+  plan reaches W5.
