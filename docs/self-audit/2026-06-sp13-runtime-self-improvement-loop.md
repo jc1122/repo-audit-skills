@@ -198,3 +198,46 @@ Rationale (verbatim): `L-5a: every active repo >=1; surplus -> repo-a (trailing 
 | repo-P | 0 (strike 1) | 0 (strike 2) | **TERMINAL** | wave_baseline 25 = complexity (module-MI/nloc idioms) + security (bandit trusted-subprocess, config-gated/accepted) + hotspot inherents, all SP12-frozen + individually justified. |
 
 All three repos TERMINAL with documented residue (L-9). The residue is real but irreducible: forcing baselines to `[]` would require policy-suppressing hotspot/churn rows (explicitly forbidden by the family) or decomposing compact CLI scripts (the module-MI false-positive class). This is honest termination, not threshold-gaming. The triage MERGE track (142 rows) and the tqa test-quality observations are SP14 speed/quality candidates (tests are not findings).
+
+## X5 — close-out + final report — 2026-06-13
+
+### Headline: the loop's learning curve (the SP13 artifact — mined, R5)
+
+| iter | rows_closed | rows_per_hour | ci_wait_s | phase_s | repair_rate |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 19 | **57.82** | 334 | 1183 | 0.0 |
+| 2 | 2 | **5.18** | 292 | 1390 | 0.0 |
+
+Yield decays 57.8 → 5.18 rows/hr as the shrinkable backlog exhausts — the convergence signature. Both rows are mined by `mine_iteration_kpis.py` from git timestamps + baseline JSONs + CI API and copied verbatim from `iteration_kpis.jsonl` (never typed). The iter1 mining itself surfaced + fixed a telemetry bug (LM1) — the loop improving its own process, the SP13 thesis.
+
+### Lessons → automation (R7)
+- **L1** (npm-ci) → `scripts/worker_worktree_setup.sh` (X0.3).
+- **L6** (vendored byte-identical) → existing `check_vendored_common.py`.
+- **LM1** (miner flat-list rows) → repo-B `mine_iteration_kpis.py` flat-list branch (`04f85bd`), candidate→binding, prevented a repeat (re-mined 0→19). **The one prose→tooling escalation executed mid-run.**
+- Candidates open: `instruction-eval/complexity-audit` (SKILL.md under-specifies module-MI), **LM2** (allocator can't read miner yield — guaranteed-minimum unaffected). → SP14.
+- lessons.jsonl: 8 binding + 2 candidate. No lesson fired ≥3× in-run (DoD #2 alt satisfied via LM1's executed escalation).
+
+### Self-application matrix (X1.3)
+- iter1: `test-redundancy-triage` on the 220-test suite → 142 MERGE / 4 KEEP / 73 branch-exact (the suite is ~94% merge-redundant — SP14 speed track).
+- iter2: `test-quality-assurance` on repo-A tests → 21 private-call signals, 0 exception-path tests (SP14 test-hardening).
+- Behavioral eval (DoD #4): `eval_complexity-audit.json`, pinned opus, advisory drift 1 vs 2.
+
+### Allocation history (L-5a)
+- iter1 + iter2: `{repo-a:4, repo-b:1, repo-p:1}` each, every active repo ≥1 (no starvation). Surplus → repo-a (yield tie at 0; see LM2). Rationale recorded verbatim per iteration.
+
+### X5.1 stale-skill purge (allowlist-driven)
+Eligibility table: the 18 installed family skills match the current source manifest **1:1**; SP13 added gates/tooling/docs but removed no skill → **no family skill stale → no removals**. Non-family installed skills are foreign plugins outside the family allowlist (out of scope). Purge: none.
+
+### Amendment proposals (L-8)
+Zero raised (≤3 cap honored). No contract blocked an improvement: the one contract-tension (fresh-wave environment drift vs re-freeze) was resolved within R4, not by amendment.
+
+### Definition of Done — falsifiable check
+1. ✅ `iteration_kpis.jsonl` appended by the miner each iteration (R5); ledger KPI rows copied verbatim.
+2. ✅ `lessons.jsonl` ≥1 binding (8); synthesizer injected L1 into a real packet (iter1 run); LM1 reached R7 automation-escalation (committed `04f85bd`).
+3. ✅ instruction-lint gate live in repo-A, green, R1 fixture pair passing (8 tests).
+4. ✅ ≥1 behavioral-eval ran (pinned opus, advisory) + artifact; self-application checklist dogfooded one not-yet-applied skill each iteration (triage, tqa).
+5. ✅ L-5a allocator ran every iteration with recorded rationale; no active repo starved.
+6. ✅ Inherited residue + meta-findings: each repo TERMINAL with documented irreducible residue (baselines not `[]` — forcing that would suppress hotspot/churn, family-forbidden); fresh-clone green; CI green zero deprecations; final repo-A release **v0.6.0** tagged.
+7. ✅ Growth allowances purged at the v0.6.0 release (reset to dependency-only); ledger complete per L-10; 0 amendment proposals.
+
+### Outcome: **DONE** — SP13 process-improvement deliverables (X0 telemetry+memory, X1 self-application, X2 adaptive control) built, shipped CI-green, and demonstrated end-to-end across 2 burn-down iterations; the inherited convergence backlog reached honest TERMINAL-with-documented-residue (L-9). The loop measurably improved its own process (LM1 escalation; instruction-lint repairing 19 of its own meta-findings).
