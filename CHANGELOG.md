@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.1 - 2026-06-13
+
+SP14 family-side closeout (no audit-leaf behavior change — all 18 leaf scripts byte-identical to 0.6.0).
+
+- Test-tree hygiene: removed unused imports/locals across 28 test files (56 ruff F401/F841/F811).
+- growth-audit tests: removed 9 dead/obsolete shadowed duplicate definitions (a rewrite left-behind);
+  revived 2 gap-closing tests (Gemfile + package.json dependency parsing) -> growth_audit.py coverage 83%->87%.
+- Added scripts/remediation_excludes.json: durable machine-readable policy excluding intentional
+  tests/fixtures from automated remediation.
+- Growth allowances re-baselined at this tag (SP14 doc-growth allowances purged post-release).
+
 ## 0.6.0 - 2026-06-13
 
 - Final SP13 release: runtime self-improvement loop hardening.
