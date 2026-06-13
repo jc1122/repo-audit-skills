@@ -239,13 +239,7 @@ def _package_json_dep_entries(content: str) -> list[str]:
     entries: list[str] = []
     for section in _PACKAGE_JSON_DEP_SECTIONS:
         value = data.get(section)
-        if isinstance(value, dict):
-            entries.extend(
-                f"{section}:{dep_name}"
-                for dep_name in value
-                if isinstance(dep_name, str)
-            )
-        elif isinstance(value, list):
+        if isinstance(value, (dict, list)):
             entries.extend(
                 f"{section}:{dep_name}"
                 for dep_name in value
