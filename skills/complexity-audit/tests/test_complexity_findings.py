@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from helpers import FIXTURES, load_module
 

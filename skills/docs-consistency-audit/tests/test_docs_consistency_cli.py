@@ -1,6 +1,5 @@
 """CLI contract tests for docs-consistency-audit."""
 
-import json
 
 from helpers import FIXTURES, load_module, read_findings, run_cli
 
