@@ -26,6 +26,7 @@ const skills = [
   "test-effectiveness-audit",
   "exec-audit",
   "growth-audit",
+  "perf-smell-audit",
 ];
 
 function usage() {

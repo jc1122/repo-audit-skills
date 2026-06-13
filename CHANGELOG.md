@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 - 2026-06-14
+
+New leaf: **perf-smell-audit** — a deterministic, advisory algorithmic
+performance-smell audit that wraps perflint (via pylint) to emit `PERF` findings
+(loop-invariant computation, wrong container types) to the shared code-health
+schema. Source-level only; complementary to exec-audit's execution-level PERF
+findings. Registered in the installer, `check_release`, the coverage suite, and
+self-audit scope; CI installs pylint/perflint. Family version sync 0.6.1 → 0.7.0.
+
 ## 0.6.1 - 2026-06-13
 
 SP14 family-side closeout (no audit-leaf behavior change — all 18 leaf scripts byte-identical to 0.6.0).
