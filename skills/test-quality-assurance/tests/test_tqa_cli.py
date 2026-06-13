@@ -94,7 +94,6 @@ def test_cli_with_cov_json(tmp_path):
 
 def test_cli_with_baseline_json(tmp_path):
     """Pass baseline JSON and get delta in report."""
-    import json
     # First, create a baseline by running the script
     baseline_out = tmp_path / "baseline.json"
     run_cli(
