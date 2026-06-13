@@ -5,30 +5,6 @@
       "max_delta": 0,
       "reason": "Dependency growth is never allowed under the stdlib-only rule. Any positive delta must emit an overflow finding. Zero tolerance for new runtime dependencies.",
       "expires": "never"
-    },
-    {
-      "metric": "tracked_files_growth",
-      "max_delta": 14,
-      "reason": "SP13 bootstrap + X0-X3 keystone/harness evidence and tooling since v0.5.21: SP13 plan + launch prompt (2); X0 lessons.jsonl + iteration_kpis.jsonl + worker_worktree_setup.sh (3); X1 instruction-lint gate scripts/check_instruction_lint.py + scripts/instruction_lint_baseline.json + tests/test_check_instruction_lint.py (3); X1/X2/X3 process docs SP13 ledger + self-application-checklist.md + amendment-proposals/TEMPLATE.md + eval_complexity-audit.json (4) and the X3 SP14-CANDIDATES.md freeze doc (1). Orchestration/instruction tooling + evidence + docs only; no new audited-leaf source modules.",
-      "expires": "next-release"
-    },
-    {
-      "metric": "cli_flag_growth",
-      "max_delta": 11,
-      "reason": "The X1.1 instruction-lint gate (scripts/check_instruction_lint.py) adds its own argparse surface (--root/--out/--baseline/--format/--scan-only/--snapshot), and the X4-i2 dedup rewired it onto gate_common.gate_main/GateSpec (the shared gate-runner flag surface). A new deterministic gate; no audited-leaf CLI changed.",
-      "expires": "next-release"
-    },
-    {
-      "metric": "docs_loc_growth",
-      "max_delta": 1400,
-      "reason": "SP13 bootstrap + SP12 closeout + X0-X4 process docs since v0.5.21: the SP13 plan + launch prompt, the X0 lessons ledger, the X1/X2/X3 process docs, and the L-10-mandated per-iteration SP13 ledger appends (KPI rows, lessons added/promoted/escalated, allocation rationale, self-application results) across the post-freeze burn-down. Documentation/evidence only; no production source LOC. Release-expiring at the X5 repo-A release.",
-      "expires": "next-release"
-    },
-    {
-      "metric": "net_loc_growth",
-      "max_delta": 2150,
-      "reason": "SP13 bootstrap + X0-X4 keystone/harness net LOC since v0.5.21: the docs above (incl. the per-iteration L-10 ledger appends across the post-freeze burn-down) plus the X0 worker_worktree_setup.sh + iteration_kpis.jsonl, the X1.1 instruction-lint checker + tests + baseline + run_checks.py registration + bookkeeping, accepted SP12 triage_redundancy.py shrink, and these allowance refreshes. Post-freeze process batches touch orchestration/instructions only (R6) and source ratchets shrink-only, so growth here is ledger/tooling evidence, not audited-leaf source. Release-expiring at the X5 repo-A release.",
-      "expires": "next-release"
     }
   ]
 }
