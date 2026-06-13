@@ -27,8 +27,8 @@ there; where this prompt and the plan differ, the plan wins.
 ENTRY (continuation, not relaunch): SP12 has shipped its enablement (gate
 speed, exec-audit + growth-audit leaves, parallel wave) and burned down under a
 closed universe. Re-verify the current repo-A/B/P mains and the inherited open
-residue from the SP12 ledger tail (last recorded ~repo-A 260, repo-B 22,
-repo-P 27 = 309 rows — ledgers are truth, re-read them). Confirm all three
+residue from the SP12 ledger tail (terminal record: repo-A 260, repo-B 13,
+repo-P 25 = 298 rows — ledgers are truth, re-read them). Confirm all three
 mains are clean and CI-green and no SP12 worker is still writing. Bootstrap
 probe green. You inherit the SP12 residue as backlog and EXPAND it with the
 meta-findings the X1 harness surfaces, then RE-FREEZE at X3.

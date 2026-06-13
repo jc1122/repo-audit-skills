@@ -726,3 +726,38 @@ Growth allowance table:
 | `dependency_growth` | 0 | never | still enforced |
 | `docs_loc_growth` | 376 | next release | refreshed for W6 iteration-4 ledger evidence and accepted cross-repo shrink bookkeeping |
 | `net_loc_growth` | 368 | next release | refreshed for W6 iteration-4 ledger evidence and allowance-file bookkeeping |
+
+## Terminal record (2026-06-13)
+
+SP12 ended BLOCKED-by-operator-order during W6 iteration 4: the human
+instructed the orchestrator to run a last iteration and sum up. No L-1/C-8
+gate condition fired; this is an authority halt, not a gate failure. All work
+shipped to that point is closed and the mains are clean + CI-green.
+
+Final state:
+
+| Repo | main | Release | Installed | Open rows |
+| --- | --- | --- | --- | ---: |
+| repo-A `repo-audit-skills` | `667efae` (SP12 last) | `v0.5.21` | 18 leaves @ `0.5.21` | 260 |
+| repo-B `repo-audit-refactor-optimize` | `e3adf81` | `v0.4.6` | `0.4.6` | 13 |
+| repo-P `perf-benchmark-skill` | `ac58303` | `v0.3.8` | `0.3.8` | 25 |
+| total | | | | **298** |
+
+(repo-A `main` advanced to `d535e3d` after this terminal with a docs-only
+commit adding the SP13 plan + launch prompt; no source/version change.)
+
+Shipped in SP12: W0 gate parallelization + timing budget (v0.5.20), the
+`exec-audit` and `growth-audit` leaves, the registry-driven parallel wave, the
+baseline freeze (closed universe), and W6 strict-shrink burn-down (W6 removed
+22 rows from a start count of 320 across the three repos).
+
+DoD rows not met: no repo reached baseline `[]`; the W5-frozen universe still
+has 298 open rows (repo-A dominated by hotspot/exec/growth rows from the
+expanded 8-lane wave). The close-out package (purge, final report, repo-A
+minor bump to a DoD-complete state) was not executed under the stop order.
+
+Successor: this run is CONTINUED by the combined Opus-driven SP13 —
+`docs/superpowers/plans/2026-06-13-sp13-runtime-self-improvement-loop.md` —
+which inherits the 298-row residue as its backlog, adds the runtime
+self-improvement layer (telemetry, lessons, self-application, adaptive
+allocation), re-freezes, and burns down to terminal.
