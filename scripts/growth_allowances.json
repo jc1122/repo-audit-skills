@@ -8,14 +8,14 @@
     },
     {
       "metric": "docs_loc_growth",
-      "max_delta": 228,
-      "reason": "SP12 W6 iteration-3 ledger evidence append plus accepted refactor/ratchet bookkeeping: 228 lines of convergent-loop documentation for W6 ship, installed wave, and freeze boundary evidence.",
+      "max_delta": 306,
+      "reason": "SP12 W6 iteration-3 and iteration-4 ledger evidence append plus accepted refactor/ratchet bookkeeping: convergent-loop documentation for W6 ship, installed wave, freeze boundary evidence, v0.4.6 reinstall, and repo-B strict-shrink evidence.",
       "expires": "next-release"
     },
     {
       "metric": "net_loc_growth",
-      "max_delta": 220,
-      "reason": "SP12 W6 iteration-3 ledger evidence append plus accepted refactor/ratchet bookkeeping: net LOC from 228-line ledger entry offset by allowance-file pruning. No new source code.",
+      "max_delta": 298,
+      "reason": "SP12 W6 iteration-3 and iteration-4 ledger evidence append plus accepted refactor/ratchet bookkeeping: net LOC from ledger evidence plus allowance refresh. No new production source code.",
       "expires": "next-release"
     }
   ]
