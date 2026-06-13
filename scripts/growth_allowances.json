@@ -14,8 +14,8 @@
     },
     {
       "metric": "cli_flag_growth",
-      "max_delta": 6,
-      "reason": "The X1.1 instruction-lint gate (scripts/check_instruction_lint.py) adds its own argparse surface (--root/--out/--baseline/--format/etc.), a new deterministic gate. No audited-leaf CLI changed.",
+      "max_delta": 11,
+      "reason": "The X1.1 instruction-lint gate (scripts/check_instruction_lint.py) adds its own argparse surface (--root/--out/--baseline/--format/--scan-only/--snapshot), and the X4-i2 dedup rewired it onto gate_common.gate_main/GateSpec (the shared gate-runner flag surface). A new deterministic gate; no audited-leaf CLI changed.",
       "expires": "next-release"
     },
     {

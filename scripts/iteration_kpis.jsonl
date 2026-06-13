@@ -1,1 +1,2 @@
 {"ci_wait_seconds": 334.0, "iteration": 1, "phase_seconds": {"window": 1183.0}, "repair_rate": 0.0, "rows_closed": 19, "rows_per_hour": 57.819103972950124, "total_phase_seconds": 1183.0, "worker_count": 0}
+{"ci_wait_seconds": 292.0, "iteration": 2, "phase_seconds": {"window": 1390.0}, "repair_rate": 0.0, "rows_closed": 2, "rows_per_hour": 5.179856115107913, "total_phase_seconds": 1390.0, "worker_count": 0}
