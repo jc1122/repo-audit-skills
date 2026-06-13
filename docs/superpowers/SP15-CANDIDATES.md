@@ -20,7 +20,7 @@ discovered mid-run is parked here and never folded into the active SP14 run (L-1
   still has to apply it when building the audit scope. Wiring the engine to self-filter
   excluded paths (so intentional residue is never even proposed) is the next mechanization
   step: it converts a per-run judgment into permanent enforced state.
-- **Duplicate-named test classes in `growth-audit/tests/test_growth_audit.py`** (8 classes +
+- **Duplicate-named test classes in `skills/growth-audit/tests/test_growth_audit.py`** (8 classes +
   1 function defined twice; the earlier definitions are shadowed/never-run and have *different*
   bodies than their twins — latent test-coverage loss). Deferred-hard from SP14 dead-code
   remediation because auto-deletion would discard differing shadowed scenarios; needs a human

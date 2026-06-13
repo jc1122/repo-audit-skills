@@ -209,7 +209,7 @@ marked the intentional fixtures, dogfooding the engine on repo-A:
 - One **N=8 engine pass** (8 grouped, file-disjoint workers in worktrees off main; conflict-free
   `merge_clean` per branch; ruff re-audit per file): **56 of 65** unused-import/local findings
   removed across 28 test files (F401×26, F841×29, exec-audit's 1 duplicate `import pytest`).
-- **9 deferred-hard** (flagged, NOT auto-removed): `growth-audit/tests/test_growth_audit.py` has
+- **9 deferred-hard** (flagged, NOT auto-removed): `skills/growth-audit/tests/test_growth_audit.py` has
   **8 test classes + 1 function each defined twice** — the earlier copies are shadowed (pytest
   collects 50 tests before *and* after, proving they never ran) but have **different bodies**
   than their twins (latent never-executed scenarios). Auto-deleting 341 lines would discard
