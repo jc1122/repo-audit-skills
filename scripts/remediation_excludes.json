@@ -1,0 +1,9 @@
+{
+  "_comment": "Durable remediation-scope policy for the repo-audit-skills family. The audit LEAVES are advisory and detect everything (they never mutate source); this file constrains only what an automated REMEDIATION run (e.g. the SP14 MPRR engine) is allowed to FIX/merge, so intentional residue is never re-proposed and a fresh orchestrator does not have to re-derive the judgment each run.",
+  "dead_code": {
+    "exclude_paths": ["**/tests/fixtures/**"],
+    "reason": "Files under tests/fixtures/ are intentionally-dirty inputs whose unused imports / dead functions / unused locals are the SUBJECT of the audit leaves' own detection tests (e.g. dead-code-audit's test_dirty_fixture_flags_unused_import_and_local_via_ruff asserts ruff flags `import os` and `unused_local`). Removing them would break those tests. They must stay dirty; never remediate them.",
+    "scope_note": "repo-A's own selfaudit gate (scripts/self_audit.py::_prefixes) scopes to production code (skills/*/scripts, scripts, shared) and deliberately does NOT audit tests/. A remediation run that opts to also clean tests/ (as SP14 did for unused imports/locals) MUST still honor this fixtures exclusion."
+  },
+  "_status": "Read by the orchestrator when building a remediation scope. Auto-consumption by the MPRR engine's normalize/partition step (so it self-filters without an orchestrator reading this) is an SP15 mechanization candidate — see docs/superpowers/SP15-CANDIDATES.md."
+}
