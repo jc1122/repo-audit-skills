@@ -98,7 +98,6 @@ def test_finding_docstring_percent_configured(tmp_path):
 
 def test_changelog_excluded_from_version_checks(tmp_path):
     """Stale version pins in CHANGELOG*.md are excluded from checks."""
-    import os
     root = tmp_path / "tree"
     root.mkdir()
     # Package metadata with current version
@@ -111,7 +110,7 @@ def test_changelog_excluded_from_version_checks(tmp_path):
     )
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(root), "--out-dir", str(out)])
+    mod.main(["--root", str(root), "--out-dir", str(out)])
     # CHANGELOG.md is excluded; no version stale finding should appear
     data = read_findings(out)
     versions = [f for f in data if f["metric"]["name"] == "doc_version_stale"]
@@ -132,7 +131,7 @@ def test_changelog_exclusion_readme_still_checked(tmp_path):
     )
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(root), "--out-dir", str(out)])
+    mod.main(["--root", str(root), "--out-dir", str(out)])
     data = read_findings(out)
     versions = [f for f in data if f["metric"]["name"] == "doc_version_stale"]
     assert len(versions) == 1, (
@@ -168,7 +167,7 @@ def test_source_prefix_filters_markdown_findings(tmp_path):
     (pkg / "README.md").write_text(dirty_md)
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(root),
         "--source-prefix", "pkg/",
         "--out-dir", str(out),
@@ -200,7 +199,7 @@ def test_source_prefix_excludes_out_of_prefix_content(tmp_path):
     mod = load_module()
     out = tmp_path / "out"
     # Use a prefix that matches nothing
-    rc = mod.main([
+    mod.main([
         "--root", str(root),
         "--source-prefix", "src/",
         "--out-dir", str(out),
