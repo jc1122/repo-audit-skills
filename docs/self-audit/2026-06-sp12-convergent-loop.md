@@ -350,3 +350,128 @@ Current state after W3/W4:
 - repo-P remains untouched in SP12 so far.
 - Next action: W5 ship repo-A and repo-B, reinstall changed skills, then run the
   expanded installed 8-lane wave on repo-A/repo-B/repo-P before the W5 freeze.
+
+## Iteration 2 W5 ship, installed wave, and freeze boundary (2026-06-13)
+
+Scope:
+
+- Shipped repo-A with the W1 `exec-audit` and W2 `growth-audit` leaves plus the
+  repo-A growth gate.
+- Shipped repo-B with W3 registry-driven parallel waves and W4 packet/patch
+  synthesis.
+- Repaired one W5 wave-runner classification defect: the installed
+  code-health lane returns exit 2 with parsed findings, which must be a
+  findings status, not a wave error.
+- Re-shipped repo-B as `v0.4.5` for that installed-behavior fix.
+- Ran the expanded installed 8-lane wave on repo-A/repo-B/repo-P.
+- Froze the W5 finding universe for repo-B and repo-P via their
+  `check_wave_baseline.py` gates. Repo-A has no wave-baseline gate; its freeze
+  inputs are this ledger plus the existing self-audit and growth gates.
+
+Ship evidence:
+
+| Repo | Head | Release | CI run | Result |
+| --- | --- | --- | --- | --- |
+| repo-A | `e099ce0` | `v0.5.21` | `27455580887` | success |
+| repo-B | `2b2806f` | `v0.4.4` | `27455149106` | success |
+| repo-B | `ebbafed` | `v0.4.5` | `27456126811` | success |
+| repo-B freeze | `6373ac6` | no release, baseline-only | `27456374135` | success |
+| repo-P freeze | `b35da00` | no release, baseline-only | `27456374180` | success |
+
+Release/readback:
+
+- repo-A release:
+  https://github.com/jc1122/repo-audit-skills/releases/tag/v0.5.21
+- repo-B releases:
+  https://github.com/jc1122/repo-audit-refactor-optimize/releases/tag/v0.4.4
+  and
+  https://github.com/jc1122/repo-audit-refactor-optimize/releases/tag/v0.4.5
+- Reinstalled repo-A leaves into `/home/jakub/.agents/skills`; installed-vs-
+  source parity passed for all 18 repo-A skill directories.
+- Reinstalled repo-B into `/home/jakub/.agents/skills/repo-audit-refactor-optimize`;
+  installed-vs-source parity passed and installed `check_release.py` passed.
+- Installed readback versions:
+  - repo-A leaves: `0.5.21`.
+  - repo-B orchestration skill: `0.4.5`.
+
+Worker runs:
+
+| Packet | Worktree | Run dir | Result |
+| --- | --- | --- | --- |
+| repo-A W5 release prep | `/tmp/sp12/repo-a-05-release` | `/tmp/sp12/runs/repo-a-w5-release-prep` | accepted |
+| repo-A growth dependency false positive | `/tmp/sp12/repo-a-05-release` | `/tmp/sp12/runs/repo-a-w5-growth-dependency-fp` | accepted |
+| repo-A current allowance refresh | `/tmp/sp12/repo-a-05-release` | `/tmp/sp12/runs/repo-a-w5-growth-current-allowance` | accepted |
+| repo-A SIM114 repair | `/tmp/sp12/repo-a-05-release` | `/tmp/sp12/runs/repo-a-w5-growth-sim114` | accepted |
+| repo-A allowance tighten | `/tmp/sp12/repo-a-05-release` | `/tmp/sp12/runs/repo-a-w5-growth-allowance-tighten` | accepted |
+| repo-B W5 release prep | repo-B release worktree | `/tmp/sp12/runs/repo-b-w5-release-prep` | accepted |
+| repo-B wave status fix | `/tmp/sp12/repo-b-05-wave-status-fix` | `/tmp/sp12/runs/repo-b-w5-wave-status-fix` | accepted |
+| repo-B v0.4.5 release prep | `/tmp/sp12/repo-b-05-release-045` | `/tmp/sp12/runs/repo-b-w5-release-045` | accepted |
+| repo-B W5 freeze baseline | `/tmp/sp12/repo-b-05-freeze-baseline` | `/tmp/sp12/runs/repo-b-w5-freeze-baseline` | accepted after follow-up |
+| repo-B freeze-maintenance baseline follow-up | `/tmp/sp12/repo-b-05-freeze-baseline` | `/tmp/sp12/runs/repo-b-w5-freeze-baseline-followup` | accepted |
+| repo-P W5 freeze baseline | `/tmp/sp12/repo-p-05-freeze-baseline` | `/tmp/sp12/runs/repo-p-w5-freeze-baseline` | accepted after follow-up |
+| repo-P freeze-maintenance baseline follow-up | `/tmp/sp12/repo-p-05-freeze-baseline` | `/tmp/sp12/runs/repo-p-w5-freeze-baseline-followup` | accepted |
+
+Issues found and fixed during W5:
+
+- repo-A CI initially failed because GitHub Actions checkout did not fetch tags;
+  `.github/workflows/check.yml` now uses `fetch-depth: 0`.
+- That workflow fix added two net LOC after the exact growth allowance refresh;
+  the repo-A growth allowance was updated and the next CI run passed.
+- `growth-audit` initially counted package metadata as dependency growth; fixed
+  so package self-metadata does not trigger dependency growth.
+- `growth-audit` tripped one SIM114 self-audit finding; fixed without changing
+  output contracts.
+- repo-B wave runner treated code-health exit 2 with parsed findings as
+  `error`; fixed and released in `v0.4.5`.
+- Baseline freeze commits themselves created growth identities, and repo-B also
+  created a hotspot identity on `scripts/wave_baseline.json`; follow-up
+  baseline commits included those freeze-maintenance identities so the live
+  baseline gates pass.
+
+Final installed W5 wave / gate counts:
+
+| Repo | code-health | security | hygiene | docs | dependency | hotspot | exec | growth | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| repo-A installed wave | 18 | 0 | 0 | 0 | 0 | 206 | 0 | 0 | 224 |
+| repo-B `check_wave_baseline.py` | 12 | 3 | 0 | 0 | 0 | 7 | 1 | 1 | 24 |
+| repo-P `check_wave_baseline.py` | 24 | 0 | 0 | 0 | 0 | 7 | 0 | 1 | 32 |
+
+Repo-A local gates after release:
+
+- `python3 scripts/check_growth.py`:
+  `{"status": "pass", "count": 0, "baseline": "v0.5.21"}`.
+- `python3 scripts/check_self_audit.py`:
+  `{"status": "pass", "count": 40, "baseline": 40}`.
+
+Triage before freeze:
+
+- Duplicate-execution findings are zero on repo-A and repo-P.
+- repo-B has one surviving `exec-audit` row:
+  `benchmark_entrypoints_missing`. It is advisory residue, not a trivially
+  fixable duplicate-run regression.
+- Growth rows that survived in repo-B/repo-P are freeze-maintenance
+  `net_loc_growth` identities from the baseline commits themselves.
+- No new lane/metric/class may be added after this point. The finding universe
+  is CLOSED; K-1 is active. Hard cap: 14 iterations from the freeze boundary.
+  New classes go to `docs/superpowers/SP13-CANDIDATES.md`.
+
+Timing vs budget / wave timings:
+
+| Repo/scope | Slowest lane or gate | Seconds | Notes |
+| --- | --- | ---: | --- |
+| repo-A installed W5 wave | code-health | 2.226 | final installed wave artifact: `/tmp/sp12/w5-wave-installed-final/repo-a` |
+| repo-B installed W5 wave gate | code-health | 1.796 | final live baseline count `24/24` |
+| repo-P installed W5 wave gate | code-health | 1.799 | final live baseline count `32/32` |
+| repo-A release CI | check | 321 | GitHub Actions run `27455580887` |
+| repo-B v0.4.5 CI | check | 13 | GitHub Actions run `27456126811` |
+| repo-B freeze CI | check | completed success | GitHub Actions run `27456374135` |
+| repo-P freeze CI | check | completed success | GitHub Actions run `27456374180` |
+
+Current state after W5 freeze:
+
+- repo-A `main` is at released `v0.5.21` and clean before this ledger append.
+- repo-B `main` is pushed at `6373ac6`; baseline gate passes `24/24`.
+- repo-P `main` is pushed at `b35da00`; baseline gate passes `32/32`.
+- Next action: prune/re-justify repo-A growth allowances after the `v0.5.21`
+  release and this ledger append, then start W6 iteration 3 C-0 diagnosis under
+  the closed finding universe.
