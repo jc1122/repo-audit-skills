@@ -1,6 +1,6 @@
 ---
 name: structure-audit
-version: 0.5.21
+version: 0.6.0
 description: >
   Deterministic, advisory import-structure audit for Python. Builds the internal
   import graph (stdlib ast), enumerates import cycles (Tarjan SCC), and flags

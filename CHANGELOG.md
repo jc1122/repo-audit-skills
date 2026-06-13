@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.0 - 2026-06-13
+
+- Final SP13 release: runtime self-improvement loop hardening.
+- Added the instruction-lint gate that detects SKILL.md command/section drift.
+- Added loop telemetry (iteration KPI miner) and a two-tier lessons ledger.
+- Added behavioral instruction-eval (advisory) for skill prompt quality.
+- Added the batch allocator for worker packet sizing.
+- Added the amendment-proposal protocol for safe plan amendments.
+- Added `## Overview` and `## Limits` sections to 16 leaf SKILL.md docs.
+- Ratcheted self-audit and instruction-lint baselines to measured deltas.
+- Bumped version metadata to 0.6.0 across package.json and all 18 skill
+  SKILL.md frontmatter entries.
+
 ## 0.5.21 - 2026-06-13
 
 - Added and registered the W1 exec-audit leaf.
