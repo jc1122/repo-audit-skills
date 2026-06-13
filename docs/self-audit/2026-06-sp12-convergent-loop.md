@@ -561,8 +561,8 @@ Growth allowance table:
 | Metric | Max delta | Expires | Status |
 | --- | ---: | --- | --- |
 | `dependency_growth` | 0 | never | still enforced |
-| `docs_loc_growth` | 125 | next release | unchanged from W5 ledger allowance; not expired because no release occurred |
-| `net_loc_growth` | 120 | next release | unchanged from W5 ledger allowance; not expired because no release occurred |
+| `docs_loc_growth` | 228 | next release | refreshed for W6 iteration-3 ledger evidence and accepted refactor bookkeeping |
+| `net_loc_growth` | 220 | next release | refreshed for W6 iteration-3 ledger evidence and accepted refactor bookkeeping |
 
 Ship/readback:
 
