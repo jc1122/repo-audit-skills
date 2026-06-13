@@ -6,7 +6,6 @@ scoping.  All tests are in-process via load_module().main([...]).
 """
 
 import json
-import sys
 from pathlib import Path
 
 from helpers import load_module, make_history
