@@ -140,3 +140,35 @@ Shrinkable backlog for X4 (the rest is TERMINAL-documented residue):
 - repo-B: wave_baseline 13 (real MI/param debt subset).
 - repo-P: wave_baseline 25 (real complexity/security subset).
 - repo-A hotspot 206 + non-shrinkable wave rows: TERMINAL residue candidates.
+
+## X4 — iteration 1 (post-freeze burn-down) — 2026-06-13
+
+Installed versions unchanged (repo-A leaves 0.5.21; SP13 additions are CI/orchestration tooling — no reinstall, L-6). Active repos: A, B, P.
+
+**Step 2 — allocation (L-5a):** `allocate_batches.py` → `{repo-a: 4, repo-b: 1, repo-p: 1}`.
+Rationale (verbatim): `L-5a: every active repo >=1; surplus -> repo-a (trailing yield 0 rows, best of {repo-a:0,repo-b:0,repo-p:0})`. (KPI tail empty at iteration 1 → all yields 0 → surplus to first active repo, stable.)
+
+**Step 3 — self-application (X1.3 first target):** `test-redundancy-triage` on repo-A's 220-test triage suite (`skills/test-redundancy-triage/tests/test_pure_functions.py`, 151 tests). Result: **142 MERGE_RECOMMENDED / 4 KEEP_FOR_SIGNAL** of 146 analyzed; 73 branch-exact-match pairs; all tests pass; coverage signal 151/151; mutation signal 0 (no ranked csv). Finding: the triage skill's OWN suite is ~94% merge-redundant — a large speed-optimization track (DELETE/MERGE rows are speed batches, not frozen findings; tests are not findings → freeze unbound). Folded into the backlog as a speed track (deferred; not a convergence row). Also surfaced: triage `--suite` errors on a directory (wants a file) — minor usability candidate.
+
+**Step 4 — dispatch (lesson-injecting synthesizer):** repo-A batch = fix the 19 instruction-lint meta-findings. `inject_lessons(packet{scope:worktree-setup}, lessons, cap=5)` attached binding lesson **L1** (`npm ci` / worker_worktree_setup.sh) to the real packet — DoD #2 injection demonstrated. Worker `sp13/x4i1-instrlint-fix` (native Opus, `/tmp/sp13/repo-A-i1-instrfix`).
+
+**Step 5 — verify + ratchet:** re-ran the gate myself: instruction-lint **19 → 0**, baseline ratcheted to `[]` (shrink-only). Full check 10/10 cheap + 2/2 heavy, 0 failed. Merged `f388e2f` → repo-A main `c49d646`. Net −6 LOC (baseline shrank, offsetting +109 docs). No allowance bump needed.
+
+**Worker-repair → lesson (R7 in action):** the KPI miner mis-reported `rows_closed=0` (it counted only dict-shaped baselines; instruction_lint is a flat list). Recorded candidate **LM1**; since predicted-recurring and it breaks the headline `rows_per_hour`, escalated immediately to tooling — repo-B `mine_iteration_kpis.py` flat-list branch (`04f85bd`, merged `8f27083`), new test RED→GREEN. LM1 promoted candidate→binding (evidence: re-mined rows_closed 0→19). This is the loop improving its own telemetry process — the SP13 thesis.
+
+**Mined KPI row (verbatim from `iteration_kpis.jsonl`, R5):**
+```json
+{"ci_wait_seconds": 334.0, "iteration": 1, "phase_seconds": {"window": 1183.0}, "repair_rate": 0.0, "rows_closed": 19, "rows_per_hour": 57.819103972950124, "total_phase_seconds": 1183.0, "worker_count": 0}
+```
+
+**Step 6 — strict-shrink bookkeeping (L-1):**
+
+| Repo | rows before | rows after | Δ | strike |
+| --- | ---: | ---: | ---: | --- |
+| repo-A (instruction_lint) | 19 | 0 | −19 | shrank ✓ |
+| repo-B | 13 | 13 | 0 | no batch dispatched (miner-fix was a process/tooling batch, R6 — not a finding shrink) → no strike this iter |
+| repo-P | 25 | 25 | 0 | no batch dispatched → no strike this iter |
+
+**Lessons:** added LM1 (telemetry) + the X1.2 eval candidate (`instruction-eval/complexity-audit`); LM1 escalated to tooling + promoted to binding. Lessons.jsonl now 7 binding (L1-L7) + LM1(binding) + 1 candidate (eval) = 9.
+
+**Self-application matrix:** `test-redundancy-triage` ✅ applied-to-family this iteration.
