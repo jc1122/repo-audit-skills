@@ -14,8 +14,6 @@ from pathlib import Path
 
 import pytest
 
-import pytest
-
 # Paths to the skill
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = SKILL_ROOT / "scripts" / "exec_audit.py"
@@ -107,7 +105,7 @@ def _make_junit_xml(out_dir: Path, cases: list[dict]) -> Path:
     xml_path = out_dir / "junit.xml"
     root = ET.Element("testsuite", name="pytest", tests=str(len(cases)))
     for c in cases:
-        tc = ET.SubElement(
+        ET.SubElement(
             root,
             "testcase",
             name=c["name"],
@@ -139,7 +137,7 @@ def test_node_skeleton_no_duplicate_execution(tmp_path):
     """Non-Python node skeleton with distinct test/lint has no duplicate_execution rows."""
     repo = _make_node_skeleton(tmp_path)
     out_dir = tmp_path / "out"
-    result = _run_cli("--root", str(repo), "--out-dir", str(out_dir))
+    _run_cli("--root", str(repo), "--out-dir", str(out_dir))
     # May exit 1 (for benchmark_entrypoints_missing) but must not have duplicate_execution
     data = _read_findings(out_dir)
     dup_exec = [f for f in data if f["metric"]["name"] == "duplicate_execution"]
@@ -151,7 +149,7 @@ def test_degenerate_repo_only_benchmark_gap(tmp_path):
     repo = tmp_path / "empty"
     repo.mkdir()
     out_dir = tmp_path / "out"
-    result = _run_cli("--root", str(repo), "--out-dir", str(out_dir))
+    _run_cli("--root", str(repo), "--out-dir", str(out_dir))
     data = _read_findings(out_dir)
     # All findings must be benchmark_entrypoints_missing
     non_bem = [f for f in data if f["metric"]["name"] != "benchmark_entrypoints_missing"]
@@ -173,7 +171,7 @@ def test_junit_slow_test_detection(tmp_path):
     repo = tmp_path / "repo"
     repo.mkdir()
     out_dir = tmp_path / "out"
-    result = _run_cli(
+    _run_cli(
         "--root", str(repo),
         "--out-dir", str(out_dir),
         "--junit-xml", str(junit),
