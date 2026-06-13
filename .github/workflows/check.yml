@@ -31,7 +31,10 @@ jobs:
             ruff==0.15.16 \
             mypy==2.1.0 \
             bandit==1.9.4 \
-            mutmut==3.6.0
+            mutmut==3.6.0 \
+            pylint==3.3.9 \
+            astroid==3.3.11 \
+            perflint==0.8.1
 
       - name: Install Node dependencies
         run: npm install
