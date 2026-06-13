@@ -8,8 +8,8 @@
     },
     {
       "metric": "net_loc_growth",
-      "max_delta": 4728,
-      "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission plus W3/W4 ledger append and W5 current-head refresh: net 4728 LOC from new gate scripts, leaf implementations, fixture tests, integration wiring, convergent-loop ledger evidence entries, the package metadata dependency false-positive fix/tests, and v0.5.21 release-prep metadata.",
+      "max_delta": 4722,
+      "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission plus W3/W4 ledger append and W5 current-head refresh: net 4722 LOC from new gate scripts, leaf implementations, fixture tests, integration wiring, convergent-loop ledger evidence entries, the package metadata dependency false-positive fix/tests, and v0.5.21 release-prep metadata.",
       "expires": "next-release"
     },
     {
