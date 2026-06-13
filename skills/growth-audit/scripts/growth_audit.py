@@ -95,49 +95,32 @@ class ToolError(RuntimeError):
 
 def _git(root: Path, *args: str, timeout: int = TOOL_TIMEOUT) -> str:
     """Run a git command in *root* and return stdout."""
+    cmd = ["git", "-C", str(root), *args]
     try:
-        proc = subprocess.run(
-            ["git", "-C", str(root), *args],
-            text=True,
-            capture_output=True,
-            timeout=timeout,
-            check=False,
+        result = subprocess.run(
+            cmd, text=True, capture_output=True, timeout=timeout, check=False,
         )
-    except FileNotFoundError as exc:
-        raise ToolError("git is not installed") from exc
-    if proc.returncode != 0:
-        raise ToolError(f"git {args[0]} failed: {proc.stderr.strip()}")
-    return proc.stdout
+    except FileNotFoundError:
+        raise ToolError("git is not installed") from None
+    if result.returncode:
+        raise ToolError(f"git {args[0]} failed: {result.stderr.strip()}")
+    return result.stdout
 
 
 def _validate_git_root(root: Path) -> None:
     """Raise ToolError if *root* is not inside a git working tree."""
-    proc = subprocess.run(
+    result = subprocess.run(
         ["git", "-C", str(root), "rev-parse", "--git-dir"],
-        capture_output=True,
-        text=True,
+        capture_output=True, text=True,
     )
-    if proc.returncode != 0:
+    if result.returncode:
         raise ToolError(f"not a git repository: {root}")
 
 
 def _resolve_rev(root: Path, rev: str) -> str:
     """Resolve *rev* to a full commit SHA."""
-    out = _git(root, "rev-parse", "--verify", f"{rev}^{{commit}}")
-    return out.strip()
+    return _git(root, "rev-parse", "--verify", f"{rev}^{{commit}}").strip()
 
-
-def _checkout_file_at_rev(
-    root: Path, rev: str, rel_path: str, dest: Path
-) -> bool:
-    """Copy a single file from *rev* to *dest*.  Returns True on success."""
-    try:
-        _git(root, "show", f"{rev}:{rel_path}", timeout=30)
-    except ToolError:
-        return False
-    content = _git(root, "show", f"{rev}:{rel_path}", timeout=30)
-    dest.write_text(content, encoding="utf-8")
-    return True
 
 
 # ---------------------------------------------------------------------------
@@ -150,7 +133,15 @@ def _new_files(root: Path, base: str, head: str) -> list[str]:
     out = _git(
         root, "diff", "--name-only", "--diff-filter=A", f"{base}..{head}"
     )
-    return [l for l in out.splitlines() if l.strip()]
+    return [line for line in out.splitlines() if line.strip()]
+
+
+def _path_matches_globs(fpath: str, globs: tuple[str, ...]) -> bool:
+    """Return True if *fpath* matches any of *globs* by suffix or prefix."""
+    return any(
+        fpath.endswith(g) or (g.endswith("/") and fpath.startswith(g))
+        for g in globs
+    )
 
 
 def _numstat_delta(
@@ -170,12 +161,8 @@ def _numstat_delta(
         if len(parts) < 3:
             continue
         fpath = parts[2]
-        if path_globs:
-            if not any(
-                fpath.endswith(g) or g.endswith("/") and fpath.startswith(g)
-                for g in path_globs
-            ):
-                continue
+        if path_globs and not _path_matches_globs(fpath, path_globs):
+            continue
         adds = int(parts[0]) if parts[0] != "-" else 0
         dels = int(parts[1]) if parts[1] != "-" else 0
         total += adds - dels
@@ -265,22 +252,22 @@ DEFAULT_CONFIG: dict[str, Any] = {
 
 def _load_config(config_path: str | None) -> dict[str, Any]:
     """Load JSON config and merge with defaults."""
-    cfg = dict(DEFAULT_CONFIG)
+    config = dict(DEFAULT_CONFIG)
     if config_path is None:
-        return cfg
-    cfg_file = Path(config_path)
+        return config
+    path = Path(config_path)
     try:
-        raw = cfg_file.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
     except OSError as exc:
         raise ToolError(f"cannot read config file: {exc}") from exc
     try:
-        overrides = json.loads(raw)
+        data = json.loads(text)
     except json.JSONDecodeError as exc:
         raise ToolError(f"invalid JSON in config: {exc}") from exc
-    if not isinstance(overrides, dict):
+    if not isinstance(data, dict):
         raise ToolError("config root must be a JSON object")
-    cfg.update(overrides)
-    return cfg
+    config.update(data)
+    return config
 
 
 # ---------------------------------------------------------------------------
@@ -302,11 +289,77 @@ def _collect_metrics(
     }
 
 
+def _overflow_finding(
+    metric_name: str, delta: int, max_delta: float, overflow: int
+) -> hc.Finding:
+    """Build a growth finding for an overflow beyond allowance."""
+    return hc.Finding(
+        leaf=LEAF,
+        signal=SIGNAL_GROWTH,
+        severity=_severity_for_delta(metric_name, overflow),
+        path="<repo>",
+        line_start=0,
+        line_end=0,
+        symbol=metric_name,
+        metric_name=metric_name,
+        metric_value=float(delta),
+        metric_threshold=max_delta,
+        evidence_tool="git",
+        evidence_raw=json.dumps({
+            "base": "baseline-rev",
+            "head": "HEAD",
+            "delta": delta,
+            "allowance": max_delta,
+            "overflow": overflow,
+        }),
+        confidence="high",
+        suggested_action=(
+            f"Review {metric_name} growth of +{delta} "
+            f"(allowance: {max_delta}, overflow: {overflow})"
+        ),
+    )
+
+
+def _unsuppressed_finding(name: str, delta: int) -> hc.Finding:
+    """Build a growth finding for an unsuppressed metric."""
+    return hc.Finding(
+        leaf=LEAF,
+        signal=SIGNAL_GROWTH,
+        severity=_severity_for_delta(name, delta),
+        path="<repo>",
+        line_start=0,
+        line_end=0,
+        symbol=name,
+        metric_name=name,
+        metric_value=float(delta),
+        metric_threshold=0.0,
+        evidence_tool="git",
+        evidence_raw=json.dumps({"delta": delta}),
+        confidence="medium",
+        suggested_action=(
+            f"Consider adding an allowance for {name} growth of +{delta}"
+        ),
+    )
+
+
+def _emit_unsuppressed(
+    metrics: dict[str, int],
+    handled: set[str],
+) -> list[hc.Finding]:
+    """Emit findings for metrics not covered by any allowance rule."""
+    findings: list[hc.Finding] = []
+    for name, delta in sorted(metrics.items()):
+        if delta <= 0 or name in handled:
+            continue
+        findings.append(_unsuppressed_finding(name, delta))
+    return findings
+
+
 def _apply_allowances(
     metrics: dict[str, int],
     allow_growth: list[dict[str, Any]],
 ) -> tuple[list[hc.Finding], list[dict[str, Any]], list[dict[str, Any]]]:
-    """Compare metrics against allowances; return (findings, suppressions, overflows)."""
+    """Apply allowance rules to metrics; return (findings, suppressions, overflows)."""
     findings: list[hc.Finding] = []
     suppressions: list[dict[str, Any]] = []
     overflows: list[dict[str, Any]] = []
@@ -315,83 +368,26 @@ def _apply_allowances(
         metric_name = rule.get("metric", "")
         max_delta = rule.get("max_delta", 0)
         reason = rule.get("reason", "")
-
         if metric_name not in metrics:
             continue
-
         delta = metrics[metric_name]
         if delta <= 0:
-            continue  # no positive growth to flag
-
+            continue
         if delta <= max_delta:
-            suppressions.append({
-                "metric": metric_name,
-                "delta": delta,
-                "max_delta": max_delta,
-                "reason": reason,
-            })
+            suppressions.append(
+                {"metric": metric_name, "delta": delta,
+                 "max_delta": max_delta, "reason": reason})
         else:
             overflow = delta - max_delta
-            overflows.append({
-                "metric": metric_name,
-                "delta": delta,
-                "max_delta": max_delta,
-                "overflow": overflow,
-                "reason": reason,
-            })
+            overflows.append(
+                {"metric": metric_name, "delta": delta,
+                 "max_delta": max_delta, "overflow": overflow, "reason": reason})
             findings.append(
-                hc.Finding(
-                    leaf=LEAF,
-                    signal=SIGNAL_GROWTH,
-                    severity=_severity_for_delta(metric_name, overflow),
-                    path="<repo>",
-                    line_start=0,
-                    line_end=0,
-                    symbol=f"{metric_name}",
-                    metric_name=metric_name,
-                    metric_value=float(delta),
-                    metric_threshold=float(max_delta),
-                    evidence_tool="git",
-                    evidence_raw=json.dumps({
-                        "base": "baseline-rev",
-                        "head": "HEAD",
-                        "delta": delta,
-                        "allowance": max_delta,
-                        "overflow": overflow,
-                    }),
-                    confidence="high",
-                    suggested_action=(
-                        f"Review {metric_name} growth of +{delta} "
-                        f"(allowance: {max_delta}, overflow: {overflow})"
-                    ),
-                )
-            )
+                _overflow_finding(metric_name, delta, float(max_delta), overflow))
 
     # Unsuppressed metrics not in any allowance rule: always emit if positive
-    suppressed_metrics = {s["metric"] for s in suppressions}
-    overflow_metrics = {o["metric"] for o in overflows}
-    for name, delta in sorted(metrics.items()):
-        if delta <= 0 or name in suppressed_metrics or name in overflow_metrics:
-            continue
-        findings.append(
-            hc.Finding(
-                leaf=LEAF,
-                signal=SIGNAL_GROWTH,
-                severity=_severity_for_delta(name, delta),
-                path="<repo>",
-                line_start=0,
-                line_end=0,
-                symbol=name,
-                metric_name=name,
-                metric_value=float(delta),
-                metric_threshold=0.0,
-                evidence_tool="git",
-                evidence_raw=json.dumps({"delta": delta}),
-                confidence="medium",
-                suggested_action=f"Consider adding an allowance for {name} growth of +{delta}",
-            )
-        )
-
+    handled = {s["metric"] for s in suppressions} | {o["metric"] for o in overflows}
+    findings.extend(_emit_unsuppressed(metrics, handled))
     return findings, suppressions, overflows
 
 
@@ -496,17 +492,21 @@ def render_md(
         lines.append("No findings.")
         return "\n".join(lines) + "\n"
 
-    by_signal: dict[str, list[hc.Finding]] = {}
-    for f in findings:
-        by_signal.setdefault(f.signal, []).append(f)
+    grouped: dict[str, list[hc.Finding]] = {}
+    for finding in findings:
+        sig = finding.signal
+        if sig not in grouped:
+            grouped[sig] = []
+        grouped[sig].append(finding)
 
-    for signal in sorted(by_signal):
-        lines.append(f"## {signal} ({len(by_signal[signal])})")
-        for f_item in by_signal[signal]:
+    for sig, items in sorted(grouped.items()):
+        lines.append(f"## {sig} ({len(items)})")
+        for finding in items:
             lines.append(
-                f"- `{f_item.path}` **{f_item.symbol}** "
-                f"value={f_item.metric_value:g} threshold={f_item.metric_threshold:g} "
-                f"[{f_item.severity}]"
+                f"- `{finding.path}` **{finding.symbol}** "
+                f"value={finding.metric_value:g} "
+                f"threshold={finding.metric_threshold:g} "
+                f"[{finding.severity}]"
             )
         lines.append("")
 
