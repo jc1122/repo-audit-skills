@@ -578,3 +578,81 @@ Next action:
 - Start W6 iteration 4 C-0 diagnosis from the now-pushed heads under the same
   closed universe. Current open rows before the next iteration are repo-A
   `260`, repo-B `22`, repo-P `27`, total `309`.
+
+## W6 iteration 4 - installed runner repair and repo-B strict shrink
+
+Entry state:
+
+- repo-A `main` was clean at `8df569f`, matching `origin/main`; CI run
+  `27458433370` succeeded.
+- repo-B `main` was clean at `0f5b21d` after release `v0.4.6`; CI run
+  `27459360572` succeeded.
+- repo-P `main` was clean at `8425c68`, matching `origin/main`; CI run
+  `27457886932` succeeded.
+
+Installed-runner repair:
+
+- Installed repo-B growth-only diagnosis against repo-A initially returned
+  `growth findings: 2`, proving the installed orchestration skill was stale
+  relative to the source behavior needed for W6.
+- Released repo-B `v0.4.6` from `0f5b21d` and reinstalled it into
+  `/home/jakub/.agents/skills/repo-audit-refactor-optimize`.
+- Installed readback showed `SKILL.md` version `0.4.6`; installed
+  `scripts/check_release.py` passed; installed growth-only wave against repo-A
+  then returned zero findings.
+
+Bootstrap and C-0 refresh:
+
+- Post-reinstall bootstrap probes for repo-A, repo-B, and repo-P exited `0`
+  with `restart_required=false` and `stop_before_discovery=false`.
+- Unscoped raw installed-wave probes for repo-B and repo-P, and a later raw
+  scoped repo-A probe, were discarded as non-authoritative because they bypassed
+  repo-owned baseline/scope rules.
+- Authoritative C-0 counts remained repo-A `260`, repo-B `22`, repo-P `27`,
+  total `309`.
+
+Accepted worker batch:
+
+| Repo | Batch | Worktree | Run dir | Commit(s) | Result |
+| --- | --- | --- | --- | --- | --- |
+| repo-B | wave runner E501 repair | `/tmp/sp12/repo-b-06-runner-e501` | `/tmp/sp12/runs/repo-b-w6-runner-e501` | `117275e` | first pass removed target E501 rows but added `cli_flag_growth`; rejected until repaired |
+| repo-B | wave runner growth repair | `/tmp/sp12/repo-b-06-runner-e501` | `/tmp/sp12/runs/repo-b-w6-runner-e501-repair` | `cf510f1` | accepted; strict subset, zero added identities |
+
+Accepted identity delta:
+
+| Repo | Before | After | Removed | Added | Net shrink |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| repo-B wave baseline | 22 | 19 | 3 | 0 | 3 |
+
+Removed identities:
+
+- `quality` `E501` in repo-B wave runner, `E501@88:89`.
+- `quality` `E501` in repo-B wave runner, `E501@223:89`.
+- `hotspot` `churn_complexity_product` in repo-B wave baseline JSON.
+
+Verification:
+
+| Surface | Evidence |
+| --- | --- |
+| repo-B worker worktree | `python3 -m pytest -q` -> `142 passed`; `python3 scripts/check_wave_baseline.py` -> `19/19`; `python3 scripts/check_release.py` -> pass |
+| repo-B main after fast-forward | `python3 -m pytest -q` -> `142 passed`; `python3 scripts/check_wave_baseline.py` -> `19/19`; `python3 scripts/check_release.py` -> pass |
+| repo-B fresh clone | `/tmp/sp12/fresh/w6-b-e501-20260613T070338Z`; same three gates passed |
+| repo-B CI | GitHub Actions run `27459845146`, workflow `check`, succeeded for `cf510f1` |
+
+Ship/readback:
+
+- Pushed repo-B `main` from `0f5b21d` to `cf510f1`.
+- No repo-B release or reinstall was performed for the E501/growth repair
+  batch because the accepted change was a finding shrink against the already
+  released `v0.4.6` runner behavior.
+
+Current open rows:
+
+| Repo | Remaining |
+| --- | ---: |
+| repo-A | 260 |
+| repo-B | 19 |
+| repo-P | 27 |
+| total | 306 |
+
+W6 accepted strict removals so far: `14` from the W6 start count of `320`.
