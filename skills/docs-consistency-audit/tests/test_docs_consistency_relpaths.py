@@ -3,7 +3,6 @@
 All finding paths must be root-relative POSIX strings with no absolute paths.
 """
 
-import json
 
 from helpers import FIXTURES, load_module, read_findings
 

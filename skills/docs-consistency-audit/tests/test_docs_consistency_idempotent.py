@@ -3,7 +3,6 @@
 Two runs on the same inputs must produce byte-identical findings JSON.
 """
 
-from pathlib import Path
 
 from helpers import FIXTURES, load_module
 
