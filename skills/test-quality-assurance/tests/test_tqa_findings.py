@@ -8,9 +8,7 @@ import ast
 import json
 import re
 from collections import Counter
-from pathlib import Path
 
-import pytest
 
 from helpers import FIXTURES, load_module
 

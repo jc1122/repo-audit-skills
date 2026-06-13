@@ -6,10 +6,8 @@ resolve_and_validate_suite_paths, write_confidence_gate_artifact, etc.
 from __future__ import annotations
 
 import ast
-import json
 import os
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -42,10 +40,6 @@ def test_build_runtime_env_with_numba_stub(tmp_path: Path):
         tmp_path, out_dir, sys.executable, allow_numba_stub=True
     )
     assert "PYTHONPATH" in env
-    stub_dir = out_dir / "_runtime_stubs"
-    # numba should have been checked, stub may or may not have been created
-    # depending on whether numba is importable
-    stub_dir_exists = stub_dir.exists()
     # At minimum PYTHONPATH should be set
     assert env["PYTHONPATH"]
 

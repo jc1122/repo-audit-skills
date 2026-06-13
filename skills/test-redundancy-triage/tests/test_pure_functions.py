@@ -7,9 +7,6 @@ from __future__ import annotations
 
 import ast
 import json
-import os
-import sys
-import tempfile
 from pathlib import Path
 
 import pytest
