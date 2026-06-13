@@ -656,3 +656,73 @@ Current open rows:
 | total | 306 |
 
 W6 accepted strict removals so far: `14` from the W6 start count of `320`.
+
+### W6 iteration 4 continuation - cross-repo strict shrink
+
+Repo-A bookkeeping repair:
+
+- Ledger commit `cfc6990` recorded the first W6 iteration-4 shrink but failed
+  repo-A CI run `27460049146` on the growth gate: docs LOC `306` exceeded
+  allowance `228`, and net LOC `298` exceeded allowance `220`.
+- Commit `711646a` refreshed the reasoned SP12 growth allowance to docs LOC
+  `306` and net LOC `298`; local `npm run check` passed and CI run
+  `27460281403` succeeded.
+
+Accepted and discarded batches:
+
+| Repo | Batch | Worktree | Run dir | Commit | Result |
+| --- | --- | --- | --- | --- | --- |
+| repo-B | `synthesize_packets.py` security | `/tmp/sp12/repo-b-06-security-synth` | `/tmp/sp12/runs/repo-b-w6-security-synth` | `ba735bc` | accepted; `19 -> 16`, removed 3 security identities, added 0 |
+| repo-P | reporting parameter-count first pass | `/tmp/sp12/repo-p-06-reporting-params` | `/tmp/sp12/runs/repo-p-w6-reporting-params` | `f4ce009` | discarded; strict subset but touched disallowed pipeline/test files |
+| repo-P | reporting parameter-count scoped retry | `/tmp/sp12/repo-p-06-reporting-params-scoped` | `/tmp/sp12/runs/repo-p-w6-reporting-params-scoped` | `ac58303` | accepted after read-only reviewer approval; `27 -> 25`, removed 2 identities, added 0 |
+| repo-B | wave runner complexity | `/tmp/sp12/repo-b-06-runner-complexity` | `/tmp/sp12/runs/repo-b-w6-runner-complexity` | `e3adf81` | accepted after read-only reviewer approval; `16 -> 13`, removed 3 identities, added 0 |
+
+Reviewer evidence:
+
+| Repo | Review run dir | Verdict | Notes |
+| --- | --- | --- | --- |
+| repo-P | `/tmp/sp12/runs/repo-p-w6-reporting-params-review` | approve | scope limited to reporting/baseline; compatibility preserved; `155` tests and `25/25` wave verified |
+| repo-B | `/tmp/sp12/runs/repo-b-w6-runner-complexity-review` | approve | scope limited to runner/baseline; ordering and skipped-lane semantics preserved; `142` tests, `13/13` wave, and release check verified |
+
+Accepted identity delta:
+
+| Repo | Before | After | Removed | Added | Net shrink |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| repo-B security batch | 19 | 16 | 3 | 0 | 3 |
+| repo-P reporting batch | 27 | 25 | 2 | 0 | 2 |
+| repo-B runner batch | 16 | 13 | 3 | 0 | 3 |
+
+Verification evidence:
+
+| Repo | Local gates | Fresh clone | CI run | Result |
+| --- | --- | --- | --- | --- |
+| repo-B security | `python3 -m pytest -q` -> `142 passed`; `check_wave_baseline.py` -> `16/16`; `check_release.py` pass | `/tmp/sp12/fresh/w6-b-security-20260613T073843Z`; same gates passed | `27460599774` | success |
+| repo-P reporting | `python3 -m pytest -q` -> `155 passed`; `check_wave_baseline.py` -> `25/25` | `/tmp/sp12/fresh/w6-p-reporting-20260613T074926Z`; same gates passed | `27460830633` | success |
+| repo-B runner | `python3 -m pytest -q` -> `142 passed`; `check_wave_baseline.py` -> `13/13`; `check_release.py` pass | `/tmp/sp12/fresh/w6-b-runner-20260613T075104Z`; same gates passed | `27460864573` | success |
+
+Ship/readback:
+
+- Pushed repo-B `main` from `cf510f1` to `ba735bc`, then to `e3adf81`.
+- Pushed repo-P `main` from `8425c68` to `ac58303`.
+- No release tags were created and no reinstall was performed because all
+  accepted changes were source refactor/security-cleanup/baseline shrink work
+  against already released diagnosis behavior.
+
+Current open rows:
+
+| Repo | Remaining |
+| --- | ---: |
+| repo-A | 260 |
+| repo-B | 13 |
+| repo-P | 25 |
+| total | 298 |
+
+W6 accepted strict removals so far: `22` from the W6 start count of `320`.
+
+Growth allowance table:
+
+| Metric | Max delta | Expires | Status |
+| --- | ---: | --- | --- |
+| `dependency_growth` | 0 | never | still enforced |
+| `docs_loc_growth` | 376 | next release | refreshed for W6 iteration-4 ledger evidence and accepted cross-repo shrink bookkeeping |
+| `net_loc_growth` | 368 | next release | refreshed for W6 iteration-4 ledger evidence and allowance-file bookkeeping |
