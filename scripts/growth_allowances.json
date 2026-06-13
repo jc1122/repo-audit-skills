@@ -1,0 +1,34 @@
+{
+  "allow_growth": [
+    {
+      "metric": "tracked_files_growth",
+      "max_delta": 10,
+      "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission: 10 new tracked files introduced for gate integration, coverage-gap leaf, and audit pipeline scaffolding.",
+      "expires": "next-release"
+    },
+    {
+      "metric":     "net_loc_growth",
+      "max_delta": 4284,
+      "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission: net 4284 LOC from new gate scripts, leaf implementations, fixture tests, and integration wiring.",
+      "expires": "next-release"
+    },
+    {
+      "metric": "docs_loc_growth",
+      "max_delta": 337,
+      "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission: 337 lines of documentation covering gate operation, leaf descriptions, and CHANGELOG entries.",
+      "expires": "next-release"
+    },
+    {
+      "metric": "cli_flag_growth",
+      "max_delta": 15,
+      "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission: 15 new CLI flags for growth-audit, coverage-gap, and gate-suite entry points.",
+      "expires": "next-release"
+    },
+    {
+      "metric": "dependency_growth",
+      "max_delta": 0,
+      "reason": "Dependency growth is never allowed under the stdlib-only rule. Any positive delta must emit an overflow finding. Zero tolerance for new runtime dependencies.",
+      "expires": "never"
+    }
+  ]
+}
