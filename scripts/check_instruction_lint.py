@@ -33,12 +33,14 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gate_common import verdict  # noqa: E402
+from gate_common import GateSpec, gate_main  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE_PATH = "scripts/instruction_lint_baseline.json"
 BASELINE = ROOT / BASELINE_PATH
 SNAPSHOT = ROOT / "scripts" / "instruction_lint_snapshot.json"
+OUT = ROOT / ".self_audit_out" / "instruction-lint"
+FINDINGS_FILE = OUT / "instruction-lint_findings.json"
 
 LEAF = "instruction-lint"
 REQUIRED_SECTIONS = ("## Overview", "## Limits")
@@ -319,17 +321,76 @@ def _write_outputs(findings: list[dict], out: str | None, fmt: str) -> None:
         raise SystemExit(f"unsupported --format: {fmt}")
 
 
+def _scan_only(argv: list[str] | None) -> int:
+    """Leaf entrypoint: scan ``--root`` for SKILL.md and write full findings.
+
+    This is the ``leaf_cmd`` half of the gate. It mirrors the sibling gates'
+    separate leaf binary (e.g. ``docs_consistency_audit.py``) so that the
+    shared ``gate_common.gate_main`` runner can drive the verdict without this
+    gate hand-rolling the baseline-load / verdict / print epilogue.
+    """
+    parser = argparse.ArgumentParser(
+        description="Scan SKILL.md files and write instruction-lint findings JSON."
+    )
+    parser.add_argument(
+        "--root",
+        default="skills",
+        help="Directory scanned for **/SKILL.md (default: skills).",
+    )
+    parser.add_argument("--out", help="Write full findings JSON to this path.")
+    parser.add_argument(
+        "--format", default="json", choices=["json"], help="Output format."
+    )
+    args = parser.parse_args(argv)
+
+    root = Path(args.root)
+    if not root.is_absolute():
+        root = ROOT / root
+    findings = scan(root)
+    _write_outputs(findings, args.out, args.format)
+    return 0
+
+
+def _spec(root: str, baseline: str | None) -> GateSpec:
+    """Build the GateSpec whose ``leaf_cmd`` self-invokes the scan-only mode.
+
+    The leaf writes full findings to ``FINDINGS_FILE``; ``gate_common`` then
+    normalizes them onto the 4-key baseline shape, mirroring this module's
+    own ``normalize`` (``leaf, path, symbol, metric``).
+    """
+    OUT.mkdir(parents=True, exist_ok=True)
+    leaf_cmd = [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--scan-only",
+        "--root",
+        root,
+        "--out",
+        str(FINDINGS_FILE),
+    ]
+    return GateSpec(
+        leaf_cmd=leaf_cmd,
+        findings_file=str(FINDINGS_FILE),
+        snapshot_path=str(SNAPSHOT),
+        baseline_path=baseline or BASELINE_PATH,
+        description="Deterministic SKILL.md command/section drift gate.",
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     """Scan and ratchet-gate the instruction-lint findings.
 
-    In normal mode, scans ``--root`` and compares normalized findings against
-    the baseline, returning nonzero only on regressions / stale entries. The
-    ``--snapshot`` / ``--baseline`` overrides let tests drive the verdict
+    ``--scan-only`` runs just the SKILL.md scan (the leaf half). Otherwise this
+    delegates to the shared ``gate_common.gate_main`` runner: it scans via a
+    self-invoked leaf subprocess, normalizes, and ratchets against the baseline.
+    The ``--snapshot`` / ``--baseline`` overrides let tests drive the verdict
     directly (mirroring the sibling gates).
     """
     parser = argparse.ArgumentParser(
-        description="Deterministic SKILL.md command/section drift gate."
+        description="Deterministic SKILL.md command/section drift gate.",
+        add_help=False,
     )
+    parser.add_argument("--scan-only", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument(
         "--root",
         default="skills",
@@ -347,27 +408,27 @@ def main(argv: list[str] | None = None) -> int:
         "--snapshot",
         help="Existing normalized snapshot JSON (testing only — skips the scan).",
     )
-    args = parser.parse_args(argv)
-
-    if args.snapshot:
-        current = json.loads(Path(args.snapshot).read_text(encoding="utf-8"))
-    else:
-        root = Path(args.root)
-        if not root.is_absolute():
-            root = ROOT / root
-        findings = scan(root)
-        _write_outputs(findings, args.out, args.format)
-        current = normalize(findings)
-        SNAPSHOT.write_text(
-            json.dumps(current, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-        )
-
-    baseline = json.loads(
-        Path(args.baseline or BASELINE).read_text(encoding="utf-8")
+    parser.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="Show this help message and exit.",
     )
-    code, payload = verdict(current, baseline, baseline_path=BASELINE_PATH)
-    print(json.dumps(payload, indent=2))
-    return code
+    args, _ = parser.parse_known_args(argv)
+
+    if args.scan_only:
+        scan_argv = ["--root", args.root, "--format", args.format]
+        if args.out:
+            scan_argv += ["--out", args.out]
+        return _scan_only(scan_argv)
+
+    gate_argv: list[str] = []
+    if args.snapshot:
+        gate_argv += ["--snapshot", args.snapshot]
+    if args.baseline:
+        gate_argv += ["--baseline", args.baseline]
+    return gate_main(gate_argv, _spec(args.root, args.baseline))
 
 
 if __name__ == "__main__":
