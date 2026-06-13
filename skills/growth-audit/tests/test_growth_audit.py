@@ -213,7 +213,7 @@ def test_allowance_suppresses_tracked_files_growth(tmp_path: Path):
     )
 
     out = tmp_path / "out"
-    result = _run(
+    _run(
         "--root", str(repo), "--out-dir", str(out),
         "--baseline-rev", "base", "--config", str(cfg),
     )
@@ -462,7 +462,7 @@ def test_cli_flag_growth_detected(tmp_path: Path):
     _git_commit_all(repo, "add two more flags")
 
     out = tmp_path / "out"
-    result = _run("--root", str(repo), "--out-dir", str(out), "--baseline-rev", "base")
+    _run("--root", str(repo), "--out-dir", str(out), "--baseline-rev", "base")
     summary = _read_summary(out)
     assert summary["metrics"]["cli_flag_growth"] >= 2, (
         f"expected >= 2 new flags, got {summary['metrics']['cli_flag_growth']}"
