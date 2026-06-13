@@ -191,4 +191,42 @@ The foreign repo (resu) was remediated locally and NOT pushed (third-party). Eng
 held: 0 merge conflicts across 17 conflict-free merges. No real finding suppressed; no gate gamed
 (the 142-backlog and resu's vulture-LOW residue are honestly deferred/documented, not force-merged).
 
+---
+
+## Post-DONE follow-up — repo-A test-tree hygiene + honest convergence correction
+
+**Correction to the iter-1 repo-A entry.** The iter-1 table called repo-A's 108 dead-code
+findings "documented residue, CI-baseline-accepted." That was inaccurate about the *mechanism*.
+The truth (verified): repo-A's selfaudit gate (`scripts/self_audit.py::_prefixes`) scopes to
+**production code only** (`skills/*/scripts`, `scripts`, `shared`) and **never audits `tests/`**;
+its baseline holds 40 findings (22 duplication + 18 complexity), **zero dead-code**. So
+**repo-A's production-scoped dead-code residual = 0** (genuinely converged under its own
+convention), and the 81 ruff findings I surfaced were all in `tests/` — *below* repo-A's audit
+scope, not "baseline-accepted." They only appeared because I over-scoped the audit into `tests/`.
+
+**Action taken (user-requested):** cleaned the genuinely-removable `tests/` cruft AND durably
+marked the intentional fixtures, dogfooding the engine on repo-A:
+- One **N=8 engine pass** (8 grouped, file-disjoint workers in worktrees off main; conflict-free
+  `merge_clean` per branch; ruff re-audit per file): **56 of 65** unused-import/local findings
+  removed across 28 test files (F401×26, F841×29, exec-audit's 1 duplicate `import pytest`).
+- **9 deferred-hard** (flagged, NOT auto-removed): `growth-audit/tests/test_growth_audit.py` has
+  **8 test classes + 1 function each defined twice** — the earlier copies are shadowed (pytest
+  collects 50 tests before *and* after, proving they never ran) but have **different bodies**
+  than their twins (latent never-executed scenarios). Auto-deleting 341 lines would discard
+  those differing scenarios; the right fix (rename-and-revive vs delete) needs human judgment.
+  A first worker (W5) *did* delete them; I **discarded that branch** as over-reach and re-ran a
+  conservative worker. (Evidence the scope discipline works: the engine + review caught it.)
+- **Durable fixture marking:** committed `scripts/remediation_excludes.json` — a machine-readable
+  policy excluding `**/tests/fixtures/**` from remediation, with the reason (the fixtures are
+  detection-coupled: `dead-code-audit`'s own `test_dirty_fixture_flags_unused_import_and_local_via_ruff`
+  asserts ruff flags them, so they must stay dirty). This converts the per-run "these are
+  intentional" judgment into permanent state so future runs don't re-derive or re-propose it.
+  (Engine auto-consumption of this file is logged as an SP15 candidate — the remaining
+  mechanization step.)
+
+Post-pass re-audit (integration branch): `tests/` ruff residual = 16 intentional fixtures
+(now marked) + 9 deferred growth-audit duplicate-class F811. Gate: full `run_checks.py` green +
+fresh-clone sim → ff-merge to main → CI green. repo-A remains converged (production scope) and is
+now also clean in `tests/` except the flagged duplicate-class item.
+
 
