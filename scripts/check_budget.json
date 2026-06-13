@@ -8,6 +8,7 @@
   "hygiene": 10,
   "docs": 10,
   "dependency": 10,
+  "instrlint": 60,
   "coverage": 270,
   "pytest": 260
 }

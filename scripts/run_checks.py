@@ -34,6 +34,7 @@ CHEAP: list[tuple[str, str]] = [
     ("hygiene", "scripts/check_repo_hygiene.py"),
     ("docs", "scripts/check_docs_consistency.py"),
     ("dependency", "scripts/check_dependency_audit.py"),
+    ("instrlint", "scripts/check_instruction_lint.py"),
 ]
 
 HEAVY: list[tuple[str, str]] = [

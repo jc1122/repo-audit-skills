@@ -292,7 +292,7 @@ def test_main_fails_on_budget_violation(monkeypatch, capsys):
     assert "FAILED" not in out  # no functional failures
     assert "OVER BUDGET" in out
     assert "50.000s > 10.000s" in out
-    assert "11 over-budget" in out
+    assert "12 over-budget" in out
     assert "0 failed" in out
 
 
@@ -319,7 +319,7 @@ def test_main_writes_timings(tmp_path, monkeypatch, capsys):
 
 
 def test_cheap_has_8_entries():
-    assert len(rc.CHEAP) == 9
+    assert len(rc.CHEAP) == 10
 
 
 def test_heavy_has_2_entries():
@@ -329,7 +329,7 @@ def test_heavy_has_2_entries():
 def test_cheap_names_match_budget_keys():
     budget_keys = {
         "vendored", "fixtures", "growth", "release", "selfaudit",
-        "security", "hygiene", "docs", "dependency",
+        "security", "hygiene", "docs", "dependency", "instrlint",
     }
     assert {name for name, _ in rc.CHEAP} == budget_keys
 

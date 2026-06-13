@@ -1,0 +1,116 @@
+[
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/code-health-audit-pipeline/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/complexity-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/coverage-gap-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/dead-code-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/dependency-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/dependency-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/docs-consistency-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/duplication-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/growth-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/hotspot-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/repo-hygiene-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/security-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/structure-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/test-audit-pipeline/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/test-effectiveness-audit/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/test-quality-assurance/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/test-quality-assurance/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/test-redundancy-triage/SKILL.md",
+    "symbol": "instruction_missing_section"
+  },
+  {
+    "leaf": "instruction-lint",
+    "metric": "instruction_missing_section",
+    "path": "skills/test-redundancy-triage/SKILL.md",
+    "symbol": "instruction_missing_section"
+  }
+]
