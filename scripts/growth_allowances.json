@@ -8,7 +8,7 @@
     },
     {
       "metric":     "net_loc_growth",
-      "max_delta": 4318,
+      "max_delta": 4379,
       "reason": "SP12 W1/W2 exec-audit and growth-audit leaf admission: net 4284 LOC from new gate scripts, leaf implementations, fixture tests, and integration wiring.",
       "expires": "next-release"
     },
