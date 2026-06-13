@@ -102,7 +102,7 @@ Confidence: ``high``. Package name/version are read from ``pyproject.toml``
 Confidence: ``medium``. Off by default; enabled only via ``--config``. See
 Thresholds.
 
-## Honest Limits
+## Limits
 
 - Markdown heuristics are best-effort and miss non-standard formatting.
 - The argparse guard uses private ``parser._actions`` after verifying it exists;

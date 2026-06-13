@@ -111,7 +111,7 @@ out-dir/
 - **Django**: Pass `--env DJANGO_SETTINGS_MODULE=myproject.settings`
 - **General**: Any env var needed by the test suite should be passed via `--env`
 
-## Known Limitations
+## Limits
 
 - Sibling skill discovery is relative to the `test-quality-assurance` and
   `test-redundancy-triage` install directories; use `--tqa-script` and

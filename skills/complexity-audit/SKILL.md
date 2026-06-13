@@ -58,3 +58,15 @@ module-MI relaxation.
   have low module MI because they remain self-contained, while function-level
   lizard checks still report actionable complexity. Entrypoint modules below
   the floor still emit `maintainability_index`.
+
+## Limits
+
+- Advisory only — emits SIMPLIFY/DECOMPOSE findings and never refactors or
+  mutates source.
+- Python only: backed by `lizard` and `radon mi`, which analyze Python source.
+- Requires `lizard` and `radon` installed; a missing tool is a config error
+  (exit `2`), not a finding.
+- Metrics are static thresholds on cyclomatic complexity, length, parameter
+  count, and maintainability index; they flag structural smells, not behavioral
+  bugs, and need human interpretation.
+- No network access; deterministic for fixed inputs and tool versions.

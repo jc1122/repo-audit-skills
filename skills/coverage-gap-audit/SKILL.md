@@ -46,3 +46,15 @@ reports are merged by union of executed lines and max statement count.
 
 - `0` clean, `1` advisory findings present, `2` tool/config error (missing or
   invalid coverage report).
+
+## Limits
+
+- Advisory only — emits TEST findings and never mutates source.
+- Never runs tests: it consumes an existing coverage.py JSON report, so its
+  accuracy depends entirely on how that report was generated.
+- Python only: tuned for coverage.py JSON for Python production files.
+- A missing or invalid coverage report is a config error (exit `2`), not a
+  finding.
+- Line-coverage based: reports under-tested files by executed-line percentage;
+  it does not assess assertion quality or branch coverage.
+- Deterministic and offline; no network access.

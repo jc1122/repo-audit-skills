@@ -97,7 +97,7 @@ The `code-health-audit-pipeline` umbrella fail-safe-skips unknown `requires`
 keys and lists this as `"requires mutation_scope artifact"` in `skipped`. It
 runs standalone until mutation-scope artifact plumbing exists.
 
-## Honest Limits
+## Limits
 - Python only: `mutmut` operates on Python source.
 - Runtime cost: `mutmut run` spawns a test subprocess per mutant; budget with
   `--max-mutants`.

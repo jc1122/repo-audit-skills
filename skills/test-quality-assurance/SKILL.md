@@ -8,6 +8,12 @@ description: >
 
 # Test Quality Assurance
 
+## Overview
+
+Scores a test suite against an 8-dimension TDD rubric, producing 0-24 scores and
+a prioritized list of quality gaps with concrete improvement actions. Covers
+contract coverage, behavioral clarity, maintainability, and risk posture.
+
 ## Purpose
 Use this skill for test-health quality scoring (contract coverage, behavioral clarity,
 maintainability, and risk posture). This is separate from `$test-redundancy-triage`, which
@@ -82,7 +88,8 @@ do not auto-delete change indicators.
 - [`skills/test-quality-assurance/scripts/audit_test_quality.py`](skills/test-quality-assurance/scripts/audit_test_quality.py): baseline metrics.
 - [`skills/test-quality-assurance/references/sample-report.md`](skills/test-quality-assurance/references/sample-report.md): output pattern.
 
-## Known Limitations
+## Limits
+- Advisory only — scores and reports; never edits tests or source.
 - AST/static analysis only; runtime-only behavior and dynamic fixture patterns can be missed.
 - Heuristic scoring is advisory and should be interpreted by humans.
 - `--cov-json` requires a pre-generated `coverage.json` file.
