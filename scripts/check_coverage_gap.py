@@ -39,6 +39,8 @@ SUITES = [
     "skills/docs-consistency-audit/tests",
     "skills/security-audit/tests",
     "skills/test-effectiveness-audit/tests",
+    "skills/exec-audit/tests",
+    "skills/growth-audit/tests",
 ]
 SUITE_TIMEOUT = 600
 

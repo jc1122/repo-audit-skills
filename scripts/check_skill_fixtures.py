@@ -30,6 +30,8 @@ HELP_COMMANDS = [
     ],
     ["python3", "skills/test-redundancy-triage/scripts/triage_redundancy.py", "--help"],
     ["python3", "skills/coverage-gap-audit/scripts/coverage_gap_audit.py", "--help"],
+    ["python3", "skills/exec-audit/scripts/exec_audit.py", "--help"],
+    ["python3", "skills/growth-audit/scripts/growth_audit.py", "--help"],
 ]
 
 
