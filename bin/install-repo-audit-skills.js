@@ -24,6 +24,8 @@ const skills = [
   "docs-consistency-audit",
   "security-audit",
   "test-effectiveness-audit",
+  "exec-audit",
+  "growth-audit",
 ];
 
 function usage() {
