@@ -5,6 +5,30 @@
       "max_delta": 0,
       "reason": "Dependency growth is never allowed under the stdlib-only rule. Any positive delta must emit an overflow finding. Zero tolerance for new runtime dependencies.",
       "expires": "never"
+    },
+    {
+      "metric": "tracked_files_growth",
+      "max_delta": 11,
+      "reason": "New perf-smell-audit leaf (perflint-backed PERF findings): SKILL.md, LICENSE, pyproject.toml, vendored health_common.py, perf_smell_audit.py, conftest.py, helpers.py, two fixtures, two test files. Intentional feature growth.",
+      "expires": "next repo-A release that ships perf-smell-audit (re-baseline + purge)"
+    },
+    {
+      "metric": "net_loc_growth",
+      "max_delta": 431,
+      "reason": "New perf-smell-audit leaf source + tests + vendored health_common copy, plus its registration in check_release/installer/coverage-suite and these allowances. Intentional feature growth.",
+      "expires": "next repo-A release that ships perf-smell-audit (re-baseline + purge)"
+    },
+    {
+      "metric": "docs_loc_growth",
+      "max_delta": 53,
+      "reason": "perf-smell-audit SKILL.md (Overview/Quick Start/Output/Exit Codes/Tools/Limits), mirroring the dead-code-audit leaf doc. Intentional feature growth.",
+      "expires": "next repo-A release that ships perf-smell-audit (re-baseline + purge)"
+    },
+    {
+      "metric": "cli_flag_growth",
+      "max_delta": 3,
+      "reason": "perf_smell_audit.py CLI flags --root, --source-prefix, --out-dir, mirroring sibling leaves. Intentional feature growth.",
+      "expires": "next repo-A release that ships perf-smell-audit (re-baseline + purge)"
     }
   ]
 }

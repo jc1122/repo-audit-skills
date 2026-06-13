@@ -34,6 +34,7 @@ REQUIRED_SKILLS = {
     "test-effectiveness-audit": "test-effectiveness-audit",
     "exec-audit": "exec-audit",
     "growth-audit": "growth-audit",
+    "perf-smell-audit": "perf-smell-audit",
 }
 REQUIRED_SCRIPTS = {
     "complexity-audit": ["scripts/complexity_audit.py"],
@@ -54,6 +55,7 @@ REQUIRED_SCRIPTS = {
     "test-effectiveness-audit": ["scripts/test_effectiveness_audit.py"],
     "exec-audit": ["scripts/exec_audit.py"],
     "growth-audit": ["scripts/growth_audit.py"],
+    "perf-smell-audit": ["scripts/perf_smell_audit.py"],
 }
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 

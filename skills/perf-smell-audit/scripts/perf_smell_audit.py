@@ -16,14 +16,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
 
 LEAF = "perf-smell"
-# perflint reserves the 8xxx message range; we keep ONLY those ids. (`pylint --enable` takes
-# message ids, not a plugin name, and pylint always emits its own fatals/syntax errors, which
-# start with F/E and are therefore dropped by this prefix filter.)
+# perflint reserves the 8xxx message range; we keep ONLY those ids. (`pylint
+# --enable` takes message ids, not a plugin name, and pylint always emits its own
+# fatals/syntax errors, which start with F/E and are dropped by this prefix filter.)
 _PERFLINT_PREFIXES = ("W81", "W82", "W83", "W84", "R81", "R82")
 
 
 class ToolError(RuntimeError):
-    """Underlying tool missing or produced unusable output (→ EXIT_ERROR, never silent-clean).
+    """Tool missing or produced unusable output (→ EXIT_ERROR, never silent-clean).
 
     Mirrors the convention in dead_code_audit.py / quality_audit.py: a missing tool is a
     hard error, not zero findings.
@@ -44,9 +44,9 @@ def _python_files(root: Path, source_prefixes: list[str]) -> list[Path]:
 def _run_perflint(files: list[Path], root: Path) -> list[dict]:
     if not files:
         return []
-    # Missing tool is a hard error, never silent-clean (matches dead_code_audit / quality_audit).
-    # find_spec also catches a missing perflint plugin, which `--load-plugins` would otherwise
-    # surface only as a JSON fatal we'd filter out (a false "clean").
+    # Missing tool is a hard error, never silent-clean (matches sibling leaves).
+    # find_spec also catches a missing perflint plugin, which --load-plugins would
+    # otherwise surface only as a JSON fatal we'd filter out (a false "clean").
     for tool in ("pylint", "perflint"):
         if importlib.util.find_spec(tool) is None:
             raise ToolError(f"{tool} is not installed")
@@ -85,7 +85,8 @@ def analyze_tree(root: str | Path, source_prefixes: list[str]) -> list[hc.Findin
     for msg in _run_perflint(files, root):
         code = msg.get("message-id", "") or ""
         if not code.startswith(_PERFLINT_PREFIXES):
-            continue  # keep only perflint's own messages; drop pylint core + syntax/import errors
+            # keep only perflint's own messages; drop pylint core + syntax errors
+            continue
         findings.append(
             hc.Finding(
                 leaf=LEAF,
@@ -108,9 +109,13 @@ def analyze_tree(root: str | Path, source_prefixes: list[str]) -> list[hc.Findin
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Static algorithmic-smell audit (perflint).")
+    parser = argparse.ArgumentParser(
+        description="Static algorithmic-smell audit (perflint)."
+    )
     parser.add_argument("--root", required=True)
-    parser.add_argument("--source-prefix", action="append", default=[], dest="source_prefixes")
+    parser.add_argument(
+        "--source-prefix", action="append", default=[], dest="source_prefixes"
+    )
     parser.add_argument("--out-dir", required=True)
     return parser
 
@@ -119,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         findings = analyze_tree(args.root, args.source_prefixes)
-    except ToolError as exc:  # missing/broken tool → EXIT_ERROR, matching sibling leaves
+    except ToolError as exc:  # missing/broken tool → EXIT_ERROR
         print(f"perf-smell-audit tool error: {exc}", file=sys.stderr)
         return hc.EXIT_ERROR
     data = hc.write_findings(findings, args.out_dir, LEAF)
