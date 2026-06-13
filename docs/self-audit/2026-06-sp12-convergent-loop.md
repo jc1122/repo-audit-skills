@@ -475,3 +475,106 @@ Current state after W5 freeze:
 - Next action: prune/re-justify repo-A growth allowances after the `v0.5.21`
   release and this ledger append, then start W6 iteration 3 C-0 diagnosis under
   the closed finding universe.
+
+## W6 iteration 3 - first closed-universe shrink
+
+Iteration state:
+
+- K-1 closed universe remains active. No new lane, metric, or class was added.
+- Bootstrap probes exited `0` for repo-A, repo-B, and repo-P with
+  `restart_required=false` and `stop_before_discovery=false`.
+- Installed versions were unchanged from W5: repo-A leaves `0.5.21`, repo-B
+  orchestration skill `0.4.5`; repo-P was not released/reinstalled in this
+  iteration.
+- This was a refactor/format-only iteration. Per K-6, no release or reinstall
+  was performed after the successful push/CI checks.
+
+C-0 before counts:
+
+| Repo | Self-audit | code-health | security | hygiene | docs | dependency | hotspot | exec | growth | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| repo-A | 40 | 18 | 0 | 0 | 0 | 0 | 206 | 0 | 0 | 264 |
+| repo-B | 0 | 12 | 3 | 0 | 0 | 0 | 7 | 1 | 1 | 24 |
+| repo-P | 0 | 24 | 0 | 0 | 0 | 0 | 7 | 0 | 1 | 32 |
+| Total | 40 | 54 | 3 | 0 | 0 | 0 | 220 | 1 | 2 | 320 |
+
+Accepted/discarded batches:
+
+| Repo | Batch | Worktree | Run dir | Commit | Result |
+| --- | --- | --- | --- | --- | --- |
+| repo-A | triage quality/type rows | `/tmp/sp12/repo-a-06-triage-quality-types` | `/tmp/sp12/runs/repo-a-w6-triage-quality-types` | `88edb1d` | accepted; removed 4 quality/type identities, added 0 |
+| repo-B | wave-runner E501 | `/tmp/sp12/repo-b-06-wave-e501` | `/tmp/sp12/runs/repo-b-w6-wave-e501` | `e892c1a` | discarded; removed 5 identities but added new `cli_flag_growth`, violating K-1 strict subset |
+| repo-B | synthesis E501 | `/tmp/sp12/repo-b-06-synthesis-e501` | `/tmp/sp12/runs/repo-b-w6-synthesis-e501` | `3e94dae` | accepted; removed 2 E501 identities, added 0 |
+| repo-P | scoring complexity | `/tmp/sp12/repo-p-06-scoring-complexity` | `/tmp/sp12/runs/repo-p-w6-scoring-complexity` | `8425c68` | accepted after reviewer; removed 5 code-health identities, added 0 |
+| repo-P | scoring complexity reviewer | same worktree | `/tmp/sp12/runs/repo-p-w6-scoring-complexity-review` | n/a | approved in `verdict.json` |
+
+Identity deltas:
+
+| Repo | Before | After | Removed | Added | Shrink |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| repo-A installed wave | 224 | 220 | 4 | 0 | 4 |
+| repo-A self-audit | 40 | 40 | 0 | 0 | 0 |
+| repo-B wave baseline | 24 | 22 | 2 | 0 | 2 |
+| repo-P wave baseline | 32 | 27 | 5 | 0 | 5 |
+| Total open rows | 320 | 309 | 11 | 0 | 11 |
+
+Post-iteration after counts:
+
+| Repo | Self-audit | code-health | security | hygiene | docs | dependency | hotspot | exec | growth | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| repo-A | 40 | 14 | 0 | 0 | 0 | 0 | 206 | 0 | 0 | 260 |
+| repo-B | 0 | 10 | 3 | 0 | 0 | 0 | 7 | 1 | 1 | 22 |
+| repo-P | 0 | 19 | 0 | 0 | 0 | 0 | 7 | 0 | 1 | 27 |
+| Total | 40 | 43 | 3 | 0 | 0 | 0 | 220 | 1 | 2 | 309 |
+
+Strict-shrink bookkeeping:
+
+- repo-A shrank by 4 rows. Zero-shrink strike count: 0.
+- repo-B shrank by 2 rows after discarding the first non-strict-subset batch.
+  Zero-shrink strike count: 0.
+- repo-P shrank by 5 rows. Zero-shrink strike count: 0.
+- No repo is TERMINAL after this iteration.
+
+Verification evidence:
+
+| Repo | Local gates | Fresh clone | CI run | Result |
+| --- | --- | --- | --- | --- |
+| repo-A | `npm run check` passed: `9/9 cheap`, `2/2 heavy`, `0 over-budget`, `0 failed`; `check_self_audit.py` `40/40`; `check_growth.py` `0` | `/tmp/sp12/fresh/w6-a-20260613T052731Z`, `npm ci && npm run check` passed | `27457886894`, job `81165709741` | success, job duration `5m56s` |
+| repo-B | `python3 -m pytest -q` `141 passed`; `check_wave_baseline.py` `22/22`; `check_release.py` pass | `/tmp/sp12/fresh/w6-b-20260613T052731Z`, suite plus wave/release checks passed | `27457886848`, job `81165709579` | success |
+| repo-P | `python3 -m pytest -q` `155 passed`; `check_wave_baseline.py` `27/27`; reviewer verdict `approve` | `/tmp/sp12/fresh/w6-p-20260613T052731Z`, suite plus wave check passed | `27457886932`, job `81165709837` | success |
+
+Timing vs budget:
+
+| Repo/scope | Slowest lane or gate | Seconds | Evidence |
+| --- | --- | ---: | --- |
+| repo-A `npm run check` | coverage | 115.245 | repo-A ignored check timing artifact; within budget |
+| repo-A `npm run check` | pytest | 114.398 | repo-A ignored check timing artifact; within budget |
+| repo-A installed wave | code-health | 2.733 | `/tmp/sp12/w6-iter3-after/repo-a/wave_timings.json` |
+| repo-B wave gate | code-health | 3.623 | repo-B ignored wave timing artifact |
+| repo-P wave gate | code-health | 2.662 | repo-P ignored wave timing artifact |
+| repo-A CI | check job | 356 | GitHub Actions run `27457886894` |
+| repo-B CI | check job | 12 | GitHub Actions run `27457886848` |
+| repo-P CI | check job | 11 | GitHub Actions run `27457886932` |
+
+Growth allowance table:
+
+| Metric | Max delta | Expires | Status |
+| --- | ---: | --- | --- |
+| `dependency_growth` | 0 | never | still enforced |
+| `docs_loc_growth` | 125 | next release | unchanged from W5 ledger allowance; not expired because no release occurred |
+| `net_loc_growth` | 120 | next release | unchanged from W5 ledger allowance; not expired because no release occurred |
+
+Ship/readback:
+
+- Pushed repo-A `main` from `b16735d` to `88edb1d`.
+- Pushed repo-B `main` from `6373ac6` to `3e94dae`.
+- Pushed repo-P `main` from `b35da00` to `8425c68`.
+- No release tags were created and no reinstall was performed because all
+  accepted source changes were refactor/format-only and did not change leaf
+  behavior.
+
+Next action:
+
+- Start W6 iteration 4 C-0 diagnosis from the now-pushed heads under the same
+  closed universe. Current open rows before the next iteration are repo-A
+  `260`, repo-B `22`, repo-P `27`, total `309`.
