@@ -47,7 +47,6 @@ def test_docstring_dirty_fails(tmp_path):
 
 def test_docstring_no_public_symbols_skipped(tmp_path):
     """Module with 0 public symbols is skipped (no finding)."""
-    import os
     root = tmp_path / "tree"
     pkg = root / "pkg"
     pkg.mkdir(parents=True)
