@@ -36,7 +36,7 @@ below was **re-run by the orchestrator** (a worker's self-reported green is not 
 | 7 | `mprr_run` CLI | `7a279f8` | `test_mprr_run` 3 passed | ✅ (combined w/8,9) |
 | 8 | KPI miner ext. | `eacc666` | `test_mine_iteration_kpis` 4 passed (3 pre-existing intact) | ✅ R5 mined-not-typed |
 | 9 | fixtures + e2e | `548e45a` | `test_mprr_e2e` 3 passed (known/degenerate/non-python R1) | ✅ |
-| 10 | SKILL.md + `references/mprr.md` + nosec fix | `31ba6ab` | full suite 187; instruction-lint **0 net-new findings** vs main | ✅ |
+| 10 | SKILL.md MPRR section + MPRR references page (repo-B) + nosec fix | `31ba6ab` | full suite 187; instruction-lint **0 net-new findings** vs main | ✅ |
 
 **Necessary plan-vs-reality deviations (recorded, not gamed):**
 - `bcabba7` **CI hypothesis**: repo-B had NO pyproject/requirements and CI installed only

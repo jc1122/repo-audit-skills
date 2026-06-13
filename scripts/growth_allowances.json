@@ -5,6 +5,30 @@
       "max_delta": 0,
       "reason": "Dependency growth is never allowed under the stdlib-only rule. Any positive delta must emit an overflow finding. Zero tolerance for new runtime dependencies.",
       "expires": "never"
+    },
+    {
+      "metric": "docs_loc_growth",
+      "max_delta": 6000,
+      "reason": "SP14 (MPRR) adds its orchestration docs to repo-A: the design spec, the implementation plan, the launch prompt, the SP15 freeze stub, and the per-iteration MPRR run ledger. The engine code + tests live in repo-B (not counted here). The ledger is appended once per Phase-B iteration (hard cap 12), so docs-LOC grows steadily through the run; this allowance covers the full SP14 documentation footprint.",
+      "expires": "next repo-A release after SP14 closeout (re-baseline + purge, mirroring the v0.6.0 SP13 purge)"
+    },
+    {
+      "metric": "net_loc_growth",
+      "max_delta": 6000,
+      "reason": "repo-A's SP14 changes are documentation-only (engine code is in repo-B), so net-LOC growth tracks docs-LOC growth: spec + plan + launch prompt + SP15 stub + the per-iteration ledger appends. Same release-expiring lifecycle as docs_loc_growth.",
+      "expires": "next repo-A release after SP14 closeout (re-baseline + purge, mirroring the v0.6.0 SP13 purge)"
+    },
+    {
+      "metric": "tracked_files_growth",
+      "max_delta": 8,
+      "reason": "SP14 adds a small fixed set of new tracked doc files to repo-A (spec, plan, launch-prompt split, ledger, SP15-CANDIDATES stub). Phase B appends to the single ledger file rather than adding files; the small headroom covers any incidental orchestration artifact.",
+      "expires": "next repo-A release after SP14 closeout (re-baseline + purge, mirroring the v0.6.0 SP13 purge)"
+    },
+    {
+      "metric": "cli_flag_growth",
+      "max_delta": 12,
+      "reason": "The MPRR engine's CLI flags (mprr_run plan/integrate/reaudit: --run-dir, --findings, --triage, --ceiling, --repo, --packet-id, --evidence, --diff-files, --branch, --no-merge) are documented in repo-A's plan and launch prompt; the detector counts them as new flag declarations. The engine ships in repo-B; this is documentation surface, and the flag set is fixed for SP14.",
+      "expires": "next repo-A release after SP14 closeout (re-baseline + purge, mirroring the v0.6.0 SP13 purge)"
     }
   ]
 }
