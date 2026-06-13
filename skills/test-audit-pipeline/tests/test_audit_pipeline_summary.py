@@ -840,14 +840,11 @@ def test_main_skip_coverage_run(tmp_path, monkeypatch):
     monkeypatch.setattr(ap, "DEFAULT_TRIAGE_SCRIPT", FIXTURES / "coverage.json")
 
     # Monkeypatch _run_stage to return a synthetic success.
-    import subprocess as sp_mod
 
     class FakeCompleted:
         returncode = 0
         stdout = ""
         stderr = ""
-
-    original_run_stage = ap._run_stage
 
     def fake_run_stage(cmd, *, env, cwd, label):
         return FakeCompleted()

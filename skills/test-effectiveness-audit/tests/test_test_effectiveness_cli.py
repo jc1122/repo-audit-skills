@@ -11,12 +11,11 @@ Other CLI/contract tests use mod.main([...]) in-process with capsys for coverage
 import importlib.util
 import json
 import shutil
-from pathlib import Path
 
 import pytest
 
 try:
-    from helpers import load_module, run_cli, FIXTURES, SKILL_ROOT, SCRIPT
+    from helpers import load_module, run_cli, FIXTURES
 except ImportError:
     pytest.skip("helpers module not yet available", allow_module_level=True)
 

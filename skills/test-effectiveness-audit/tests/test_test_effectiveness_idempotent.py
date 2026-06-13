@@ -223,7 +223,6 @@ def test_main_idempotent_with_fake_data(tmp_path: Path, monkeypatch, capsys):
 
     # Monkeypatch the subprocess calls that run mutmut
     # Replace the underlying run function so it returns fake data
-    import subprocess
 
     fake_mutants_dir = tmp_path / "fake_mutants" / "mutants" / "src"
     fake_mutants_dir.mkdir(parents=True)
