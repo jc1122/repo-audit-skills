@@ -96,7 +96,7 @@ def test_report_md_is_written(tmp_path, capsys):
     """dependency_report.md is written to --out-dir."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main(["--root", str(FIXTURES / "dirty"), "--out-dir", str(out)])
+    mod.main(["--root", str(FIXTURES / "dirty"), "--out-dir", str(out)])
     report = out / "dependency_report.md"
     assert report.exists(), "dependency_report.md should be written"
     content = report.read_text()

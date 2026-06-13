@@ -53,7 +53,7 @@ def test_advisory_null_severity_maps_to_medium(tmp_path, capsys):
     # for any declared package matching the advisory.  We use clean fixture
     # which declares only requests, and an advisory with a different package
     # to avoid cross-contamination.
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "dirty"),
         "--out-dir", str(out),
         "--advisory-report", str(FIXTURES / "advisory_null_severity.json"),
@@ -78,7 +78,7 @@ def test_advisory_critical_severity_maps_to_high(tmp_path, capsys):
     """Critical C-8 severity maps to finding severity 'high'."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "dirty"),
         "--out-dir", str(out),
         "--advisory-report", str(FIXTURES / "advisory_critical.json"),
@@ -100,7 +100,7 @@ def test_advisory_null_latest_version_omits_outdated(tmp_path, capsys):
     """When latest_version is null, no dependency_outdated finding is produced."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "dirty"),
         "--out-dir", str(out),
         "--advisory-report", str(FIXTURES / "advisory_null_latest.json"),
@@ -150,7 +150,7 @@ def test_advisory_finding_has_high_confidence(tmp_path, capsys):
     """Advisory vulnerability findings must use confidence 'high'."""
     mod = load_module()
     out = tmp_path / "out"
-    rc = mod.main([
+    mod.main([
         "--root", str(FIXTURES / "dirty"),
         "--out-dir", str(out),
         "--advisory-report", str(FIXTURES / "advisory.json"),
