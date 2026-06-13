@@ -1,6 +1,6 @@
 ---
 name: exec-audit
-version: 0.5.20
+version: 0.5.21
 description: >
   Deterministic, advisory execution audit for any repository. Detects duplicate or
   serial runner invocations in npm scripts, parses JUnit XML for slow tests, and

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.21 - 2026-06-13
+
+- Added and registered the W1 exec-audit leaf.
+- Added and registered the W2 growth-audit leaf and repo-A growth gate.
+- Refreshed the W5 pre-release growth allowance for W3/W4 ledger growth.
+
 ## 0.5.20 - 2026-06-12
 
 - Release preparation for W0 behavior-change release.
