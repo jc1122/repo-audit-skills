@@ -279,3 +279,74 @@ Current state after merge:
 - W1/W2 source work is accepted locally but not yet shipped/reinstalled.
 - Next action: continue with W3/W4 or perform the next K-6 ship step when the
   plan reaches W5.
+
+## Iteration 2 W3/W4 repo-B wave and synthesis (2026-06-13)
+
+Scope:
+
+- W3 repo-B diagnosis wave is now registry-driven, parallel, and emits
+  `wave_timings.json`.
+- W3 added the expanded 8-lane registry, including `exec` and `growth`.
+- W3 excluded timing telemetry from wave baseline comparison.
+- W4 added advisory K-7 packet synthesis and mechanical patch proposal
+  artifacts from wave findings.
+- repo-B `main` fast-forwarded from `f6ace4b` to `dfc7545`.
+
+Worker runs:
+
+| Packet | Worktree | Run dir | Result |
+| --- | --- | --- | --- |
+| W3 wave core | `/tmp/sp12/repo-b-03-w3-wave-core` | `/tmp/sp12/runs/repo-b-w3-wave-core` | accepted after dirty-test follow-up |
+| W3 wave core finalize | `/tmp/sp12/repo-b-03-w3-wave-core` | `/tmp/sp12/runs/repo-b-w3-wave-core-finalize` | accepted |
+| W3 registry/baseline | `/tmp/sp12/repo-b-03-w3-wave-core` | `/tmp/sp12/runs/repo-b-w3-registry-baseline` | accepted after default-registry repair |
+| W3 default registry repair | `/tmp/sp12/repo-b-03-w3-wave-core` | `/tmp/sp12/runs/repo-b-w3-default-registry-fix` | accepted |
+| W4 synthesis | `/tmp/sp12/repo-b-03-w4-synthesis` | `/tmp/sp12/runs/repo-b-w4-synthesis` | accepted after repair |
+| W4 synthesis repair | `/tmp/sp12/repo-b-03-w4-synthesis` | `/tmp/sp12/runs/repo-b-w4-synthesis-repair` | accepted |
+
+Accepted repo-B commits merged by fast-forward:
+
+- `1ed744a` `feat(wave): load lanes from registry and run in parallel`.
+- `ee08223` `test(wave): align registry wave tests`.
+- `29de3f6` `feat(wave): add lane registry and timing exclusion`.
+- `7cf8a39` `fix(wave): use committed lane registry by default`.
+- `0637bed` `feat(synthesis): packet and patch proposals from wave findings`.
+- `dfc7545` `fix(synthesis): complete packet proposal edge cases`.
+
+Issues found and fixed during W3/W4:
+
+- W3 first pass left the repo-B wave-runner test file modified after commit;
+  follow-up committed the intended test correction and left the worktree clean.
+- W3 registry smoke initially required explicit `--registry`; repaired so the
+  committed repo-B wave lane registry is the default lane source while explicit
+  registries remain supported.
+- W4 first pass left the repo-B packet-synthesis script modified and failed 8
+  synthesis edge-case tests; repaired missing-value/threshold goal wording,
+  non-dict and missing-id skips, result shape, signal fallback, and metric
+  formatting.
+
+Verification:
+
+- repo-B W3 combined branch tests: `122 passed`.
+- repo-B W4 repaired branch tests: `124 passed`.
+- repo-B W3/W4 integration branch tests: `140 passed`.
+- repo-B main after fast-forward tests: `140 passed`.
+- Expanded smoke with repo-A source skills and no explicit registry:
+  `exec` lane recognized with 1 finding, `growth` lane recognized with 2
+  findings, and `wave_timings.json` written.
+
+Timing artifact smoke:
+
+| Lane | Seconds |
+| --- | ---: |
+| exec | 0.073 |
+| growth | 0.084 |
+
+Current state after W3/W4:
+
+- repo-A `main` contains accepted W1/W2 and ledger entries; it is not pushed or
+  released yet.
+- repo-B `main` contains accepted W3/W4; it is ahead of `origin/main` by 6
+  commits and is not pushed or released yet.
+- repo-P remains untouched in SP12 so far.
+- Next action: W5 ship repo-A and repo-B, reinstall changed skills, then run the
+  expanded installed 8-lane wave on repo-A/repo-B/repo-P before the W5 freeze.
