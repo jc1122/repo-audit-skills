@@ -8,20 +8,26 @@
     },
     {
       "metric": "tracked_files_growth",
-      "max_delta": 5,
-      "reason": "SP13 bootstrap (2 docs) + X0 keystone evidence/tooling (3 files): the SP13 plan and operator launch prompt; plus X0's lessons ledger docs/self-audit/lessons.jsonl, the append-only telemetry evidence scripts/iteration_kpis.jsonl, and the R7-escalation setup script scripts/worker_worktree_setup.sh. Orchestration evidence/tooling only; no new leaf/source modules.",
+      "max_delta": 14,
+      "reason": "SP13 bootstrap + X0-X3 keystone/harness evidence and tooling since v0.5.21: SP13 plan + launch prompt (2); X0 lessons.jsonl + iteration_kpis.jsonl + worker_worktree_setup.sh (3); X1 instruction-lint gate scripts/check_instruction_lint.py + scripts/instruction_lint_baseline.json + tests/test_check_instruction_lint.py (3); X1/X2/X3 process docs SP13 ledger + self-application-checklist.md + amendment-proposals/TEMPLATE.md + eval_complexity-audit.json (4) and the X3 SP14-CANDIDATES.md freeze doc (1). Orchestration/instruction tooling + evidence + docs only; no new audited-leaf source modules.",
+      "expires": "next-release"
+    },
+    {
+      "metric": "cli_flag_growth",
+      "max_delta": 6,
+      "reason": "The X1.1 instruction-lint gate (scripts/check_instruction_lint.py) adds its own argparse surface (--root/--out/--baseline/--format/etc.), a new deterministic gate. No audited-leaf CLI changed.",
       "expires": "next-release"
     },
     {
       "metric": "docs_loc_growth",
-      "max_delta": 747,
-      "reason": "SP13 bootstrap + SP12 closeout + X0 lessons docs since v0.5.21: SP12 convergent-loop ledger closeout, the SP13 combined plan, the SP13 launch prompt, and the X0 two-tier lessons ledger (docs/self-audit/lessons.jsonl). Documentation/evidence only; no production source LOC.",
+      "max_delta": 1050,
+      "reason": "SP13 bootstrap + SP12 closeout + X0-X3 process docs since v0.5.21: SP12 convergent-loop ledger closeout, the SP13 plan + launch prompt, the X0 two-tier lessons ledger, and the X1/X2/X3 process docs (SP13 runtime-self-improvement ledger, self-application checklist, amendment-proposal template, behavioral-eval artifact, and the X3 freeze SP14-CANDIDATES doc). Documentation/evidence only; no production source LOC.",
       "expires": "next-release"
     },
     {
       "metric": "net_loc_growth",
-      "max_delta": 780,
-      "reason": "SP13 bootstrap + X0 keystone net LOC since v0.5.21: the docs above plus the X0 worker_worktree_setup.sh escalation script and append-only iteration_kpis.jsonl, accepted SP12 triage_redundancy.py shrink bookkeeping, and this allowance refresh. No new production source code.",
+      "max_delta": 1760,
+      "reason": "SP13 bootstrap + X0-X3 keystone/harness net LOC since v0.5.21: the docs above plus the X0 worker_worktree_setup.sh + iteration_kpis.jsonl, the X1.1 instruction-lint checker + its tests + baseline + run_checks.py registration + check_budget/.gitignore/self_audit_baseline bookkeeping, accepted SP12 triage_redundancy.py shrink, and these allowance refreshes. No new audited-leaf production source code.",
       "expires": "next-release"
     }
   ]
