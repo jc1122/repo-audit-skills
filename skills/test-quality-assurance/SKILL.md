@@ -1,6 +1,6 @@
 ---
 name: test-quality-assurance
-version: 0.5.21
+version: 0.6.0
 description: >
   Score your test suite against an 8-dimension TDD rubric, produce 0-24 scores,
   and output quality gaps with prioritized improvement actions.

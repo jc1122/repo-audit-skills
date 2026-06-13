@@ -1,6 +1,6 @@
 ---
 name: duplication-audit
-version: 0.5.21
+version: 0.6.0
 description: >
   Deterministic, advisory copy-paste clone audit for Python. Uses jscpd to detect
   duplicated token sequences and emits EXTRACT (cross-file) / MERGE (same-file)
