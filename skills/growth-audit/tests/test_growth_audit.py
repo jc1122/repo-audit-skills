@@ -524,394 +524,6 @@ class TestLoadModule:
         assert callable(mod.main)
 
 
-class TestDepEntries:
-    """Coverage: _dep_entries — pure function for parsing dependency manifests."""
-
-    def test_requirements_txt(self):
-        mod = _load_module()
-        entries = mod._dep_entries("pytest>=7.0\nrequests==2.28\n", "requirements.txt")
-        assert len(entries) >= 2
-        assert "pytest>=7.0" in entries
-
-    def test_comments_and_blanks_skipped(self):
-        mod = _load_module()
-        entries = mod._dep_entries(
-            "# comment\n\nrequests>=2.28\n  \n# another\n",
-            "requirements.txt",
-        )
-        assert entries == ["requests>=2.28"]
-
-    def test_toml_entries(self):
-        mod = _load_module()
-        content = 'serde = "1"\ntokio = { version = "1" }\n'
-        entries = mod._dep_entries(content, "Cargo.toml")
-        assert len(entries) >= 2
-
-    def test_json_entries(self):
-        mod = _load_module()
-        content = json.dumps({
-            "name": "demo",
-            "version": "0.1.0",
-            "scripts": {"test": "vitest"},
-            "dependencies": {"react": "^18", "lodash": "^4"},
-            "devDependencies": {"vite": "^5"},
-        })
-        entries = mod._dep_entries(content, "package.json")
-        assert set(entries) == {
-            "dependencies:react",
-            "dependencies:lodash",
-            "devDependencies:vite",
-        }
-
-    def test_go_mod_entries(self):
-        mod = _load_module()
-        content = "require (\n\tgithub.com/stretchr/testify v1.8.0\n)\n"
-        entries = mod._dep_entries(content, "go.mod")
-        assert len(entries) >= 1
-
-    def test_gemfile_entries(self):
-        mod = _load_module()
-        content = 'gem "rails"\ngem "rspec"\n'
-        entries = mod._dep_entries(content, "Gemfile")
-        assert len(entries) >= 2
-
-    def test_empty_content(self):
-        mod = _load_module()
-        entries = mod._dep_entries("", "requirements.txt")
-        assert entries == []
-
-
-class TestSeverityForDelta:
-    """Coverage: _severity_for_delta."""
-
-    def test_tracked_files(self):
-        mod = _load_module()
-        assert mod._severity_for_delta("tracked_files_growth", 5) == "low"
-        assert mod._severity_for_delta("tracked_files_growth", 15) == "medium"
-        assert mod._severity_for_delta("tracked_files_growth", 30) == "high"
-
-    def test_dependency_growth(self):
-        mod = _load_module()
-        assert mod._severity_for_delta("dependency_growth", 3) == "low"
-        assert mod._severity_for_delta("dependency_growth", 15) == "medium"
-        assert mod._severity_for_delta("dependency_growth", 25) == "high"
-
-    def test_net_loc_growth(self):
-        mod = _load_module()
-        assert mod._severity_for_delta("net_loc_growth", 300) == "low"
-        assert mod._severity_for_delta("net_loc_growth", 800) == "medium"
-        assert mod._severity_for_delta("net_loc_growth", 3000) == "high"
-
-    def test_cli_flag_growth(self):
-        mod = _load_module()
-        assert mod._severity_for_delta("cli_flag_growth", 3) == "low"
-        assert mod._severity_for_delta("cli_flag_growth", 8) == "medium"
-        assert mod._severity_for_delta("cli_flag_growth", 20) == "high"
-
-    def test_unknown_metric_defaults_low(self):
-        mod = _load_module()
-        assert mod._severity_for_delta("unknown_metric", 100) == "low"
-
-
-class TestLoadConfig:
-    """Coverage: _load_config."""
-
-    def test_defaults_when_none(self):
-        mod = _load_module()
-        cfg = mod._load_config(None)
-        assert cfg["allow_growth"] == []
-
-    def test_from_file(self, tmp_path):
-        mod = _load_module()
-        cfg_file = tmp_path / "cfg.json"
-        cfg_file.write_text(json.dumps({
-            "allow_growth": [{"metric": "net_loc_growth", "max_delta": 100, "reason": "test"}]
-        }))
-        cfg = mod._load_config(str(cfg_file))
-        assert len(cfg["allow_growth"]) == 1
-        assert cfg["allow_growth"][0]["metric"] == "net_loc_growth"
-
-    def test_invalid_json(self, tmp_path):
-        mod = _load_module()
-        cfg_file = tmp_path / "cfg.json"
-        cfg_file.write_text("not json")
-        with pytest.raises(mod.ToolError, match="invalid"):
-            mod._load_config(str(cfg_file))
-
-    def test_missing_file(self, tmp_path):
-        mod = _load_module()
-        with pytest.raises(mod.ToolError, match="cannot read"):
-            mod._load_config(str(tmp_path / "nonexistent.json"))
-
-
-class TestEmitError:
-    """Coverage: _emit_error."""
-
-    def test_prints_json_error(self):
-        mod = _load_module()
-        old = sys.stdout
-        try:
-            sys.stdout = io.StringIO()
-            mod._emit_error("boom")
-            output = sys.stdout.getvalue()
-        finally:
-            sys.stdout = old
-        assert "error" in output
-        assert "boom" in output
-        assert json.loads(output)["status"] == "error"
-
-
-class TestBuildParser:
-    """Coverage: build_parser."""
-
-    def test_creates_parser(self):
-        mod = _load_module()
-        parser = mod.build_parser()
-        assert parser is not None
-
-    def test_parses_required_args(self):
-        mod = _load_module()
-        parser = mod.build_parser()
-        ns = parser.parse_args([
-            "--root", "/tmp/r", "--out-dir", "/tmp/o", "--baseline-rev", "v1.0"
-        ])
-        assert ns.root == "/tmp/r"
-        assert ns.out_dir == "/tmp/o"
-        assert ns.baseline_rev == "v1.0"
-
-
-class TestRenderMd:
-    """Coverage: render_md."""
-
-    def test_empty_report(self):
-        mod = _load_module()
-        summary = {
-            "metrics": {}, "suppressions": [],
-            "baseline": "v1", "baseline_sha": "abc123", "head_sha": "def456",
-        }
-        md = mod.render_md([], summary)
-        assert "# growth-audit report" in md
-        assert "No findings" in md
-
-    def test_with_findings(self):
-        mod = _load_module()
-        f = mod.hc.Finding(
-            leaf="growth-audit",
-            signal="RESTRUCTURE",
-            severity="medium",
-            path="<repo>",
-            line_start=0, line_end=0,
-            symbol="tracked_files_growth",
-            metric_name="tracked_files_growth",
-            metric_value=5.0, metric_threshold=0.0,
-            evidence_tool="git", evidence_raw='{"delta": 5}',
-            confidence="high",
-            suggested_action="Review growth",
-        )
-        summary = {
-            "metrics": {"tracked_files_growth": 5},
-            "suppressions": [],
-            "baseline": "v1", "baseline_sha": "abc", "head_sha": "def",
-        }
-        md = mod.render_md([f], summary)
-        assert "RESTRUCTURE" in md
-        assert "tracked_files_growth" in md
-
-    def test_with_suppressions(self):
-        mod = _load_module()
-        summary = {
-            "metrics": {"tracked_files_growth": 3},
-            "suppressions": [
-                {"metric": "tracked_files_growth", "delta": 3, "max_delta": 5, "reason": "ok"}
-            ],
-            "baseline": "v1", "baseline_sha": "abc", "head_sha": "def",
-        }
-        md = mod.render_md([], summary)
-        assert "Suppressions" in md
-        assert "tracked_files_growth" in md
-
-
-class TestApplyAllowances:
-    """Coverage: _apply_allowances."""
-
-    def test_overflow_produces_finding(self):
-        mod = _load_module()
-        metrics = {"tracked_files_growth": 10}
-        allow = [{"metric": "tracked_files_growth", "max_delta": 3, "reason": "test"}]
-        findings, suppressions, overflows = mod._apply_allowances(metrics, allow)
-        assert len(findings) >= 1
-        assert len(overflows) >= 1
-        f = findings[0]
-        assert f.signal == "RESTRUCTURE"
-        assert f.metric_name == "tracked_files_growth"
-
-    def test_suppression_no_finding(self):
-        mod = _load_module()
-        metrics = {"tracked_files_growth": 2}
-        allow = [{"metric": "tracked_files_growth", "max_delta": 5, "reason": "test"}]
-        findings, suppressions, overflows = mod._apply_allowances(metrics, allow)
-        assert len(suppressions) >= 1
-        assert len(findings) == 0
-
-    def test_no_positive_growth_no_finding(self):
-        mod = _load_module()
-        metrics = {"tracked_files_growth": 0}
-        allow = [{"metric": "tracked_files_growth", "max_delta": 5, "reason": "test"}]
-        findings, suppressions, overflows = mod._apply_allowances(metrics, allow)
-        assert len(findings) == 0
-        assert len(suppressions) == 0
-
-    def test_unsuppressed_metric_emits(self):
-        mod = _load_module()
-        metrics = {"cli_flag_growth": 5}
-        allow = []  # no allowances
-        findings, suppressions, overflows = mod._apply_allowances(metrics, allow)
-        assert len(findings) >= 1
-        f = findings[0]
-        assert f.metric_name == "cli_flag_growth"
-        assert f.metric_value == 5.0
-
-    def test_multiple_allowances(self):
-        mod = _load_module()
-        metrics = {"tracked_files_growth": 3, "net_loc_growth": 1000}
-        allow = [
-            {"metric": "tracked_files_growth", "max_delta": 5, "reason": "ok"},
-            {"metric": "net_loc_growth", "max_delta": 200, "reason": "too small"},
-        ]
-        findings, suppressions, overflows = mod._apply_allowances(metrics, allow)
-        assert len(suppressions) >= 1  # tracked_files_growth suppressed
-        assert len(overflows) >= 1     # net_loc_growth overflow
-        assert len(findings) >= 1      # at least net_loc_growth
-
-
-class TestAnalyzeTreeInProcess:
-    """Coverage: analyze_tree (needs git repo)."""
-
-    def test_basic_growth(self, tmp_path):
-        mod = _load_module()
-        repo = tmp_path / "repo"
-        repo.mkdir()
-        _git_init(repo)
-        _write(repo / "README.md", "# Hello\n")
-        _git_commit_all(repo, "initial")
-        _git_tag(repo, "base")
-        _write(repo / "main.py", "x = 1\n")
-        _git_commit_all(repo, "add main.py")
-
-        findings, summary = mod.analyze_tree(str(repo), "base")
-        assert summary["leaf"] == "growth-audit"
-        assert summary["metrics"]["tracked_files_growth"] >= 1
-        assert isinstance(findings, list)
-
-    def test_with_config(self, tmp_path):
-        mod = _load_module()
-        repo = tmp_path / "repo"
-        repo.mkdir()
-        _git_init(repo)
-        _write(repo / "README.md", "# Hello\n")
-        _git_commit_all(repo, "initial")
-        _git_tag(repo, "base")
-        _write(repo / "main.py", "x = 1\n")
-        _git_commit_all(repo, "add main.py")
-
-        cfg = {"allow_growth": [{"metric": "tracked_files_growth", "max_delta": 10, "reason": "ok"}]}
-        findings, summary = mod.analyze_tree(str(repo), "base", config=cfg)
-        assert summary["suppression_count"] >= 1
-        assert summary["finding_count"] == 0  # suppressed
-
-    def test_bad_baseline_raises(self, tmp_path):
-        mod = _load_module()
-        repo = tmp_path / "repo"
-        repo.mkdir()
-        _git_init(repo)
-        with pytest.raises(mod.ToolError, match="cannot resolve"):
-            mod.analyze_tree(str(repo), "nonexistent_tag")
-
-    def test_not_git_repo_raises(self, tmp_path):
-        mod = _load_module()
-        non_repo = tmp_path / "not_repo"
-        non_repo.mkdir()
-        with pytest.raises(mod.ToolError, match="not a git"):
-            mod.analyze_tree(str(non_repo), "HEAD")
-
-
-class TestMainInProcess:
-    """Coverage: main entry point."""
-
-    def test_no_args(self):
-        mod = _load_module()
-        assert mod.main([]) == 2
-
-    def test_missing_args(self):
-        mod = _load_module()
-        assert mod.main(["--root", "/tmp"]) == 2
-
-    def test_with_git_repo(self, tmp_path):
-        mod = _load_module()
-        repo = tmp_path / "repo"
-        repo.mkdir()
-        _git_init(repo)
-        _write(repo / "README.md", "# Hello\n")
-        _git_commit_all(repo, "initial")
-        out = tmp_path / "out"
-
-        rc = mod.main([
-            "--root", str(repo), "--out-dir", str(out), "--baseline-rev", "HEAD"
-        ])
-        assert rc in (0, 1)
-        assert (out / "growth-audit_findings.json").exists()
-        assert (out / "growth-audit_summary.json").exists()
-
-    def test_md_format(self, tmp_path):
-        mod = _load_module()
-        repo = tmp_path / "repo"
-        repo.mkdir()
-        _git_init(repo)
-        _write(repo / "README.md", "# Hello\n")
-        _git_commit_all(repo, "initial")
-        out = tmp_path / "out"
-
-        rc = mod.main([
-            "--root", str(repo), "--out-dir", str(out),
-            "--baseline-rev", "HEAD", "--format", "md",
-        ])
-        assert rc in (0, 1)
-        assert (out / "growth-audit_report.md").exists()
-
-
-# ---------------------------------------------------------------------------
-# Vendored health_common.py coverage
-# ---------------------------------------------------------------------------
-
-
-def test_vendored_health_common_is_importable(tmp_path):
-    """Loading the vendored health_common.py exercises all its lines."""
-    hc_mod = _load_vendored_hc()
-
-    f = hc_mod.Finding(
-        leaf="test", signal="SIMPLIFY", severity="low",
-        path="f.py", line_start=1, line_end=2, symbol="s",
-        metric_name="m", metric_value=0.5, metric_threshold=1.0,
-        evidence_tool="t", evidence_raw="r",
-        confidence="medium", suggested_action="a",
-    )
-    d = f.to_dict()
-    assert d["leaf"] == "test"
-    assert d["signal"] == "SIMPLIFY"
-    assert len(d["id"]) == 16
-
-    sorted_f = hc_mod.sort_findings([f])
-    assert len(sorted_f) == 1
-
-    data = hc_mod.write_findings([f], tmp_path, "test-leaf")
-    assert len(data) == 1
-    assert (tmp_path / "test-leaf_findings.json").exists()
-
-    assert hc_mod.EXIT_CLEAN == 0
-    assert hc_mod.EXIT_FINDINGS == 1
-    assert hc_mod.EXIT_ERROR == 2
-
-
 # ======================================================================
 # In-process tests (coverage for growth_audit.py and vendored health_common.py)
 # ======================================================================
@@ -961,6 +573,28 @@ class TestDepEntries:
         mod = _load_module()
         entries = mod._dep_entries("", "requirements.txt")
         assert entries == []
+
+    def test_json_entries(self):
+        mod = _load_module()
+        content = json.dumps({
+            "name": "demo",
+            "version": "0.1.0",
+            "scripts": {"test": "vitest"},
+            "dependencies": {"react": "^18", "lodash": "^4"},
+            "devDependencies": {"vite": "^5"},
+        })
+        entries = mod._dep_entries(content, "package.json")
+        assert set(entries) == {
+            "dependencies:react",
+            "dependencies:lodash",
+            "devDependencies:vite",
+        }
+
+    def test_gemfile_entries(self):
+        mod = _load_module()
+        content = 'gem "rails"\ngem "rspec"\n'
+        entries = mod._dep_entries(content, "Gemfile")
+        assert len(entries) >= 2
 
 
 class TestSeverityForDelta:
@@ -1066,6 +700,57 @@ class TestBuildParser:
         assert ns.out_dir == "/o"
         assert ns.baseline_rev == "HEAD~1"
         assert ns.format == "json"
+
+
+class TestRenderMd:
+    """Coverage: render_md."""
+
+    def test_empty_report(self):
+        mod = _load_module()
+        summary = {
+            "metrics": {}, "suppressions": [],
+            "baseline": "v1", "baseline_sha": "abc123", "head_sha": "def456",
+        }
+        md = mod.render_md([], summary)
+        assert "# growth-audit report" in md
+        assert "No findings" in md
+
+    def test_with_findings(self):
+        mod = _load_module()
+        f = mod.hc.Finding(
+            leaf="growth-audit",
+            signal="RESTRUCTURE",
+            severity="medium",
+            path="<repo>",
+            line_start=0, line_end=0,
+            symbol="tracked_files_growth",
+            metric_name="tracked_files_growth",
+            metric_value=5.0, metric_threshold=0.0,
+            evidence_tool="git", evidence_raw='{"delta": 5}',
+            confidence="high",
+            suggested_action="Review growth",
+        )
+        summary = {
+            "metrics": {"tracked_files_growth": 5},
+            "suppressions": [],
+            "baseline": "v1", "baseline_sha": "abc", "head_sha": "def",
+        }
+        md = mod.render_md([f], summary)
+        assert "RESTRUCTURE" in md
+        assert "tracked_files_growth" in md
+
+    def test_with_suppressions(self):
+        mod = _load_module()
+        summary = {
+            "metrics": {"tracked_files_growth": 3},
+            "suppressions": [
+                {"metric": "tracked_files_growth", "delta": 3, "max_delta": 5, "reason": "ok"}
+            ],
+            "baseline": "v1", "baseline_sha": "abc", "head_sha": "def",
+        }
+        md = mod.render_md([], summary)
+        assert "Suppressions" in md
+        assert "tracked_files_growth" in md
 
 
 class TestRenderMdInProcess:
