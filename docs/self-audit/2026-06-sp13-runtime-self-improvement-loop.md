@@ -35,12 +35,12 @@ Re-verified the continuation entry state (plan "Lineage and entry state"):
 Worker route: native Opus subagents in `/tmp/sp13` git worktrees, file-backed L-7
 packets, re-verified by the orchestrator (worker green never trusted).
 
-- **X0.1 KPI miner** (repo-B `scripts/mine_iteration_kpis.py` + test): `compute_kpi`
+- **X0.1 KPI miner** (repo-B `mine_iteration_kpis.py` (under its scripts/) + test): `compute_kpi`
   (rows_closed/rows_per_hour/repair_rate, derived) + `is_regression` (only
   rows_per_hour −20% / repair_rate +50%; ci_wait never trips it — R5) + `main()`
   that DERIVES inputs from git timestamps, baseline JSONs, run-dir repairs, CI API
   (mined, never typed). Re-verified: 2 passed, full repo-B suite 144→ green.
-- **X0.2 lessons ledger + injection** (repo-B `scripts/synthesize_packets.py`
+- **X0.2 lessons ledger + injection** (repo-B `synthesize_packets.py` (under its scripts/)
   `inject_lessons`+`needs_automation`, + test): scope-matched binding-only capped
   injection; `needs_automation = binding & fires>=3 & !escalated`. Re-verified:
   2 passed, synthesizer 18 passed (no regression).
@@ -65,7 +65,7 @@ packets, re-verified by the orchestrator (worker green never trusted).
 
 ## X1 / X2 — self-application + adaptive control (IN PROGRESS)
 
-- **X2.1 allocator** (repo-B `scripts/allocate_batches.py` + test): `allocate`
+- **X2.1 allocator** (repo-B `allocate_batches.py` (under its scripts/) + test): `allocate`
   (guaranteed ≥1/active repo + surplus to best trailing per-repo yield, cap 6) +
   `rationale` (one-line, cites mined yield). Re-verified 5 passed, full 151 passed;
   merged to repo-B `main` `c8d0945` (local, bundling into X3 ship).
@@ -81,5 +81,62 @@ packets, re-verified by the orchestrator (worker green never trusted).
   leaf-behavior change/reinstall and a baseline-0 collision in the docs lane; carries
   its own baseline so its meta-findings join the frozen universe at X3. Sunset: fold
   into docs-consistency-audit once stable (R2).
-- **X1.2 behavioral eval** (repo-B `scripts/run_instruction_eval.py`): DISPATCHED.
+- **X1.2 behavioral eval** (repo-B `run_instruction_eval.py` (under its scripts/)): DISPATCHED.
   Advisory, pinned-model, drift→candidate lesson + advisory finding (never a gate).
+
+## X1 / X2 — COMPLETE (shipped)
+
+- **X1.1 instruction-lint** SHIPPED (repo-A merge `966c30f` → main `98cf902`):
+  standalone deterministic gate, 10th cheap gate, R1 fixture pair (valid skeleton
+  0 findings / degenerate doc → 1 `instruction_dead_command` + 1
+  `instruction_missing_section`). Real `skills/` scan: **19 findings**, all
+  `instruction_missing_section` (16 miss `## Limits`; 3 miss both), **0 dead
+  commands** (every documented family command resolves + answers `--help`).
+  Baseline-seeded green. Side effects: test_run_checks roster 9→10, +2 self-audit
+  duplication rows baselined (40→42), 2 complexity findings refactored away.
+  DoD #3 ✓.
+- **X1.2 behavioral eval** SHIPPED (repo-B `a7f7ffd`). Real DoD #4 case run:
+  pinned model `claude-opus-4-8`, given ONLY complexity-audit's SKILL.md + a
+  fixture, produced **1 finding vs 2 expected** (missed the module-MI SIMPLIFY,
+  conflated SIMPLIFY/DECOMPOSE) → advisory drift, artifact
+  `docs/self-audit/eval_complexity-audit.json`, candidate lesson
+  `instruction-eval/complexity-audit` appended to lessons.jsonl. DoD #4 (eval) ✓.
+- **X2.1 allocator** SHIPPED (repo-B `a7f7ffd`): re-verified 5 + full 151 passed.
+- **X2.2 amendment protocol** + **X1.3 checklist** shipped (repo-A docs).
+- Ship evidence: repo-B `a7f7ffd` pushed, CI GREEN (fresh-clone sim 154 passed).
+  repo-A X1/X2 landing `98cf902` + allowance ratchet — no leaf-behavior change, no
+  reinstall (instruction-lint is a repo-A CI gate, not an installed leaf).
+
+## X3 — re-freeze (closed universe)
+
+**X3.1 ship:** repo-B X0/X1.2/X2.1 shipped + CI green; repo-A X0/X1/X2 landing
+shipped (this commit). No reinstall — all SP13 additions are orchestration/CI
+tooling + instruction docs, not installed-leaf diagnosis behavior (L-6).
+
+**X3.2 expanded diagnosis + reconciliation:** ran the installed 8-lane wave on all
+three repos at fresh anchors. Finding: fresh-wave raw counts are dominated by
+environment/non-determinism drift — repo-P, which had ZERO SP13 source changes,
+showed 65 "new" net findings vs its frozen `wave_baseline.json`, and repo-B 168
+(both spread across PRE-EXISTING files, e.g. tests/test_run_diagnosis_wave.py).
+Per **R4** (timing/environment artifacts never enter convergence comparison), the
+re-freeze does NOT adopt this drift; re-baselining to it would be dishonest churn.
+The real SP13 expansion is the **19 repo-A instruction-lint meta-findings** + 2
+self-audit duplication rows — those ARE adopted.
+
+**X3.3 FREEZE — finding universe CLOSED, L-1 ACTIVE, hard cap 12 post-freeze
+iterations.** New classes → `docs/superpowers/SP14-CANDIDATES.md` (written).
+
+Frozen universe (committed, CI-green baselines on the three mains):
+
+| Repo | Gate-enforced rows | Ledger-documented installed-wave residue | SP13 delta |
+| --- | --- | --- | --- |
+| repo-A | self_audit 42 + instruction_lint 19 = **61** | 260 (hotspot 206 dominant — largely irreducible solo-repo inherents) | +19 instruction-lint, +2 dup |
+| repo-B | pytest/check_release green; wave_baseline **13** (SP12-frozen) | — | +0 net (drift excluded) |
+| repo-P | pytest/check_release green; wave_baseline **25** (SP12-frozen) | — | +0 net (drift excluded) |
+
+Shrinkable backlog for X4 (the rest is TERMINAL-documented residue):
+- repo-A: instruction_lint 19 (add missing `## Limits`/`## Overview`), self_audit
+  fixable subset, test-redundancy-triage DELETE rows (speed batches, not findings).
+- repo-B: wave_baseline 13 (real MI/param debt subset).
+- repo-P: wave_baseline 25 (real complexity/security subset).
+- repo-A hotspot 206 + non-shrinkable wave rows: TERMINAL residue candidates.

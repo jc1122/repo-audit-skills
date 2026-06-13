@@ -20,14 +20,14 @@
     },
     {
       "metric": "docs_loc_growth",
-      "max_delta": 1050,
-      "reason": "SP13 bootstrap + SP12 closeout + X0-X3 process docs since v0.5.21: SP12 convergent-loop ledger closeout, the SP13 plan + launch prompt, the X0 two-tier lessons ledger, and the X1/X2/X3 process docs (SP13 runtime-self-improvement ledger, self-application checklist, amendment-proposal template, behavioral-eval artifact, and the X3 freeze SP14-CANDIDATES doc). Documentation/evidence only; no production source LOC.",
+      "max_delta": 1400,
+      "reason": "SP13 bootstrap + SP12 closeout + X0-X4 process docs since v0.5.21: the SP13 plan + launch prompt, the X0 lessons ledger, the X1/X2/X3 process docs, and the L-10-mandated per-iteration SP13 ledger appends (KPI rows, lessons added/promoted/escalated, allocation rationale, self-application results) across the post-freeze burn-down. Documentation/evidence only; no production source LOC. Release-expiring at the X5 repo-A release.",
       "expires": "next-release"
     },
     {
       "metric": "net_loc_growth",
-      "max_delta": 1760,
-      "reason": "SP13 bootstrap + X0-X3 keystone/harness net LOC since v0.5.21: the docs above plus the X0 worker_worktree_setup.sh + iteration_kpis.jsonl, the X1.1 instruction-lint checker + its tests + baseline + run_checks.py registration + check_budget/.gitignore/self_audit_baseline bookkeeping, accepted SP12 triage_redundancy.py shrink, and these allowance refreshes. No new audited-leaf production source code.",
+      "max_delta": 2150,
+      "reason": "SP13 bootstrap + X0-X4 keystone/harness net LOC since v0.5.21: the docs above (incl. the per-iteration L-10 ledger appends across the post-freeze burn-down) plus the X0 worker_worktree_setup.sh + iteration_kpis.jsonl, the X1.1 instruction-lint checker + tests + baseline + run_checks.py registration + bookkeeping, accepted SP12 triage_redundancy.py shrink, and these allowance refreshes. Post-freeze process batches touch orchestration/instructions only (R6) and source ratchets shrink-only, so growth here is ledger/tooling evidence, not audited-leaf source. Release-expiring at the X5 repo-A release.",
       "expires": "next-release"
     }
   ]
