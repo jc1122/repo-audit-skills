@@ -27,6 +27,7 @@ SCRIPTS_DIR = ROOT / "scripts"
 CHEAP: list[tuple[str, str]] = [
     ("vendored", "scripts/check_vendored_common.py"),
     ("fixtures", "scripts/check_skill_fixtures.py"),
+    ("growth", "scripts/check_growth.py"),
     ("release", "scripts/check_release.py"),
     ("selfaudit", "scripts/check_self_audit.py"),
     ("security", "scripts/check_security_audit.py"),

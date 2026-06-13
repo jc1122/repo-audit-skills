@@ -1,6 +1,7 @@
 {
   "vendored": 10,
   "fixtures": 15,
+  "growth": 15,
   "release": 10,
   "selfaudit": 20,
   "security": 15,
