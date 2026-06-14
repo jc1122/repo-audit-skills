@@ -1,6 +1,6 @@
 ---
 name: perf-smell-audit
-version: 0.7.2
+version: 0.7.3
 description: >
   Deterministic, advisory algorithmic performance-smell audit for Python. Wraps
   perflint (via pylint) to emit PERF findings (loop-invariant computation, wrong

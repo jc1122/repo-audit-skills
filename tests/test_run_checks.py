@@ -30,7 +30,7 @@ def test_missing_budget_entry_is_a_violation():
 
 
 def test_load_budget_returns_dict_when_file_exists(tmp_path, monkeypatch):
-    budget_data = {"vendored": 10, "pytest": 60}
+    budget_data = {"vendored": 10, "dummy": 60}
     budget_file = tmp_path / "check_budget.json"
     budget_file.write_text(json.dumps(budget_data))
     monkeypatch.setattr(rc, "SCRIPTS_DIR", tmp_path)
@@ -292,7 +292,7 @@ def test_main_fails_on_budget_violation(monkeypatch, capsys):
     assert "FAILED" not in out  # no functional failures
     assert "OVER BUDGET" in out
     assert "50.000s > 10.000s" in out
-    assert "12 over-budget" in out
+    assert "11 over-budget" in out
     assert "0 failed" in out
 
 
@@ -318,12 +318,12 @@ def test_main_writes_timings(tmp_path, monkeypatch, capsys):
 # ------------------------------------------------------------------ constants
 
 
-def test_cheap_has_8_entries():
+def test_cheap_has_10_entries():
     assert len(rc.CHEAP) == 10
 
 
-def test_heavy_has_2_entries():
-    assert len(rc.HEAVY) == 2
+def test_heavy_has_1_entry():
+    assert len(rc.HEAVY) == 1
 
 
 def test_cheap_names_match_budget_keys():
@@ -335,4 +335,4 @@ def test_cheap_names_match_budget_keys():
 
 
 def test_heavy_names_match_budget_keys():
-    assert {name for name, _ in rc.HEAVY} == {"coverage", "pytest"}
+    assert {name for name, _ in rc.HEAVY} == {"coverage"}
