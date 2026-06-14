@@ -5,24 +5,6 @@
       "max_delta": 0,
       "reason": "Dependency growth is never allowed under the stdlib-only rule. Any positive delta must emit an overflow finding. Zero tolerance for new runtime dependencies.",
       "expires": "never"
-    },
-    {
-      "metric": "tracked_files_growth",
-      "max_delta": 1,
-      "reason": "Phase 2 accept-migration: added .repo-audit/accept.json (the portable acceptance policy that replaces the self-audit baseline) net of the two deleted legacy files (self_audit_baseline.json, remediation_excludes.json). Intentional schema migration.",
-      "expires": "next repo-A release (re-baseline growth at the new tag + purge)"
-    },
-    {
-      "metric": "net_loc_growth",
-      "max_delta": 380,
-      "reason": "Phase 2 accept-migration: the expanded .repo-audit/accept.json (41 structured entries vs the flat 40-row baseline) plus the check_self_audit.py reader, the reader tests, and these allowances, net of the two deleted legacy files. Same 40 finding identities (count-neutral); the LOC delta is purely the richer JSON schema.",
-      "expires": "next repo-A release (re-baseline growth at the new tag + purge)"
-    },
-    {
-      "metric": "docs_loc_growth",
-      "max_delta": 20,
-      "reason": "Phase 2 accept-migration: the dated CHANGELOG entry plus the SP15-candidate note rewrite. Intentional release docs.",
-      "expires": "next repo-A release (re-baseline growth at the new tag + purge)"
     }
   ]
 }
