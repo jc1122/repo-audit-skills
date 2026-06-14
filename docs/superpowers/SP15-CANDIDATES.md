@@ -14,14 +14,17 @@ discovered mid-run is parked here and never folded into the active SP14 run (L-1
   into the MPRR engine.
 
 ## Discovered during SP14 (append as encountered)
-- **Auto-consume the remediation-scope policy in the engine.** SP14 added a durable
-  machine-readable remediation-scope policy (excluding intentional `tests/fixtures/`).
-  Phase 2 folded that policy into the portable acceptance file under `.repo-audit` as
-  remediation-stage `path` entries (the standalone `remediation_excludes.json` was retired),
-  but the MPRR engine's `mprr_normalize`/`mprr_partition` step still does not load it — an
-  orchestrator has to apply it when building the audit scope. Wiring the engine to self-filter
-  excluded paths via the acceptance policy (so intentional residue is never even proposed) is
-  the next mechanization step: it converts a per-run judgment into permanent enforced state.
+- ~~**Auto-consume the remediation-scope policy in the engine.**~~ **RESOLVED (by design — SP15
+  convergent-family Task 6).** SP14 added a durable machine-readable remediation-scope policy
+  (excluding intentional `tests/fixtures/`). Phase 2 folded that policy into the portable
+  acceptance file under `.repo-audit` as remediation-stage `path` entries (the standalone
+  `remediation_excludes.json` was retired), and `mprr_run._cmd_plan` already loads
+  `.repo-audit/accept.json` and filters excluded paths BEFORE calling `normalize()`. Decision:
+  the filter stays at the orchestration boundary and is NOT pushed into `mprr_normalize`/
+  `mprr_partition` — those modules are pure (`conflicts`/`eligible`, no I/O) and `normalize()`
+  takes an already-loaded list, so injecting policy file-loading would break their contract.
+  "Auto-consume in the engine" is therefore satisfied at the correct layer; no
+  module-purity-breaking move is warranted.
 - ~~Duplicate-named test classes in `skills/growth-audit/tests/test_growth_audit.py`~~ **RESOLVED
   (commit `1558303`).** The 8 shadowed classes + 1 function were a rewrite-left-behind: un-shadowed
   and run, 33 methods failed (obsolete API) → deleted; the 2 still-passing gap-closing tests
