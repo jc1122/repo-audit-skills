@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.2 - 2026-06-14
+
+Convergent-family Phase 1 bookkeeping (family version sync 0.7.1 → 0.7.2 to anchor
+the family's self-contained convergence-gate CI pins). No leaf code changed. The
+orchestrator now runs `perf-smell-audit` as a deterministic wave lane against every
+target, so repo-A is perf-smell-audited via the wave; adding perf-smell to repo-A's
+*separate* self-audit engine was measured (589 findings over `skills`/`scripts`/`shared`)
+and deferred to the Phase-2 self-application campaign (`docs/superpowers/SP15-CANDIDATES.md`)
+to keep Phase 1 bounded. SP15 "auto-consume the remediation-scope policy in the engine"
+marked resolved-by-design (the filter correctly lives at the `mprr_run` orchestration
+boundary). Lesson LM2 escalated (fixed in repo-B's KPI miner).
+
 ## 0.7.1 - 2026-06-14
 
 Self-audit baseline migrated onto the portable acceptance schema (Phase 2). The
