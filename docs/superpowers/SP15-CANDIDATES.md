@@ -33,3 +33,18 @@ discovered mid-run is parked here and never folded into the active SP14 run (L-1
   audits production code only (`skills/*/scripts`), never `tests/`. SP14 cleaned `tests/`
   unused imports/locals opportunistically, but there is no standing gate keeping test dirs
   clean. Candidate: an optional tests-scoped dead-code ratchet (excluding fixtures).
+- **repo-A self-gate perf-smell parity is deferred to Phase 2.** SP15 (convergent-family
+  Phase 1) registered `perf-smell-audit` as the orchestrator's 9th deterministic wave lane,
+  so repo-A IS perf-smell-audited whenever the wave runs against it. Adding perf-smell to
+  repo-A's *separate* self-audit engine (`scripts/self_audit.py`, which audits `skills/*/scripts`
+  for code-health) was MEASURED first: perf-smell reports **589 findings** over repo-A's
+  production scope (`skills` + `scripts` + `shared`) — far beyond a bounded Phase-1 burn-down.
+  Per the plan's measure-then-decide rule, self-gate parity is deferred to the Phase-2
+  self-application campaign and is NOT added to `self_audit.py` in Phase 1 (keeping Phase 1
+  bounded). Root cause of the volume: `perf-smell-audit` keeps perflint's entire
+  `W81/W82/W83/W84/R81/R82` id range despite its docstring claiming a "high-precision subset
+  only" — the noisy `W8201` (loop-invariant over-approximation) and `W8202` (loop-global-usage)
+  dominate. **Standing candidate:** narrow the leaf to its advertised high-signal subset (e.g.
+  wrong-container `W8301` + true loop-invariants) so the family converges with few/zero
+  perf-smell accepts instead of large suppression ledgers (repo-B already carries 43 such
+  accepts from this phase's Task 1).
