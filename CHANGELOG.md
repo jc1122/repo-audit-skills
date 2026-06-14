@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.3 - 2026-06-15
+
+Phase 2 B0 (audit-budget perf): unwired the redundant uninstrumented full-pytest gate from
+the default `npm run check` chain. The coverage gate already runs all 20 leaf suites and
+fails on any suite failure; the full-pytest gate re-ran the same suites for a duplicate
+pass/fail with no baseline of its own (~175s). It is now opt-in via `npm run check:pytest`.
+Measured with `perf-benchmark` (first self-application on the family): `npm run check` p50
+**371.0s → 181.1s** (−51.2% median win; `verify_win` accept; suite green). No leaf code
+changed. SP15: recorded the deferral of `perf-smell-audit` narrowing (off the wall-clock
+critical path; its own coordinated multi-repo spec).
+
 ## 0.7.2 - 2026-06-14
 
 Convergent-family Phase 1 bookkeeping (family version sync 0.7.1 → 0.7.2 to anchor

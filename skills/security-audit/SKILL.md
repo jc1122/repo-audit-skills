@@ -1,6 +1,6 @@
 ---
 name: security-audit
-version: 0.7.2
+version: 0.7.3
 description: >
   Deterministic, advisory security audit for Python. Wraps a pinned bandit
   (bandit==1.9.4) static analysis run and emits SECURITY findings (shared
