@@ -39,7 +39,7 @@ CHEAP: list[tuple[str, str]] = [
 
 HEAVY: list[tuple[str, str]] = [
     ("coverage", "scripts/check_coverage_gap.py"),
-    ("pytest", "scripts/check_full_pytest.py"),
+    # full-pytest is opt-in only (npm run check:pytest); coverage already gates green.
 ]
 
 # ------------------------------------------------------------------ budget helpers
