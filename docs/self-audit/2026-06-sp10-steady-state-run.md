@@ -24,7 +24,7 @@ No stale-skill purge was performed.
 
 | Repo | Expected | Actual | Evidence |
 | --- | ---: | ---: | --- |
-| repo-A selfaudit | `106 -> 105±` | `106 -> 92` | `scripts/self_audit_baseline.json`; `npm run check` passes `92/92` |
+| repo-A selfaudit | `106 -> 105±` | `106 -> 92` | `self_audit_baseline.json`; `npm run check` passes `92/92` |
 | repo-B wave | `13 -> ~9` | `13 -> 9` | `wave_baseline.json`; two wave gates pass `9/9` |
 | repo-P wave | `59 -> actual` | `59 -> 55` | `wave_baseline.json`; two wave gates pass `55/55` |
 

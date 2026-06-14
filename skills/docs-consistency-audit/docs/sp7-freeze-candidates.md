@@ -12,7 +12,7 @@ after review and before the freeze gate.
 Justification: this is the established single-file-tool module-MI freeze
 idiom. Every leaf in this family ships one self-contained audit script by
 design, and all 14 sibling single-file tools already carry a frozen
-module-level `maintainability_index` finding in `scripts/self_audit_baseline.json`
+module-level `maintainability_index` finding in `self_audit_baseline.json`
 at comparable MI values (24–38, e.g. `structure_audit.py` 24.3,
 `complexity_audit.py` 37.6). Radon's module MI is dominated by total
 Halstead volume and SLOC, so a ~600-line tool cannot reach MI 65 without

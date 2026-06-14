@@ -516,7 +516,7 @@ Accepted implementation:
   loop values to avoid late-binding lint regressions.
 - Removed the stale duplicate baseline identity
   `skills/test-redundancy-triage/scripts/triage_redundancy.py#3692f2649583`
-  from `scripts/self_audit_baseline.json` in the same change.
+  from `self_audit_baseline.json` in the same change.
 - This is a mechanical duplicate extraction, so it used golden-suite gate
   evidence rather than a behavior-bearing mutation gate.
 
@@ -543,7 +543,7 @@ Accepted implementation:
 - Added `CoverageCommandContext` and `run_pytest_coverage` so the coverage
   `pytest` command and follow-up `coverage json` export live in one helper.
 - Removed three stale baseline identities from
-  `scripts/self_audit_baseline.json` in the same change:
+  `self_audit_baseline.json` in the same change:
   `collect_suite_coverage_union` `function_nloc`,
   `run_single_test_coverage` `function_nloc`, and duplicate identity
   `skills/test-redundancy-triage/scripts/triage_redundancy.py#db2c35610dec`.
@@ -1081,7 +1081,7 @@ Accepted batch 1:
   `skills/test-audit-pipeline/scripts/audit_pipeline.py` into focused Markdown
   section helpers while preserving the report text.
 - Removed stale `stage_report` `cyclomatic_complexity` and `function_nloc`
-  identities from `scripts/self_audit_baseline.json`.
+  identities from `self_audit_baseline.json`.
 - Committed on repo-A main as `ad82306`
   (`refactor(test-audit): split stage report rendering`).
 
@@ -1092,7 +1092,7 @@ Accepted batch 2:
   `skills/test-audit-pipeline/scripts/audit_pipeline.py` into argument-group
   helpers while preserving CLI options.
 - Removed the stale `parse_args` `function_nloc` identity from
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Committed on repo-A main as `279c979`
   (`refactor(test-audit): split parser construction`).
 
@@ -1283,7 +1283,7 @@ Accepted batch 2:
 - Grouped test-audit-pipeline stage-runner inputs into `StageRuntime` and
   stage config objects.
 - Removed the stale `stage_coverage`, `stage_tqa`, and `stage_triage`
-  parameter-count identities from `scripts/self_audit_baseline.json`.
+  parameter-count identities from `self_audit_baseline.json`.
 - Committed on repo-A main as `478a343`
   (`refactor(test-audit): group stage runner inputs`).
 
@@ -1450,7 +1450,7 @@ Accepted batch 1:
 - Worktree: `/tmp/sp11-attempt-iter6-repo-a-batch1`.
 - Grouped code-health pipeline leaf-run inputs into `LeafRunContext`.
 - Removed stale `_run_one` and `run_leaves` parameter-count identities from
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Committed on repo-A main as `802cf88`
   (`refactor(code-health): group leaf run context`).
 
@@ -1461,7 +1461,7 @@ Accepted batch 2:
   functions while preserving the decision contract.
 - Added focused gating tests for type-error and high-severity threshold cases.
 - Removed the stale `decide` cyclomatic-complexity identity from
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Committed on repo-A main as `075db6f`
   (`refactor(code-health): split decision gate stats`).
 
@@ -1643,7 +1643,7 @@ Accepted batch:
   behind compatibility wrappers while preserving existing public call shapes.
 - Removed stale `build_summary` cyclomatic-complexity and parameter-count
   identities and the stale `stage_report` parameter-count identity from
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Committed on repo-A main as `f86aeb3`
   (`refactor(test-audit): group report inputs`).
 
@@ -2774,7 +2774,7 @@ Repo-A:
   focused helpers while preserving public CLI behavior and fixture decisions.
 - The accepted source batch touched
   `skills/test-redundancy-triage/scripts/triage_redundancy.py` and
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Focused test-redundancy-triage tests passed before and after the batch:
   `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no` ->
   208 passed.
@@ -2919,7 +2919,7 @@ Repo-A:
   context objects while preserving public CLI behavior and fixture decisions.
 - The accepted source batches touched
   `skills/test-redundancy-triage/scripts/triage_redundancy.py` and
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Focused test-redundancy-triage tests passed before the edits and after both
   accepted batches:
   `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no` ->
@@ -3075,7 +3075,7 @@ Repo-A:
 - Batch 1 touched
   `skills/test-redundancy-triage/scripts/triage_redundancy.py`,
   `skills/test-redundancy-triage/tests/test_more_coverage.py`, and
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Focused test-redundancy-triage tests passed before and after the batch:
   `python3 -m pytest skills/test-redundancy-triage/tests -q --color=no` ->
   208 passed.
@@ -3093,7 +3093,7 @@ Repo-A:
 - Batch 2 split quality-audit lint and type finding construction into focused
   helpers while preserving byte-identical dirty-fixture CLI output.
 - Batch 2 touched `skills/quality-audit/scripts/quality_audit.py` and
-  `scripts/self_audit_baseline.json`.
+  `self_audit_baseline.json`.
 - Focused quality-audit tests passed before and after the batch:
   `python3 -m pytest skills/quality-audit/tests -q --color=no` -> 15 passed.
 - Dirty-fixture CLI output compared byte-identical before and after the split.
@@ -3237,7 +3237,7 @@ Repo-A batch 1:
   - `38bd5a5` (`refactor(triage): split coverage mutation helpers`).
 - Touched files:
   - `skills/test-redundancy-triage/scripts/triage_redundancy.py`.
-  - `scripts/self_audit_baseline.json`.
+  - `self_audit_baseline.json`.
 - Removed structural identities:
   - `collect_node_coverage_runs` `function_nloc`.
   - `ensure_coverage_tool` `function_nloc`.
@@ -3259,7 +3259,7 @@ Repo-A batch 2:
   - `08332b3` (`refactor(triage): split mutation probe runner`).
 - Touched files:
   - `skills/test-redundancy-triage/scripts/triage_redundancy.py`.
-  - `scripts/self_audit_baseline.json`.
+  - `self_audit_baseline.json`.
 - Removed structural identity:
   - `run_mutation_probe_kills` `function_nloc`.
 - Focused test-redundancy-triage tests passed before and after:

@@ -1,0 +1,535 @@
+{
+  "version": 1,
+  "accept": [
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "scripts/check_coverage_gap.py",
+        "symbol": "scripts/self_audit.py#d059365f82b8",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "shared/health_common.py",
+        "symbol": "skills/complexity-audit/scripts/health_common.py#635d9c1b9352",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/code-health-audit-pipeline/scripts/code_health_pipeline.py",
+        "symbol": "skills/complexity-audit/scripts/complexity_audit.py#3bd23a989fe1",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/complexity-audit/scripts/complexity_audit.py",
+        "symbol": "_lizard_findings",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/complexity-audit/scripts/complexity_audit.py",
+        "symbol": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py#c09a7e1f2987",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/complexity-audit/scripts/complexity_audit.py",
+        "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py#c3e0219b6bf5",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/complexity-audit/scripts/complexity_audit.py",
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py#043a47f8bef7",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/complexity-audit/scripts/complexity_audit.py",
+        "symbol": "skills/structure-audit/scripts/structure_audit.py#65f4db31365c",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+        "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py#a995066e7246",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+        "symbol": "skills/dead-code-audit/scripts/dead_code_audit.py#aaab5892d8e4",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py#359432191f23",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py#a7813edcbd61",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py#bd0f3cd180bb",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/coverage-gap-audit/scripts/coverage_gap_audit.py",
+        "symbol": "skills/structure-audit/scripts/structure_audit.py#820085a028b8",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py#9a9e7245a23f",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+        "symbol": "skills/duplication-audit/scripts/duplication_audit.py#bdde675cf7b2",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+        "symbol": "skills/quality-audit/scripts/quality_audit.py#3cb82d1b10e3",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+        "symbol": "skills/quality-audit/scripts/quality_audit.py#55b17679bf57",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+        "symbol": "skills/quality-audit/scripts/quality_audit.py#71284d1a2702",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/dead-code-audit/scripts/dead_code_audit.py",
+        "symbol": "skills/quality-audit/scripts/quality_audit.py#96bc26976698",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/duplication-audit/scripts/duplication_audit.py",
+        "symbol": "skills/hotspot-audit/scripts/hotspot_audit.py#e4ffdfab3447",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/hotspot-audit/scripts/_audit_git.py",
+        "symbol": "skills/repo-hygiene-audit/scripts/_git_utils.py#eb662e6faa61",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "duplication",
+        "path": "skills/repo-hygiene-audit/scripts/_thresholds.py",
+        "symbol": "skills/security-audit/scripts/_reporting.py#b668078b4ec1",
+        "metric": "duplicate_tokens"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+        "symbol": "main",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-audit-pipeline/scripts/audit_pipeline.py",
+        "symbol": "main",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-quality-assurance/scripts/audit_test_quality.py",
+        "symbol": "<module>",
+        "metric": "maintainability_index"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "bool_low_signal",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "main",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "main.evaluate",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "run_strict_delete_gate",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "write_branch_equiv_artifacts",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "write_confidence_gate_artifact",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "write_coverage_artifacts",
+        "metric": "cyclomatic_complexity"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "main",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "main.evaluate",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "run_strict_delete_gate",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "write_branch_equiv_artifacts",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "write_confidence_gate_artifact",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "write_coverage_artifacts",
+        "metric": "function_nloc"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "finding",
+        "leaf": "complexity",
+        "path": "skills/test-redundancy-triage/scripts/triage_redundancy.py",
+        "symbol": "<module>",
+        "metric": "maintainability_index"
+      },
+      "reason": "migrated accepted residual \u2014 see the repo's frozen ledger",
+      "applies": [
+        "report"
+      ]
+    },
+    {
+      "match": {
+        "kind": "path",
+        "glob": "**/tests/fixtures/**"
+      },
+      "reason": "Files under tests/fixtures/ are intentionally-dirty inputs whose unused imports / dead functions / unused locals are the SUBJECT of the audit leaves' own detection tests (e.g. dead-code-audit's test_dirty_fixture_flags_unused_import_and_local_via_ruff asserts ruff flags `import os` and `unused_local`). Removing them would break those tests. They must stay dirty; never remediate them.",
+      "applies": [
+        "remediation"
+      ]
+    }
+  ]
+}
