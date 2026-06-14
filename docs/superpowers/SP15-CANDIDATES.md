@@ -51,3 +51,14 @@ discovered mid-run is parked here and never folded into the active SP14 run (L-1
   wrong-container `W8301` + true loop-invariants) so the family converges with few/zero
   perf-smell accepts instead of large suppression ledgers (repo-B already carries 43 such
   accepts from this phase's Task 1).
+  - **Phase 2 · B0 decision (2026-06-15): DEFERRED — not on the wall-clock critical path.**
+    B0 (the audit-budget perf prerequisite) considered narrowing perf-smell and deferred it.
+    The family's `npm run check` floor was repo-A's **coverage (188.5s) + full-pytest (183.4s)**
+    double test run, NOT the perf-smell lane (which runs inside the already-fast Tier-1 wave),
+    so narrowing would not move the budget — it improves convergence *honesty*, a different
+    objective. It is also a coordinated multi-repo change (repo-A leaf re-version → re-pin
+    repo-B/repo-P gate tags → prune the 77 family-wide accepts → reconverge → update leaf
+    tests) that exceeds B0's "one bounded win, no broad restructure" scope and needs its own
+    brainstorm → plan → ship. B0 instead shipped the bounded gate-runner win (unwire the
+    redundant full-pytest gate: `npm run check` 371→181s, −51%). Narrowing remains a standing
+    candidate for its own spec.
