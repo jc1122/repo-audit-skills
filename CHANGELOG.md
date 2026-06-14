@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.1 - 2026-06-14
+
+Self-audit baseline migrated onto the portable acceptance schema (Phase 2). The
+convergence gate (`scripts/check_self_audit.py`) now reads its frozen floor from
+the report-stage `finding` entries in `.repo-audit/accept.json` instead of the
+legacy flat `scripts/self_audit_baseline.json`; the `scripts/remediation_excludes.json`
+fixtures policy is folded in as a remediation-stage `path` entry. Provably
+count-neutral: the same 40 finding identities (0 new / 0 stale). Both legacy
+files removed; `check_release` repointed to require the acceptance policy. Family
+version sync 0.7.0 → 0.7.1.
+
 ## 0.7.0 - 2026-06-14
 
 New leaf: **perf-smell-audit** — a deterministic, advisory algorithmic

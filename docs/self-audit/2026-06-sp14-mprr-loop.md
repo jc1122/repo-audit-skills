@@ -216,7 +216,7 @@ marked the intentional fixtures, dogfooding the engine on repo-A:
   those differing scenarios; the right fix (rename-and-revive vs delete) needs human judgment.
   A first worker (W5) *did* delete them; I **discarded that branch** as over-reach and re-ran a
   conservative worker. (Evidence the scope discipline works: the engine + review caught it.)
-- **Durable fixture marking:** committed `scripts/remediation_excludes.json` — a machine-readable
+- **Durable fixture marking:** committed `remediation_excludes.json` — a machine-readable
   policy excluding `**/tests/fixtures/**` from remediation, with the reason (the fixtures are
   detection-coupled: `dead-code-audit`'s own `test_dirty_fixture_flags_unused_import_and_local_via_ruff`
   asserts ruff flags them, so they must stay dirty). This converts the per-run "these are

@@ -14,12 +14,14 @@ discovered mid-run is parked here and never folded into the active SP14 run (L-1
   into the MPRR engine.
 
 ## Discovered during SP14 (append as encountered)
-- **Auto-consume `scripts/remediation_excludes.json` in the engine.** SP14 added a durable
-  machine-readable remediation-scope policy (excluding intentional `tests/fixtures/`), but the
-  MPRR engine's `mprr_normalize`/`mprr_partition` step does not yet load it — an orchestrator
-  still has to apply it when building the audit scope. Wiring the engine to self-filter
-  excluded paths (so intentional residue is never even proposed) is the next mechanization
-  step: it converts a per-run judgment into permanent enforced state.
+- **Auto-consume the remediation-scope policy in the engine.** SP14 added a durable
+  machine-readable remediation-scope policy (excluding intentional `tests/fixtures/`).
+  Phase 2 folded that policy into the portable acceptance file under `.repo-audit` as
+  remediation-stage `path` entries (the standalone `remediation_excludes.json` was retired),
+  but the MPRR engine's `mprr_normalize`/`mprr_partition` step still does not load it — an
+  orchestrator has to apply it when building the audit scope. Wiring the engine to self-filter
+  excluded paths via the acceptance policy (so intentional residue is never even proposed) is
+  the next mechanization step: it converts a per-run judgment into permanent enforced state.
 - ~~Duplicate-named test classes in `skills/growth-audit/tests/test_growth_audit.py`~~ **RESOLVED
   (commit `1558303`).** The 8 shadowed classes + 1 function were a rewrite-left-behind: un-shadowed
   and run, 33 methods failed (obsolete API) → deleted; the 2 still-passing gap-closing tests

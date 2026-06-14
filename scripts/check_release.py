@@ -98,7 +98,7 @@ def check_package(defects: list[str]) -> str:
         "scripts/check_vendored_common.py",
         "scripts/self_audit.py",
         "scripts/check_self_audit.py",
-        "scripts/self_audit_baseline.json",
+        ".repo-audit/accept.json",
         "scripts/check_coverage_gap.py",
         "scripts/coverage_gap_baseline.json",
         "scripts/gate_common.py",
