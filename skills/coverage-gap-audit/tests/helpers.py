@@ -1,4 +1,3 @@
-import importlib.util
 import json
 import subprocess
 import sys
@@ -8,12 +7,13 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = SKILL_ROOT / "scripts" / "coverage_gap_audit.py"
 FIXTURES = SKILL_ROOT / "tests" / "fixtures"
 
+# C3 pilot: normal import (not spec_from_file) for mutmut — see c3-evidence
+sys.path.insert(0, str(SKILL_ROOT / "scripts"))
+
 
 def load_module():
-    spec = importlib.util.spec_from_file_location("coverage_gap_audit", SCRIPT)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    import coverage_gap_audit
+    return coverage_gap_audit
 
 
 def run_cli(*args):
