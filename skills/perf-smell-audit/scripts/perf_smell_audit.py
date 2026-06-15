@@ -1,7 +1,11 @@
 """Static algorithmic-smell audit: wrap perflint (via pylint) → PERF findings.
 
 Deterministic, advisory, never mutates source. High-precision subset only —
-wrong-container, loop-invariant, and related performance anti-patterns.
+wrong-container, redundant-cast, dict-iterator, memoryview, and the
+deterministic list/comprehension refactors. The loop-invariant-checker's
+heuristic family (loop-invariant-statement, loop-global-usage,
+dotted-import-in-loop) is excluded: it over-approximates and yields false
+positives, not actionable signal.
 """
 from __future__ import annotations
 
@@ -16,10 +20,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import health_common as hc  # noqa: E402
 
 LEAF = "perf-smell"
-# perflint reserves the 8xxx message range; we keep ONLY those ids. (`pylint
-# --enable` takes message ids, not a plugin name, and pylint always emits its own
-# fatals/syntax errors, which start with F/E and are dropped by this prefix filter.)
-_PERFLINT_PREFIXES = ("W81", "W82", "W83", "W84", "R81", "R82")
+# perflint's high-precision, deterministic message ids only. The loop-invariant
+# checker's heuristic family is EXCLUDED — W8201 (loop-invariant-statement)
+# over-approximates (flags loop-VARIANT expressions as invariant), and W8202
+# (loop-global-usage) / W8205 (dotted-import-in-loop) are micro-opts in
+# I/O-bound cold paths; together they produced 49 false-positive accepts
+# family-wide with zero genuine fixes (Phase-3 C2). R8203 (loop-try-except) is
+# Python <3.11 only. Kept: concrete container/cast/iterator checks (W8101,
+# W8102), memoryview-over-bytes (W8204), and the deterministic list/comprehension
+# refactors (W8301, W8401, W8402, W8403) — these caught genuine fixes.
+_PERFLINT_HIGH_PRECISION = frozenset(
+    {"W8101", "W8102", "W8204", "W8301", "W8401", "W8402", "W8403"}
+)
 
 
 class ToolError(RuntimeError):
@@ -84,8 +96,8 @@ def analyze_tree(root: str | Path, source_prefixes: list[str]) -> list[hc.Findin
     findings: list[hc.Finding] = []
     for msg in _run_perflint(files, root):
         code = msg.get("message-id", "") or ""
-        if not code.startswith(_PERFLINT_PREFIXES):
-            # keep only perflint's own messages; drop pylint core + syntax errors
+        if code not in _PERFLINT_HIGH_PRECISION:
+            # keep only perflint's high-precision ids; drop heuristic + pylint core
             continue
         findings.append(
             hc.Finding(
