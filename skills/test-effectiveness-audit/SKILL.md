@@ -1,6 +1,6 @@
 ---
 name: test-effectiveness-audit
-version: 0.7.4
+version: 0.7.5
 description: >
   Deterministic, advisory mutation-testing audit for Python. Wraps mutmut==3.6.0
   to measure per-module mutation kill rates, emitting TEST findings (shared
