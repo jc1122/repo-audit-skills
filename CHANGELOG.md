@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.4 - 2026-06-15
+
+Phase 3 C1: fixed the `test-audit-pipeline` umbrella's coverage stage, which hardcoded
+`pytest-xdist`'s `-n 0` flag and failed (exit 4, `unrecognized arguments: -n`) on the family
+repos that do not install xdist. The stage now probes the target interpreter and only passes
+`-n 0` when the xdist plugin is importable; otherwise it omits the flag (behavior-equivalent —
+default pytest runs serially in-process). No xdist dependency added; TQA/triage stages and the
+CLI surface are unchanged. The umbrella is a Tier-2 advisory lane (not in the convergence wave or
+the coverage-gap gate), so repo-B/repo-P pins are unaffected.
+
 ## 0.7.3 - 2026-06-15
 
 Phase 2 B0 (audit-budget perf): unwired the redundant uninstrumented full-pytest gate from
