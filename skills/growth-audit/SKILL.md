@@ -1,6 +1,6 @@
 ---
 name: growth-audit
-version: 0.7.4
+version: 0.7.5
 description: >
   Deterministic, advisory surface-growth audit between git revisions.
   Computes tracked-files, net-LOC, docs-LOC, dependency-declaration,

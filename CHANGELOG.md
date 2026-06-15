@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.5 - 2026-06-15
+
+Phase 3 C2: narrowed `perf-smell-audit` to perflint's high-precision message ids. The
+over-approximating loop-invariant-checker heuristics — W8201 (loop-invariant-statement, flags
+loop-VARIANT expressions), W8202 (loop-global-usage), W8205 (dotted-import-in-loop) — plus the
+Python<3.11-only R8203 are now excluded; they produced 49 false-positive accepts family-wide
+(repo-B 29 + repo-P 20) with zero genuine fixes. The leaf keeps the concrete deterministic checks
+(W8101 unnecessary-list-cast, W8102 incorrect-dictionary-iterator, W8204 memoryview-over-bytes) and
+the list/comprehension refactors that caught real improvements (W8301, W8401, W8402, W8403).
+Docstring + SKILL.md scope updated for honesty. perf-smell is a convergence-wave lane → repo-B/repo-P
+re-pin their gate clone to v0.7.5 and prune the now-stale accepts.
+
 ## 0.7.4 - 2026-06-15
 
 Phase 3 C1: fixed the `test-audit-pipeline` umbrella's coverage stage, which hardcoded
