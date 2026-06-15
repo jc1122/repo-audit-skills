@@ -123,6 +123,55 @@ def _read_json(path: Path) -> dict[str, Any] | None:
 # ---------------------------------------------------------------------------
 
 
+def _xdist_available(python: str) -> bool:
+    """Return True if the target interpreter can import the xdist plugin.
+
+    Probes ``python`` (which may differ from ``sys.executable`` under
+    ``--python``); any launch failure is treated as "absent" so the caller
+    omits the xdist-only ``-n`` flag.
+    """
+    probe = (
+        "import importlib.util, sys; "
+        "sys.exit(0 if importlib.util.find_spec('xdist') else 1)"
+    )
+    try:
+        result = subprocess.run(
+            [python, "-c", probe],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return False
+    return result.returncode == 0
+
+
+def _build_coverage_cmd(
+    python: str,
+    test_marker: str,
+    cov_source: str,
+    cov_json: Path,
+    *,
+    xdist_available: bool,
+) -> list[str]:
+    """Build the coverage pytest command, gating ``-n`` on xdist availability.
+
+    ``-n 0`` is a ``pytest-xdist`` flag (force-serial). When xdist is absent it
+    is invalid and pytest exits 4; default pytest is already serial in-process,
+    so the flag is simply omitted there (behavior-equivalent).
+    """
+    cmd = [python, "-m", "pytest", "-m", test_marker]
+    if xdist_available:
+        cmd += ["-n", "0"]
+    cmd += [
+        f"--cov={cov_source}",
+        "--cov-branch",
+        f"--cov-report=json:{cov_json}",
+        "-q",
+    ]
+    return cmd
+
+
 def stage_coverage(
     runtime: StageRuntime,
     config: CoverageConfig,
@@ -131,19 +180,16 @@ def stage_coverage(
     cov_json = runtime.out_dir / "coverage.json"
     cov_source = config.source_prefix if config.source_prefix else str(runtime.root)
 
-    cmd = [
+    xdist_available = _xdist_available(runtime.python)
+    if not xdist_available:
+        _log("  · xdist not available — running coverage serially (omitting -n)")
+    cmd = _build_coverage_cmd(
         runtime.python,
-        "-m",
-        "pytest",
-        "-m",
         config.test_marker,
-        "-n",
-        "0",
-        f"--cov={cov_source}",
-        "--cov-branch",
-        f"--cov-report=json:{cov_json}",
-        "-q",
-    ]
+        cov_source,
+        cov_json,
+        xdist_available=xdist_available,
+    )
     result = _run_stage(cmd, env=runtime.env, cwd=runtime.root, label="coverage")
     if result.returncode != 0:
         _log(f"  ✗ Coverage collection failed (exit {result.returncode})")
